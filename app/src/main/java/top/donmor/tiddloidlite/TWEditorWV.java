@@ -7,9 +7,6 @@
 package top.donmor.tiddloidlite;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +20,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 //import android.support.v7.app.AlertDialog;
 //import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,16 +27,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
-import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -61,7 +54,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Locale;
 
 public class TWEditorWV extends AppCompatActivity {
 
@@ -404,7 +396,7 @@ public class TWEditorWV extends AppCompatActivity {
 						}
 					});
 					AlertDialog dialog = isExit.create();
-					dialog.setCanceledOnTouchOutside(false);
+//					dialog.setCanceledOnTouchOutside(false);
 					dialog.show();
 				} else {
 					quitting();
@@ -797,9 +789,11 @@ public class TWEditorWV extends AppCompatActivity {
 		final String fid = bu != null ? bu.getString(MainActivity.KEY_ID) : null;
 		if (fid != null) {
 			int ser = -1;
+			JSONObject w = null;
 			try {
 				for (int i = 0; i < db.getJSONArray(MainActivity.DB_KEY_WIKI).length(); i++) {
-					if (db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(i).getString(MainActivity.KEY_ID).equals(fid)) {
+					w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(i);
+					if (w.getString(MainActivity.KEY_ID).equals(fid)) {
 						ser = i;
 						break;
 					}
@@ -810,32 +804,38 @@ public class TWEditorWV extends AppCompatActivity {
 			if (ser == -1)
 				Toast.makeText(this, R.string.wiki_not_exist, Toast.LENGTH_SHORT).show();
 			else if (!fid.equals(id)) {
-				if (new MainActivity.TWInfo(this, uri).isWiki) {
-					nextWikiIntent = intent;
-					nextWikiSerial = ser;
-					if (isWiki)
-						wv.loadUrl(SCH_JS + ':' + getResources().getString(isClassic ? R.string.js_quit_c : R.string.js_quit));
-					else nextWiki();
-				} else {
-					final int p = ser;
-					final Uri r = uri;
-					new android.app.AlertDialog.Builder(this)
-							.setTitle(android.R.string.dialog_alert_title)
-							.setMessage(R.string.confirm_to_auto_remove_wiki)
-							.setNegativeButton(android.R.string.no, null)
-							.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									try {
-										db.getJSONArray(MainActivity.DB_KEY_WIKI).remove(p);
-										MainActivity.writeJson(openFileOutput(MainActivity.DB_FILE_NAME, MODE_PRIVATE), db);
-										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-											revokeUriPermission(getPackageName(), r, MainActivity.takeFlags);
-									} catch (Exception e) {
-										e.printStackTrace();
+				try {
+					final Uri u = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
+					getContentResolver().takePersistableUriPermission(u, MainActivity.TAKE_FLAGS);
+					if (new MainActivity.TWInfo(this,u).isWiki) {
+						nextWikiIntent = intent;
+						nextWikiSerial = ser;
+						if (isWiki)
+							wv.loadUrl(SCH_JS + ':' + getResources().getString(isClassic ? R.string.js_quit_c : R.string.js_quit));
+						else nextWiki();
+					} else {
+						final int p = ser;
+//						final Uri r = u;
+						new android.app.AlertDialog.Builder(this)
+								.setTitle(android.R.string.dialog_alert_title)
+								.setMessage(R.string.confirm_to_auto_remove_wiki)
+								.setNegativeButton(android.R.string.no, null)
+								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										try {
+											db.getJSONArray(MainActivity.DB_KEY_WIKI).remove(p);
+											MainActivity.writeJson(openFileOutput(MainActivity.DB_FILE_NAME, MODE_PRIVATE), db);
+											if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+												revokeUriPermission(getPackageName(), u, MainActivity.TAKE_FLAGS);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
 									}
-								}
-							}).show();
+								}).show();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -883,7 +883,7 @@ public class TWEditorWV extends AppCompatActivity {
 		try {
 //			ueu = SCH_EX_FILE + wApp.getString(MainActivity.DB_KEY_PATH);
 //				String wvTitle = wApp.getString(MainActivity.KEY_NAME);
-			if (!wvTitle.equals("")) this.setTitle(wvTitle);
+			if (wvTitle!=null&&!wvTitle.equals("")) this.setTitle(wvTitle);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
