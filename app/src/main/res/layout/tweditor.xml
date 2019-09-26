@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/twFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
+    android:background="@color/design_default_color_primary"
     android:configChanges="keyboardHidden|orientation|screenSize"
     android:orientation="vertical"
-    tools:context="top.donmor.tiddloidlite.TWEditorWV">
+    tools:context=".TWEditorWV"
+    tools:ignore="Overdraw">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -19,17 +19,15 @@
             android:id="@+id/wv_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/background_light"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextAppearance="@style/Toolbar.TitleText"/>
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            app:subtitleTextAppearance="@style/TextAppearance.AppCompat.Small" />
 
         <ProgressBar
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/background_light" />
+            android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <WebView

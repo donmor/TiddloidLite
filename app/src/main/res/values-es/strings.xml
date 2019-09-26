@@ -1,68 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!--JSON and Settings-->
-	<string name="default_se">Google</string>
 	<string name="template_repo">https://tiddlywiki.com/languages/es-ES/empty.html</string>
 	<!--UI-->
 	<string name="action_new">Crear un nuevo wiki</string>
 	<string name="action_import">Importar un archivo</string>
-	<string name="action_fork">Bifurcar un sitio web</string>
-	<string name="action_settings">Ajustes</string>
 	<string name="there_is_no_wiki_here">No hay nada aquí</string>
-	<string name="url">URL o palabra clave</string>
-	<string name="search">Buscar</string>
-	<string name="search_engine">Buscador</string>
-	<string name="google">Google</string>
-	<string name="bing">Bing</string>
-	<string name="baidu">Baidu</string>
-	<string name="sogou">Sogou</string>
-	<string name="custom">Personalizado</string>
-	<string name="enable_backup">Habilitar copia de seguridad</string>
-	<string name="no_backups">No hay copias de seguridad</string>
+	<string name="provider">"Proveedor:&#160;"</string>
+	<string name="pathDir">"Ruta:&#160;"</string>
+	<string name="filename">Nombre del archivo:&#160;</string>
+	<string name="unknown">Desconocido</string>
 	<string name="create_shortcut">Crear un acceso directo en el escritorio</string>
 	<string name="shortcut_created">Acceso directo creado correctamente</string>
 	<string name="shortcut_failed">Error al crear acceso directo</string>
 	<string name="remove_wiki">Eliminar Wiki</string>
-	<string name="downloading">Descargando</string>
-	<string name="download_complete">Descarga completa</string>
-	<string name="download_failed">Descarga fracasó</string>
 	<string name="please_wait">Por favor espera&#8230;</string>
-	<string name="filesystem">Sistema de archivos</string>
-	<string name="show_hidden_files">Montrer les fichiers cachés(.)</string>
-	<string name="template">Modelo</string>
-	<string name="update_template">Plantilla de actualización</string>
-	<string name="e_g_cse">e.g google.com/search?q=%s</string>
-	<string name="ready_to_fork">Listo para bifurcar este wiki. Haga clic en "Guardar cambios" para continuar.</string>
+	<string name="no_internet">Sin conexión a Internet</string>
 	<string name="failed">Ha fallado</string>
 	<string name="cancelled">Cancelado</string>
 	<string name="wiki_replaced">Wiki existente fue sobrescrito</string>
 	<string name="file_deleted">Archivo borrado</string>
-	<string name="backup_failed">Copia de seguridad fallida</string>
-	<string name="delete_backups_as_well">Eliminar copias de seguridad también</string>
 	<string name="delete_the_html_file">Eliminar el archivo HTML (no se puede deshacer!)</string>
-	<string name="missing_template">Falta la plantilla. Tiddloid ahora descargará un nuevo archivo de plantilla de TiddlyWiki.com.</string>
 	<string name="not_a_wiki">El archivo seleccionado no es un TiddlyWiki</string>
-	<string name="failed_opening_file">Error al abrir el archivo</string>
-	<string name="failed_creating_file">Error al crear el archivo</string>
-	<string name="failed_deleting_file">Falló la eliminación del archivo</string>
-	<string name="failed_writing_file">Error al escribir el archivo</string>
-	<string name="error_loading_page">Error al cargar la página</string>
+    <string name="failed_creating_file">Error al crear el archivo</string>
+    <string name="error_loading_page">Error al cargar la página</string>
 	<string name="error_processing_file">Error al procesar el archivo</string>
 	<string name="wiki_already_exists">El wiki ya existe</string>
     <string name="wiki_not_exist">Wiki no existe</string>
 	<string name="data_error">Error de datos</string>
-	<string name="confirm_to_del_backup">¿Estás seguro de que quieres eliminar esta versión?</string>
 	<string name="confirm_to_remove_wiki">¿Estás seguro de que deseas eliminar esta Wiki de Tiddloid?</string>
-	<string name="confirm_to_auto_remove_wiki">El elemento seleccionado no es un TiddlyWiki. ¿Quieres eliminarlo?</string>
-	<string name="confirm_to_rollback">¿Está seguro de que desea reemplazar este Wiki con la versión de respaldo? Esta operación no se puede deshacer!</string>
-	<string name="confirm_to_exit_wiki">Los cambios no se han guardado. ¿Estás seguro de que quieres dejar de fumar?</string>
-	<string name="confirm_to_exit_wiki_classic">¿Estás seguro de que quieres dejar de fumar? Por favor asegúrese de que todas las modificaciones se han guardado.</string>
-	<string name="wiki_rolled_back_successfully">Wiki revierte con éxito</string>
-	<string name="third_part_rising">La página está intentando iniciar otra aplicación. ¿Quieres continuar?</string>
-	<string name="backup_deleted">Copia de seguridad ha sido eliminado</string>
+	<string name="confirm_to_auto_remove_wiki">El wiki seleccionado ya no existe. ¿Quieres eliminarlo?</string>
+    <string name="confirm_to_exit_wiki">Los cambios no se han guardado. ¿Estás seguro de que quieres dejar de fumar?</string>
+    <string name="third_part_rising">La página está intentando iniciar otra aplicación. ¿Quieres continuar?</string>
     <string name="action_about">Acerca de Tiddloid</string>
 	<string name="about">
-        Tiddloid es una aplicación para trabajar con TiddlyWikis almacenados localmente. Una vez que tenga algunas ideas, puede escribirlas inmediatamente para que pueda acceder a ellas desde cualquier lugar. Para obtener más detalles sobre TiddlyWiki, consulte https://tiddlywiki.com/ .\n
+        Tiddloid Lite, una versión ligera de Tiddloid, es una aplicación para trabajar con TiddlyWikis almacenados localmente. Una vez que tenga algunas ideas, puede escribirlas inmediatamente para que pueda acceder a ellas desde cualquier lugar. Para obtener más detalles sobre TiddlyWiki, consulte https://tiddlywiki.com/ .\n
         \n
         Esta aplicación se lanza bajo la licencia GPLv2,\n
         (1)Uso comercial\n
@@ -76,12 +47,10 @@
         (4)bajo la misma licencia\n
         \n
         La finalización de esta aplicación es inseparable de la ayuda de estos proyectos de código abierto:\n
-        FileDialog - https://github.com/donmor/FileDialog ,\n
         Json - https://json.org/ ,\n
         Jsoup - https://jsoup.org/ ,\n
-        Rhino - https://developer.mozilla.org/Rhino .\n
         El archivo de licencia se proporciona con el código fuente.\n
         \n
-        Para obtener más detalles sobre esta aplicación, visite https://github.com/donmor/Tiddloid .
+        Para obtener más detalles sobre esta aplicación, visite https://github.com/donmor/TiddloidLite .
     </string>
 </resources>

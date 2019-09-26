@@ -13,9 +13,10 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Vibrator;
-//import android.support.annotation.NonNull;
-//import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	private final Vibrator vibrator;
 
 	// CONSTANT
-	private static final String HTML_ATTR_PART_1 = "<br><font color=\"grey\">",
-			HTML_ATTR_PART_2 = "</font>",
+	private static final String
 			STRING_0 = "";
 
 	WikiListAdapter(Context context, JSONObject db) {
@@ -78,7 +78,6 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	@Override
 	public void onBindViewHolder(@NonNull WikiListHolder holder, final int position) {
 		try {
-//			final int pos = position;
 			JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
 			FileInputStream is = null;
 			try {
@@ -119,15 +118,25 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				}
 			});
 			holder.uri = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
-//			File f = new File(holder.path);
-//			if (f.exists()) {
-//				holder.btnWiki.setVisibility(View.VISIBLE);
 			DocumentFile documentFile = DocumentFile.fromSingleUri(context, holder.uri);
-			holder.btnWiki.setText(Html.fromHtml(w.getString(MainActivity.KEY_NAME)
-					+ HTML_ATTR_PART_1
-					+ (documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0)
-					+ HTML_ATTR_PART_2));
-//			} else holder.btnWiki.setVisibility(View.GONE);
+			String s = null;
+			try {
+				s = w.getString(MainActivity.DB_KEY_SUBTITLE);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			SpannableStringBuilder builder = new SpannableStringBuilder(w.getString(MainActivity.KEY_NAME));
+			int p = builder.length();
+			builder.append(s != null && s.length() > 0 ? MainActivity.KEY_LBL + s : MainActivity.STR_EMPTY);
+			builder.append('\n');
+			ForegroundColorSpan fcs = new ForegroundColorSpan(context.getColor(R.color.content_sub));
+			builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+			p = builder.length();
+			builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0);
+			RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
+			builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+			holder.btnWiki.setText(builder);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

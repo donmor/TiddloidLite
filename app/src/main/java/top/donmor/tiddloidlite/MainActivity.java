@@ -6,18 +6,15 @@
 
 package top.donmor.tiddloidlite;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -34,10 +31,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -53,26 +50,12 @@ import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
-
-//import androidx.core.widget.CursorAdapter;
-//import androidx.core.widget.SwipeRefreshLayout;
-//import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.LinearLayoutManager;
-//import android.support.v7.widget.RecyclerView;
-//import android.support.v7.widget.Toolbar;
-//import org.mozilla.javascript.Scriptable;
-//import top.donmor.tiddloid.utils.NoLeakHandler;
-//import top.donmor.tiddloid.utils.TLSSocketFactory;
-//import com.github.donmor.filedialog.lib.FileDialog;
-//import com.github.donmor.filedialog.lib.FileDialogFilter;
 
 public class MainActivity extends AppCompatActivity {
 	private RecyclerView rvWikiList;
@@ -81,122 +64,55 @@ public class MainActivity extends AppCompatActivity {
 	private JSONObject db;
 
 	// CONSTANT
-//	static final FileDialogFilter[] HTML_FILTERS = {new FileDialogFilter(".html;.htm", new String[]{".html", ".htm"})};
 	static final int TAKE_FLAGS = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 	static final String
-//			SCHEME_BLOB_B64 = "blob-b64",
-//			BACKUP_DIRECTORY_PATH_PREFIX = "_backup",
 			KEY_NAME = "name",
+			KEY_LBL = " — ",
 			KEY_FAVICON = "favicon",
 			KEY_ID = "id",
-//			KEY_URL = "url",
-			DB_FILE_NAME = "data.json",
-//			DB_KEY_SHOW_HIDDEN = "showHidden",
-//			DB_KEY_LAST_DIR = "lastDir",
 			DB_KEY_WIKI = "wiki",
-//			DB_KEY_PATH = "path",
-			DB_KEY_URI = "uri";
-//			DB_KEY_BACKUP = "backup";
+			DB_KEY_URI = "uri",
+			DB_KEY_SUBTITLE = "subtitle",
+			STR_EMPTY = "";
 	private static final String
-//			DB_KEY_CSE = "customSearchEngine",
-//			DB_KEY_SEARCH_ENGINE = "searchEngine",
+			DB_FILE_NAME = "data.json",
 			KEY_APPLICATION_NAME = "application-name",
-			KEY_LBL = " — ",
-//			KEY_DOWNLOAD = "download",
 			KEY_CONTENT = "content",
-			KEY_VERSION = "version",
 			KEY_VERSION_AREA = "versionArea",
+			KEY_STORE_AREA = "storeArea",
+			KEY_PRE = "pre",
+			KEY_WIKI_TITLE = "$:/SiteTitle",
+			KEY_WIKI_SUBTITLE = "$:/SiteSubTitle",
+			KEY_WIKI_TITLE_C = "SiteTitle",
+			KEY_WIKI_SUBTITLE_C = "SiteSubtitle",
 			KEY_TITLE = "title",
 			TYPE_HTML = "text/html",
-//			SE_GOOGLE = "Google",
-//			SE_BING = "Bing",
-//			SE_BAIDU = "Baidu",
-//			SE_SOGOU = "Sogou",
-//			SE_CUSTOM = "Custom",
 			PREF_VER_1 = "var version = ",
 			PREF_VER_2 = "};",
 			PREF_VER_3 = "new Date(",
-			PREF_VER_4 = ")",
-//			PREF_S = "%s",
-//			PREF_SU = "#content#",
-//			SCH_EX_HTTP = "http://",
-//			TEMPLATE_FILE_NAME = "template.html",
-//			MIME_HTML = "text/html",
-//			CHARSET_DEFAULT = "UTF-8",
-			CLASS_MENU_BUILDER = "MenuBuilder",
-			METHOD_SET_OPTIONAL_ICONS_VISIBLE = "setOptionalIconsVisible";
+			PREF_VER_4 = ")";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 		setContentView(R.layout.activity_main);
-//		File templateOnStart = new File(getFilesDir(), TEMPLATE_FILE_NAME);
-//		if (!templateOnStart.exists() || !(new TWInfo(MainActivity.this, templateOnStart).isWiki)) {
-//			final ProgressDialog progressDialog = new ProgressDialog(this);
-//			progressDialog.setMessage(getResources().getString(R.string.please_wait));
-//			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//			progressDialog.setCancelable(false);
-//			progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//				@Override
-//				public void onShow(DialogInterface dialog) {
-//					wGet(MainActivity.this, Uri.parse(getResources().getString(R.string.template_repo)), new File(getFilesDir(), TEMPLATE_FILE_NAME), true, true, new DownloadChecker() {
-//						@Override
-//						public boolean checkNg(File file) {
-//							return !(new TWInfo(MainActivity.this, file).isWiki);
-//						}
-//					}, new OnDownloadCompleteListener() {
-//						@Override
-//						public void onDownloadComplete(File file) {
-//							if (file.exists())
-//								Toast.makeText(MainActivity.this, R.string.download_complete, Toast.LENGTH_SHORT).show();
-//							else
-//								Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_SHORT).show();
-//							progressDialog.dismiss();
-//						}
-//
-//						@Override
-//						public void onDownloadFailed() {
-//							Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_SHORT).show();
-//							progressDialog.dismiss();
-//						}
-//					});
-//				}
-//			});
-//			AlertDialog dialog = new AlertDialog.Builder(this)
-//					.setTitle(android.R.string.dialog_alert_title)
-//					.setMessage(R.string.missing_template)
-//					.setPositiveButton(android.R.string.ok, null)
-//					.show();
-//			dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//				@Override
-//				public void onDismiss(DialogInterface dialog) {
-//					progressDialog.show();
-//				}
-//			});
-//		}
 		try {
-			db = readJson(openFileInput(DB_FILE_NAME));
+			db = readJson(this);
 			if (db == null) throw new Exception();
 		} catch (Exception e) {
 			e.printStackTrace();
 			db = new JSONObject();
 			try {
-//				db.put(DB_KEY_SEARCH_ENGINE, R.string.default_se);
-//				db.put(DB_KEY_SHOW_HIDDEN, false);
 				db.put(DB_KEY_WIKI, new JSONArray());
-//				db.put(DB_KEY_LAST_DIR, Environment.getExternalStorageDirectory().getAbsolutePath());
-				writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
+				writeJson(this, db);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			MainActivity.this.getWindow().setStatusBarColor(Color.WHITE);
-			MainActivity.this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-			checkPermission();
-		}
+		onConfigurationChanged(getResources().getConfiguration());
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		noWiki = findViewById(R.id.t_noWiki);
@@ -233,10 +149,8 @@ public class MainActivity extends AppCompatActivity {
 							break;
 						} else if (i == m - 1) throw new Exception();
 					}
-//					if (id != null && u != null && i < m) {
-					//					File f = new File(vp);
-					getContentResolver().takePersistableUriPermission(u, TAKE_FLAGS);
-					if (new TWInfo(MainActivity.this, u).isWiki) {
+					if (u != null && new TWInfo(MainActivity.this, u).isWiki) {
+						getContentResolver().takePersistableUriPermission(u, TAKE_FLAGS);
 						if (!loadPage(id))
 							Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
 					} else {
@@ -251,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 									public void onClick(DialogInterface dialog, int which) {
 										try {
 											db.getJSONArray(DB_KEY_WIKI).remove(p);
-											writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
+											writeJson(MainActivity.this, db);
 											if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
 												revokeUriPermission(getPackageName(), r, TAKE_FLAGS);
 										} catch (Exception e) {
@@ -261,9 +175,6 @@ public class MainActivity extends AppCompatActivity {
 									}
 								}).show();
 					}
-//					} else {
-//						Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-//					}
 				} catch (Exception e) {
 					e.printStackTrace();
 					Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
@@ -274,13 +185,7 @@ public class MainActivity extends AppCompatActivity {
 			public void onItemLongClick(final int position) {
 				try {
 					final JSONObject w = db.getJSONArray(DB_KEY_WIKI).getJSONObject(position);
-//					View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.wikiconfig_dialog, null);
-//					final Button btnWikiConfigPath = view.findViewById(R.id.btnWikiConfigPath);
-//					btnWikiConfigPath.setText(wikiData.getString(DB_KEY_PATH));
-//					Button btnCreateShortcut = view.findViewById(R.id.btnCreateShortcut);
-//					Button btnRemoveWiki = view.findViewById(R.id.btnRemoveWiki);
-
-					Drawable icon = getResources().getDrawable(R.drawable.ic_description);
+					Drawable icon = getDrawable(R.drawable.ic_description);
 					FileInputStream is = null;
 					Bitmap iconX = null;
 					try {
@@ -300,35 +205,21 @@ public class MainActivity extends AppCompatActivity {
 					}
 					final IconCompat iconCompat = iconX != null ? IconCompat.createWithBitmap(iconX) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut);
 					final Uri u = Uri.parse(w.getString(DB_KEY_URI));
-//					final View view = LayoutInflater.from(MainActivity.this).inflate(R.id.textView, null);
 					final TextView view = new TextView(MainActivity.this);
 					DocumentFile file = DocumentFile.fromSingleUri(MainActivity.this, u);
-//					try {
-//						System.out.println(u.getAuthority());
-//						System.out.println(Uri.decode(u.getLastPathSegment()));
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//					CharSequence d = u.getAuthority();
-//
-//					d = d + Uri.decode(u.getLastPathSegment());
-
-					CharSequence s = getResources().getString(R.string.provider)
+					CharSequence s = getString(R.string.provider)
 							+ u.getAuthority()
 							+ '\n'
-							+ getResources().getString(R.string.pathDir)
+							+ getString(R.string.pathDir)
 							+ Uri.decode(u.getLastPathSegment())
 							+ '\n'
-							+ getResources().getString(R.string.filename)
-							+ (file != null ? file.getName() : getResources().getString(R.string.unknown));
+							+ getString(R.string.filename)
+							+ (file != null ? file.getName() : getString(R.string.unknown));
 					view.setText(s);
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-						view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
+					view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
 					final AlertDialog wikiConfigDialog = new AlertDialog.Builder(MainActivity.this)
 							.setTitle(w.getString(MainActivity.KEY_NAME))
 							.setIcon(icon)
-//							.setView(view)
-//							.setMessage(u.toString())
 							.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -353,12 +244,14 @@ public class MainActivity extends AppCompatActivity {
 												public void onClick(DialogInterface dialogInterface, int i) {
 													try {
 														db.getJSONArray(DB_KEY_WIKI).remove(position);
-														writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
+														writeJson(MainActivity.this, db);
 														DocumentsContract.deleteDocument(getContentResolver(), u);
 														if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
 															revokeUriPermission(getPackageName(), u, TAKE_FLAGS);
+														Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
 													} catch (Exception e) {
 														e.printStackTrace();
+														Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
 													}
 													MainActivity.this.onResume();
 												}
@@ -368,11 +261,12 @@ public class MainActivity extends AppCompatActivity {
 												public void onClick(DialogInterface dialog, int which) {
 													try {
 														db.getJSONArray(DB_KEY_WIKI).remove(position);
-														writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
+														writeJson(MainActivity.this, db);
 														if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
 															revokeUriPermission(getPackageName(), u, TAKE_FLAGS);
 													} catch (Exception e) {
 														e.printStackTrace();
+														Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
 													}
 													MainActivity.this.onResume();
 												}
@@ -389,11 +283,17 @@ public class MainActivity extends AppCompatActivity {
 										Bundle bu = new Bundle();
 										bu.putString(KEY_ID, id);
 										Intent in = new Intent(MainActivity.this, TWEditorWV.class).putExtras(bu).setAction(Intent.ACTION_MAIN);
-										String lbl = w.getString(MainActivity.KEY_NAME);
+										String l = w.getString(MainActivity.KEY_NAME);
+										String s = null;
+										try {
+											s = w.getString(MainActivity.DB_KEY_SUBTITLE);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
 										if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
 											ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
-													.setShortLabel(lbl.substring(0, lbl.indexOf(KEY_LBL)))
-													.setLongLabel(lbl)
+													.setShortLabel(l)
+													.setLongLabel(l + (s != null ? (KEY_LBL + s) : MainActivity.STR_EMPTY))
 													.setIcon(iconCompat)
 													.setIntent(in)
 													.build();
@@ -407,99 +307,10 @@ public class MainActivity extends AppCompatActivity {
 									}
 								}
 							})
-//							.show();
 							.create();
 					int m = Math.round(20 * getResources().getDisplayMetrics().density + 0.5f);
 					wikiConfigDialog.setView(view, m, 0, m, 0);
 					wikiConfigDialog.show();
-//					btnRemoveWiki.setOnClickListener(new View.OnClickListener() {
-//						@Override
-//						public void onClick(View v) {
-//							View view1 = LayoutInflater.from(wikiConfigDialog.getContext()).inflate(R.layout.del_confirm, null);
-//							final CheckBox cbDelFile = view1.findViewById(R.id.cbDelFile);
-//							final CheckBox cbDelBackups = view1.findViewById(R.id.cbDelBackups);
-//							cbDelBackups.setEnabled(false);
-//							cbDelFile.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//								@Override
-//								public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//									cbDelBackups.setEnabled(isChecked);
-//								}
-//							});
-//							AlertDialog removeWikiConfirmationDialog = new AlertDialog.Builder(wikiConfigDialog.getContext())
-//									.setTitle(android.R.string.dialog_alert_title)
-//									.setMessage(R.string.confirm_to_remove_wiki)
-//									.setView(view1)
-//									.setNegativeButton(android.R.string.cancel, null)
-//									.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-//										@Override
-//										public void onClick(DialogInterface dialog, int which) {
-//											try {
-//												final File f = new File(btnWikiConfigPath.getText().toString());
-//												db.getJSONArray(DB_KEY_WIKI).remove(position);
-//												writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
-//												if (cbDelFile.isChecked()) {
-//													try {
-//														File[] fbx = f.getParentFile().listFiles(new FileFilter() {
-//															@Override
-//															public boolean accept(File pathname) {
-//																return pathname.exists() && pathname.isDirectory() && pathname.getName().equals(f.getName() + BACKUP_DIRECTORY_PATH_PREFIX);
-//															}
-//														});
-//														for (File fb : fbx)
-//															if (cbDelBackups.isChecked() && fb.isDirectory()) {
-//																File[] b = fb.listFiles(new FileFilter() {
-//																	@Override
-//																	public boolean accept(File pathname) {
-//																		return isBackupFile(f, pathname);
-//																	}
-//																});
-//																for (File f1 : b)
-//																	f1.delete();
-//																fb.delete();
-//															}
-//													} catch (Exception e) {
-//														e.printStackTrace();
-//													}
-//													if (f.delete())
-//														Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
-//												}
-//											} catch (Exception e) {
-//												e.printStackTrace();
-//											}
-//											wikiConfigDialog.dismiss();
-//											MainActivity.this.onResume();
-//										}
-//									})
-//									.create();
-//							removeWikiConfirmationDialog.show();
-//						}
-//					});
-//					btnCreateShortcut.setOnClickListener(new View.OnClickListener() {
-//						@Override
-//						public void onClick(View v) {
-//							try {
-//								String id = wikiData.getString(KEY_ID);
-//								Bundle bu = new Bundle();
-//								bu.putString(KEY_ID, id);
-//								Intent in = new Intent(MainActivity.this, TWEditorWV.class).putExtras(bu).setAction(Intent.ACTION_MAIN);
-//								String lbl = wikiData.getString(MainActivity.KEY_NAME);
-//								if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
-//									ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
-//											.setShortLabel(lbl.substring(0, lbl.indexOf(KEY_LBL)))
-//											.setLongLabel(lbl)
-//											.setIcon(iconCompat)
-//											.setIntent(in)
-//											.build();
-//									if (ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcut, null))
-//										Toast.makeText(MainActivity.this, R.string.shortcut_created, Toast.LENGTH_SHORT).show();
-//									else throw new Exception();
-//								}
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//								Toast.makeText(MainActivity.this, R.string.shortcut_failed, Toast.LENGTH_SHORT).show();
-//							}
-//						}
-//					});
 				} catch (Exception e) {
 					e.printStackTrace();
 					Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
@@ -538,223 +349,22 @@ public class MainActivity extends AppCompatActivity {
 		return true;
 	}
 
-//	@Override
-//	public boolean onMenuOpened(int featureId, Menu menu) {
-//		if (menu != null) {
-//			if (menu.getClass().getSimpleName().equalsIgnoreCase(CLASS_MENU_BUILDER)) {
-//				try {
-//					Method method = menu.getClass().getDeclaredMethod(METHOD_SET_OPTIONAL_ICONS_VISIBLE, Boolean.TYPE);
-//					method.setAccessible(true);
-//					method.invoke(menu, true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		return super.onMenuOpened(featureId, menu);
-//	}
-
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_new) {
 			startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML), 43);
-//			final File template = new File(getFilesDir(), TEMPLATE_FILE_NAME);
-//			if (template.exists() && new TWInfo(MainActivity.this, template).isWiki) {
-//				File lastDir = Environment.getExternalStorageDirectory();
-//				boolean showHidden = false;
-//				try {
-//					lastDir = new File(db.getString(DB_KEY_LAST_DIR));
-//					showHidden = db.getBoolean(DB_KEY_SHOW_HIDDEN);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				FileDialog.fileSave(MainActivity.this, lastDir, HTML_FILTERS, showHidden, new FileDialog.OnFileTouchedListener() {
-//					@Override
-//					public void onFileTouched(File[] files) {
-//						FileInputStream is = null;
-//						FileOutputStream os = null;
-//						try {
-//							if (files != null && files.length > 0 && files[0] != null) {
-//								File file = files[0];
-//								is = new FileInputStream(template);
-//								os = new FileOutputStream(file);
-//								int len = is.available();
-//								int length, lengthTotal = 0;
-//								byte[] b = new byte[512];
-//								while ((length = is.read(b)) != -1) {
-//									os.write(b, 0, length);
-//									lengthTotal += length;
-//								}
-//								os.flush();
-//								if (lengthTotal != len) throw new Exception();
-//								String id = genId();
-//								try {
-//									boolean exist = false;
-//									for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-//										if (db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(DB_KEY_PATH).equals(file.getAbsolutePath())) {
-//											exist = true;
-//											id = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(KEY_ID);
-//											break;
-//										}
-//									}
-//									if (exist) {
-//										Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
-//									} else {
-//										TWInfo info = new TWInfo(MainActivity.this, file);
-//										JSONObject w = new JSONObject();
-//										w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getResources().getString(R.string.tiddlywiki));
-//										w.put(KEY_ID, id);
-//										w.put(DB_KEY_PATH, file.getAbsolutePath());
-//										w.put(DB_KEY_BACKUP, false);
-//										db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
-//									}
-//									db.put(DB_KEY_LAST_DIR, file.getParentFile().getAbsolutePath());
-//									if (!MainActivity.writeJson(openFileOutput(DB_FILE_NAME, Context.MODE_PRIVATE), db))
-//										throw new Exception();
-//								} catch (Exception e) {
-//									e.printStackTrace();
-//									Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-//								}
-//								MainActivity.this.onResume();
-//								if (!loadPage(id))
-//									Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
-//							} else throw new Exception();
-//						} catch (Exception e) {
-//							e.printStackTrace();
-//							Toast.makeText(MainActivity.this, R.string.failed_creating_file, Toast.LENGTH_SHORT).show();
-//						} finally {
-//							if (is != null)
-//								try {
-//									is.close();
-//								} catch (Exception e) {
-//									e.printStackTrace();
-//								}
-//							if (os != null)
-//								try {
-//									os.close();
-//								} catch (Exception e) {
-//									e.printStackTrace();
-//								}
-//						}
-//					}
-//
-//					@Override
-//					public void onCanceled() {
-//
-//					}
-//				});
-//			} else {
-//				final ProgressDialog progressDialog = new ProgressDialog(this);
-//				progressDialog.setMessage(getResources().getString(R.string.please_wait));
-//				progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//				progressDialog.setCancelable(false);
-//				progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//					@Override
-//					public void onShow(DialogInterface dialog) {
-//						wGet(MainActivity.this, Uri.parse(getResources().getString(R.string.template_repo)), new File(getFilesDir(), TEMPLATE_FILE_NAME), true, true, new DownloadChecker() {
-//							@Override
-//							public boolean checkNg(File file) {
-//								return !(new TWInfo(MainActivity.this, file).isWiki);
-//							}
-//						}, new OnDownloadCompleteListener() {
-//							@Override
-//							public void onDownloadComplete(File file) {
-//								Toast.makeText(MainActivity.this, R.string.download_complete, Toast.LENGTH_SHORT).show();
-//								progressDialog.dismiss();
-//								onOptionsItemSelected(item);
-//							}
-//
-//							@Override
-//							public void onDownloadFailed() {
-//								Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_SHORT).show();
-//								progressDialog.dismiss();
-//							}
-//						});
-//					}
-//				});
-//				AlertDialog dialog = new AlertDialog.Builder(this)
-//						.setTitle(android.R.string.dialog_alert_title)
-//						.setMessage(R.string.missing_template)
-//						.setPositiveButton(android.R.string.ok, null)
-//						.show();
-//				dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//					@Override
-//					public void onDismiss(DialogInterface dialog) {
-//						progressDialog.show();
-//					}
-//				});
-//			}
 		} else if (id == R.id.action_import) {
 			startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML), 42);
-//			File lastDir = Environment.getExternalStorageDirectory();
-//			boolean showHidden = false;
-//			try {
-//				lastDir = new File(db.getString(DB_KEY_LAST_DIR));
-//				showHidden = db.getBoolean(DB_KEY_SHOW_HIDDEN);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			FileDialog.fileOpen(MainActivity.this, lastDir, HTML_FILTERS, showHidden, new FileDialog.OnFileTouchedListener() {
-//				@Override
-//				public void onFileTouched(File[] files) {
-//					if (files != null && files.length > 0 && files[0] != null) {
-//						File file = files[0];
-//						String id = genId();
-//						TWInfo info = new TWInfo(MainActivity.this, file);
-//						if (info.isWiki) {
-//							try {
-//								boolean exist = false;
-//								for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-//									if (db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(DB_KEY_PATH).equals(file.getAbsolutePath())) {
-//										exist = true;
-//										id = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(KEY_ID);
-//										break;
-//									}
-//								}
-//								if (exist) {
-//									Toast.makeText(MainActivity.this, R.string.wiki_already_exists, Toast.LENGTH_SHORT).show();
-//								} else {
-//									JSONObject w = new JSONObject();
-//									w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getResources().getString(R.string.tiddlywiki));
-//									w.put(KEY_ID, id);
-//									w.put(DB_KEY_PATH, file.getAbsolutePath());
-//									w.put(DB_KEY_BACKUP, false);
-//									db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
-//								}
-//								db.put(DB_KEY_LAST_DIR, file.getParentFile().getAbsolutePath());
-//								if (!MainActivity.writeJson(openFileOutput(DB_FILE_NAME, Context.MODE_PRIVATE), db))
-//									throw new Exception();
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//								Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-//							}
-//							MainActivity.this.onResume();
-//							if (!loadPage(id))
-//								Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
-//						} else {
-//							Toast.makeText(MainActivity.this, R.string.not_a_wiki, Toast.LENGTH_SHORT).show();
-//						}
-//
-//					} else
-//						Toast.makeText(MainActivity.this, R.string.failed_opening_file, Toast.LENGTH_SHORT).show();
-//				}
-//
-//				@Override
-//				public void onCanceled() {
-//
-//				}
-//			});
 		} else if (id == R.id.action_about) {
-			final SpannableString spannableString = new SpannableString(getResources().getString(R.string.about));
+			final SpannableString spannableString = new SpannableString(getString(R.string.about));
 			Linkify.addLinks(spannableString, Linkify.ALL);
 			final AlertDialog aboutDialog = new AlertDialog.Builder(this)
 					.setTitle(R.string.action_about)
 					.setMessage(spannableString)
 					.show();
 			((TextView) aboutDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-				((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
+			((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -769,175 +379,39 @@ public class MainActivity extends AppCompatActivity {
 					case 43:
 
 						final ProgressDialog progressDialog = new ProgressDialog(this);
-						progressDialog.setMessage(getResources().getString(R.string.please_wait));
+						progressDialog.setMessage(getString(R.string.please_wait));
 						progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						progressDialog.setCanceledOnTouchOutside(false);
-
-
-//						final DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-//
-//						Uri template = Uri.parse(getResources().getString(R.string.template_repo));
-//						final DownloadManager.Request request = new DownloadManager.Request(template)
-//								.setDestinationInExternalFilesDir(this, null, TEMPLATE_FILE_NAME)
-//								.setVisibleInDownloadsUi(false)
-//								.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-//						final Bundle bundle = new Bundle();
-////						final long downloadId = downloadManager != null ? downloadManager.enqueue(request) : -1;
-//						class CompleteReceiver extends BroadcastReceiver {
-//							@Override
-//							public void onReceive(Context context, Intent intent) {
-//								long downloadId = bundle.getLong(KEY_DOWNLOAD);
-//								if (downloadId != -1 && intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) == downloadId){
-//									progressDialog.dismiss();
-//									InputStream is = null;
-//									OutputStream os = null;
-//									try {
-////									is = new FileInputStream(
-////											downloadManager != null
-////													? downloadManager.openDownloadedFile(downloadId).getFileDescriptor()
-////													: new FileDescriptor());
-////									DocumentFile.fromFile(new File(getExternalFilesDir(null),TEMPLATE_FILE_NAME));
-////										String tempFn = genId();
-////										File template = new File(getExternalFilesDir(null),tempFn);
-//										File template = new File(getExternalFilesDir(null),genId());
-//										is = new FileInputStream(template);
-//										os = getContentResolver().openOutputStream(uri);
-//										if (os != null) {
-//										int len = is.available();
-////										int length;
-////										int lengthTotal = 0;
-//										byte[] bytes = new byte[len];
-////										while ((length = is.read(bytes)) > -1) {
-////											os.write(bytes, 0, length);
-////											lengthTotal += length;
-////											if (Thread.currentThread().isInterrupted()) {
-////												break;
-////											}
-////										}
-//										os.write(bytes, 0, len);
-//										os.flush();
-//										//noinspection ResultOfMethodCallIgnored
-//										template.renameTo(new File(getExternalFilesDir(null),TEMPLATE_FILE_NAME));
-////										if (len > 0 && lengthTotal < len || !(new TWInfo(MainActivity.this, uri).isWiki))
-//										if (!(new TWInfo(MainActivity.this, uri).isWiki))
-//											throw new Exception();
-//										progressDialog.dismiss();
-//										String id = genId();
-//										try {
-//											boolean exist = false;
-//											for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-//												if (db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(DB_KEY_URI).equals(uri.toString())) {
-//													exist = true;
-//													id = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(KEY_ID);
-//													break;
-//												}
-//											}
-//											if (exist) {
-//												runOnUiThread(new Runnable() {
-//													@Override
-//													public void run() {
-//														Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
-//													}
-//												});
-//											} else {
-//												TWInfo info = new TWInfo(MainActivity.this, uri);
-//												JSONObject w = new JSONObject();
-//
-//												w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getResources().getString(R.string.tiddlywiki));
-//												w.put(KEY_ID, id);
-//												w.put(DB_KEY_URI, uri.toString());
-//												db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
-//											}
-//											if (!MainActivity.writeJson(openFileOutput(DB_FILE_NAME, Context.MODE_PRIVATE), db))
-//												throw new Exception();
-//											getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
-//										} catch (Exception e) {
-//											e.printStackTrace();
-//											runOnUiThread(new Runnable() {
-//												@Override
-//												public void run() {
-//													Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-//												}
-//											});
-//										}
-//										runOnUiThread(new Runnable() {
-//											@Override
-//											public void run() {
-//												MainActivity.this.onResume();
-//											}
-//										});
-//										if (!loadPage(id))
-//											runOnUiThread(new Runnable() {
-//												@Override
-//												public void run() {
-//													Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
-//												}
-//											});
-//
-//
-//
-//
-//
-//									}
-//								}catch (Exception e){
-//									e.printStackTrace();
-//										try {
-//											DocumentsContract.deleteDocument(getContentResolver(), uri);
-//										} catch (Exception e1) {
-//											e.printStackTrace();
-//										}
-//										runOnUiThread(new Runnable() {
-//											@Override
-//											public void run() {
-//												Toast.makeText(MainActivity.this, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
-//											}
-//										});
-//									} finally {
-//										if (is != null)
-//											try {
-//												is.close();
-//											} catch (Exception e) {
-//												e.printStackTrace();
-//											}
-//										if (os != null)
-//											try {
-//												os.close();
-//											} catch (Exception e) {
-//												e.printStackTrace();
-//											}
-//								}}
-//							}
-//						}
-
-
 						final Thread thread = new Thread(new Runnable() {
 							@Override
 							public void run() {
 								InputStream is = null;
 								OutputStream os = null;
 								boolean interrupted = false;
+								boolean iNet = false;
 								try {
 									os = getContentResolver().openOutputStream(uri);
 									if (os != null) {
-										URL url = new URL(getResources().getString(R.string.template_repo));
+										URL url = new URL(getString(R.string.template_repo));
 										HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
 										httpsURLConnection.connect();
-										int len = httpsURLConnection.getContentLength();
+										iNet = true;
 										is = httpsURLConnection.getInputStream();
 										int length;
-										int lengthTotal = 0;
 										byte[] bytes = new byte[4096];
 										while ((length = is.read(bytes)) > -1) {
 											os.write(bytes, 0, length);
-											lengthTotal += length;
 											if (Thread.currentThread().isInterrupted()) {
 												interrupted = true;
 												break;
 											}
 										}
 										os.flush();
+										os.close();
+										os = null;
 										if (!interrupted) {
-											if (len > 0 && lengthTotal < len || !(new TWInfo(MainActivity.this, uri).isWiki))
+											TWInfo info = new TWInfo(MainActivity.this, uri);
+											if (!info.isWiki)
 												throw new Exception();
 											progressDialog.dismiss();
 											String id = genId();
@@ -958,15 +432,14 @@ public class MainActivity extends AppCompatActivity {
 														}
 													});
 												} else {
-													TWInfo info = new TWInfo(MainActivity.this, uri);
 													JSONObject w = new JSONObject();
-
-													w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getResources().getString(R.string.tiddlywiki));
+													w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
+													w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
 													w.put(KEY_ID, id);
 													w.put(DB_KEY_URI, uri.toString());
 													db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
 												}
-												if (!MainActivity.writeJson(openFileOutput(DB_FILE_NAME, Context.MODE_PRIVATE), db))
+												if (!MainActivity.writeJson(MainActivity.this, db))
 													throw new Exception();
 												getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
 											} catch (Exception e) {
@@ -995,15 +468,17 @@ public class MainActivity extends AppCompatActivity {
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
+									progressDialog.dismiss();
 									try {
 										DocumentsContract.deleteDocument(getContentResolver(), uri);
 									} catch (Exception e1) {
 										e.printStackTrace();
 									}
+									final int fid = iNet ? R.string.failed_creating_file : R.string.no_internet;
 									runOnUiThread(new Runnable() {
 										@Override
 										public void run() {
-											Toast.makeText(MainActivity.this, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
+											Toast.makeText(MainActivity.this, fid, Toast.LENGTH_SHORT).show();
 										}
 									});
 								} finally {
@@ -1044,17 +519,12 @@ public class MainActivity extends AppCompatActivity {
 							@Override
 							public void onShow(DialogInterface dialog) {
 								thread.start();
-//								bundle.putLong(KEY_DOWNLOAD,downloadManager != null ? downloadManager.enqueue(request) : -1);
-//								IntentFilter intentFilter = new IntentFilter();
-//								intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-//								registerReceiver(new CompleteReceiver(), intentFilter);
 							}
 						});
 						progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialogInterface) {
 								thread.interrupt();
-//								if (downloadManager!=null) downloadManager.remove(bundle.getLong(KEY_DOWNLOAD));
 							}
 						});
 						progressDialog.show();
@@ -1076,14 +546,13 @@ public class MainActivity extends AppCompatActivity {
 									Toast.makeText(MainActivity.this, R.string.wiki_already_exists, Toast.LENGTH_SHORT).show();
 								} else {
 									JSONObject w = new JSONObject();
-									w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getResources().getString(R.string.tiddlywiki));
+									w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
+									w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
 									w.put(KEY_ID, id);
 									w.put(DB_KEY_URI, uri.toString());
-//										w.put(DB_KEY_BACKUP, false);
 									db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
 								}
-//									db.put(DB_KEY_LAST_DIR, file.getParentFile().getAbsolutePath());
-								if (!MainActivity.writeJson(openFileOutput(DB_FILE_NAME, Context.MODE_PRIVATE), db))
+								if (!MainActivity.writeJson(MainActivity.this, db))
 									throw new Exception();
 								getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
 							} catch (Exception e) {
@@ -1094,15 +563,10 @@ public class MainActivity extends AppCompatActivity {
 							if (!loadPage(id))
 								Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
 						} else {
-							Toast.makeText(MainActivity.this, R.string.failed_opening_file, Toast.LENGTH_SHORT).show();
+							Toast.makeText(MainActivity.this, R.string.not_a_wiki, Toast.LENGTH_SHORT).show();
 						}
 						break;
 				}
-			// The document selected by the user won't be returned in the intent.
-			// Instead, a URI to that document will be contained in the return intent
-			// provided to this method as a parameter.
-			// Pull that URI using resultData.getData().
-
 		}
 	}
 
@@ -1115,18 +579,7 @@ public class MainActivity extends AppCompatActivity {
 	public void onResume() {
 		super.onResume();
 		try {
-			db = readJson(openFileInput(DB_FILE_NAME));
-//			if (db != null) {
-//				int i = 0;
-//				if (db.getJSONArray(DB_KEY_WIKI).length() > 0)
-//					do {
-//						DocumentFile file = DocumentFile.fromSingleUri(this, Uri.parse(db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(DB_KEY_URI)));
-//						if (!(file != null && file.exists() && file.isFile() && file.canRead() && file.canWrite()))
-//							db.getJSONArray(DB_KEY_WIKI).remove(i);
-//						else i++;
-//					} while (i < db.getJSONArray(DB_KEY_WIKI).length());
-//			}
-//			writeJson(openFileOutput(DB_FILE_NAME, MODE_PRIVATE), db);
+			db = readJson(this);
 			wikiListAdapter.reload(db);
 			rvWikiList.setAdapter(wikiListAdapter);
 			if (db.getJSONArray(DB_KEY_WIKI).length() == 0)
@@ -1138,10 +591,24 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	static JSONObject readJson(FileInputStream is) {
+	@Override
+	public void onConfigurationChanged(@NonNull Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		try {
+				getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
+				getWindow().getDecorView().setSystemUiVisibility((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	static JSONObject readJson(Context context) {
 		byte[] b;
+		InputStream is = null;
 		JSONObject jsonObject = null;
 		try {
+			is = context.openFileInput(DB_FILE_NAME);
 			b = new byte[is.available()];
 			if (is.read(b) < 0) throw new Exception();
 			jsonObject = new JSONObject(new String(b));
@@ -1158,9 +625,11 @@ public class MainActivity extends AppCompatActivity {
 		return jsonObject;
 	}
 
-	static boolean writeJson(FileOutputStream os, JSONObject vdb) {
+	static boolean writeJson(Context context, JSONObject vdb) {
 		boolean v;
+		OutputStream os = null;
 		try {
+			os = context.openFileOutput(DB_FILE_NAME, MODE_PRIVATE);
 			byte[] b = vdb.toString(2).getBytes();
 			os.write(b);
 			os.flush();
@@ -1179,20 +648,13 @@ public class MainActivity extends AppCompatActivity {
 		return v;
 	}
 
-	@TargetApi(23)
-	private void checkPermission() {
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-		}
-	}
-
-	static String genId() {
+	private static String genId() {
 		return UUID.randomUUID().toString();
 	}
 
 	static class TWInfo {
 		boolean isWiki = false;
-		String title = null;
+		String title, subtitle = null;
 
 		TWInfo(Context context, Uri uri) {
 			try {
@@ -1200,9 +662,18 @@ public class MainActivity extends AppCompatActivity {
 				Document doc = Jsoup.parse(is, null, uri.toString());
 				Element ti = doc.getElementsByTag(KEY_TITLE).first();
 				title = ti != null ? ti.html() : null;
+				Element t1 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE).first();
+				Element t2 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE).first();
+				title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
+				subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
 				Element an = doc.getElementsByAttributeValue(KEY_NAME, KEY_APPLICATION_NAME).first();
-				isWiki = an != null && an.attr(KEY_CONTENT).equals(context.getResources().getString(R.string.tiddlywiki));
+				isWiki = an != null && an.attr(KEY_CONTENT).equals(context.getString(R.string.tiddlywiki));
 				if (isWiki) return;
+				Element sa = doc.getElementsByAttributeValue(KEY_ID, KEY_STORE_AREA).first();
+				t1 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE_C).first();
+				t2 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE_C).first();
+				title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
+				subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
 				Element ele = doc.getElementsByAttributeValue(KEY_ID, KEY_VERSION_AREA).first();
 				StringBuilder stringBuilder = new StringBuilder(ele.html());
 				int p = stringBuilder.indexOf(PREF_VER_3);
@@ -1211,24 +682,10 @@ public class MainActivity extends AppCompatActivity {
 				stringBuilder.delete(p, p + PREF_VER_4.length());
 				JSONObject jsonObject = new JSONObject(stringBuilder.substring(stringBuilder.indexOf(PREF_VER_1) + PREF_VER_1.length(), stringBuilder.indexOf(PREF_VER_2) + 1));
 				try {
-					isWiki = jsonObject.getString(KEY_TITLE).equals(context.getResources().getString(R.string.tiddlywiki));
+					isWiki = jsonObject.getString(KEY_TITLE).equals(context.getString(R.string.tiddlywiki));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-//				if (js != null) {
-//					org.mozilla.javascript.Context rhino = org.mozilla.javascript.Context.enter();
-//					rhino.setOptimizationLevel(-1);
-//					try {
-//						Scriptable scope = rhino.initStandardObjects();
-//						rhino.evaluateString(scope, js, context.getResources().getString(R.string.app_name), 1, null);
-//						String c = (String) ((Scriptable) scope.get(KEY_VERSION, scope)).get(KEY_TITLE, scope);
-//						isWiki = c != null && c.equals(context.getResources().getString(R.string.tiddlywiki));
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					} finally {
-//						org.mozilla.javascript.Context.exit();
-//					}
-//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
