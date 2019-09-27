@@ -86,11 +86,7 @@ public class MainActivity extends AppCompatActivity {
 			KEY_WIKI_TITLE_C = "SiteTitle",
 			KEY_WIKI_SUBTITLE_C = "SiteSubtitle",
 			KEY_TITLE = "title",
-			TYPE_HTML = "text/html",
-			PREF_VER_1 = "var version = ",
-			PREF_VER_2 = "};",
-			PREF_VER_3 = "new Date(",
-			PREF_VER_4 = ")";
+			TYPE_HTML = "text/html";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -216,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
 							+ getString(R.string.filename)
 							+ (file != null ? file.getName() : getString(R.string.unknown));
 					view.setText(s);
-					view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+						view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
 					final AlertDialog wikiConfigDialog = new AlertDialog.Builder(MainActivity.this)
 							.setTitle(w.getString(MainActivity.KEY_NAME))
 							.setIcon(icon)
@@ -364,7 +361,8 @@ public class MainActivity extends AppCompatActivity {
 					.setMessage(spannableString)
 					.show();
 			((TextView) aboutDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-			((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+				((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -417,10 +415,12 @@ public class MainActivity extends AppCompatActivity {
 											String id = genId();
 											try {
 												boolean exist = false;
+												JSONObject w = null;
 												for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-													if (db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(DB_KEY_URI).equals(uri.toString())) {
+													w = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i);
+													if (w.getString(DB_KEY_URI).equals(uri.toString())) {
 														exist = true;
-														id = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(KEY_ID);
+														id = w.getString(KEY_ID);
 														break;
 													}
 												}
@@ -431,8 +431,13 @@ public class MainActivity extends AppCompatActivity {
 															Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
 														}
 													});
+													w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
+													w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
+													w.put(DB_KEY_URI, uri.toString());
+													//noinspection ResultOfMethodCallIgnored
+													new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id).delete();
 												} else {
-													JSONObject w = new JSONObject();
+													w = new JSONObject();
 													w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
 													w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
 													w.put(KEY_ID, id);
@@ -594,9 +599,9 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onConfigurationChanged(@NonNull Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		try {
-				getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
-				getWindow().getDecorView().setSystemUiVisibility((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) try {
+			getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
+			getWindow().getDecorView().setSystemUiVisibility((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -660,31 +665,25 @@ public class MainActivity extends AppCompatActivity {
 			try {
 				InputStream is = context.getContentResolver().openInputStream(uri);
 				Document doc = Jsoup.parse(is, null, uri.toString());
-				Element ti = doc.getElementsByTag(KEY_TITLE).first();
-				title = ti != null ? ti.html() : null;
-				Element t1 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE).first();
-				Element t2 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE).first();
-				title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
-				subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
 				Element an = doc.getElementsByAttributeValue(KEY_NAME, KEY_APPLICATION_NAME).first();
 				isWiki = an != null && an.attr(KEY_CONTENT).equals(context.getString(R.string.tiddlywiki));
-				if (isWiki) return;
-				Element sa = doc.getElementsByAttributeValue(KEY_ID, KEY_STORE_AREA).first();
-				t1 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE_C).first();
-				t2 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE_C).first();
-				title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
-				subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
+				if (isWiki) {
+					Element ti = doc.getElementsByTag(KEY_TITLE).first();
+					title = ti != null ? ti.html() : null;
+					Element t1 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE).first();
+					Element t2 = doc.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE).first();
+					title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
+					subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
+					return;
+				}
 				Element ele = doc.getElementsByAttributeValue(KEY_ID, KEY_VERSION_AREA).first();
-				StringBuilder stringBuilder = new StringBuilder(ele.html());
-				int p = stringBuilder.indexOf(PREF_VER_3);
-				stringBuilder.delete(p, p + PREF_VER_3.length());
-				p = stringBuilder.indexOf(PREF_VER_4);
-				stringBuilder.delete(p, p + PREF_VER_4.length());
-				JSONObject jsonObject = new JSONObject(stringBuilder.substring(stringBuilder.indexOf(PREF_VER_1) + PREF_VER_1.length(), stringBuilder.indexOf(PREF_VER_2) + 1));
-				try {
-					isWiki = jsonObject.getString(KEY_TITLE).equals(context.getString(R.string.tiddlywiki));
-				} catch (Exception e) {
-					e.printStackTrace();
+				isWiki = ele != null && ele.html().length() > 0;
+				if (isWiki) {
+					Element sa = doc.getElementsByAttributeValue(KEY_ID, KEY_STORE_AREA).first();
+					Element t1 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE_C).first();
+					Element t2 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE_C).first();
+					title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
+					subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : null;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

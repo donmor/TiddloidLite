@@ -371,7 +371,7 @@ public class TWEditorWV extends AppCompatActivity {
 		wv.setWebViewClient(new WebViewClient() {
 			@Override
 			public boolean shouldOverrideUrlLoading(final WebView view, final WebResourceRequest request) {
-				Uri u =request.getUrl();
+				Uri u = request.getUrl();
 				String sch = u.getScheme();
 				if (sch == null || sch.length() == 0)
 					return false;
@@ -618,24 +618,27 @@ public class TWEditorWV extends AppCompatActivity {
 	@Override
 	public void onConfigurationChanged(@NonNull Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 		try {
 			if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 				findViewById(R.id.wv_toolbar).setVisibility(View.GONE);
-				getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
-				getWindow().getDecorView().setSystemUiVisibility(((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE) | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
+					getWindow().getDecorView().setSystemUiVisibility(((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE) | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+				} else
+					getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 			} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 				findViewById(R.id.wv_toolbar).setVisibility(View.VISIBLE);
-				getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
-				getWindow().getDecorView().setSystemUiVisibility((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					getWindow().setStatusBarColor(getColor(R.color.design_default_color_primary));
+					getWindow().getDecorView().setSystemUiVisibility((newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES ? View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : View.SYSTEM_UI_FLAG_VISIBLE);
+				} else
+					getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-				toolbar.setBackgroundColor(getColor(R.color.design_default_color_primary));
-				toolbar.setTitleTextAppearance(this, R.style.Toolbar_TitleText);
-				toolbar.setSubtitleTextAppearance(this, R.style.TextAppearance_AppCompat_Small);
-				toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-				wvProgress.setBackgroundColor(getColor(R.color.design_default_color_primary));
-			}
+			toolbar.setBackgroundColor(getResources().getColor(R.color.design_default_color_primary));
+			toolbar.setTitleTextAppearance(this, R.style.Toolbar_TitleText);
+			toolbar.setSubtitleTextAppearance(this, R.style.TextAppearance_AppCompat_Small);
+			toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+			wvProgress.setBackgroundColor(getResources().getColor(R.color.design_default_color_primary));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

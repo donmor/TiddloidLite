@@ -19,7 +19,6 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
             android:background="@drawable/ic_splash"
             android:contentDescription="@string/logo"
             app:srcCompat="@drawable/ic_splash" />
@@ -28,8 +27,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
         android:gravity="center"
         android:fontFamily="sans-serif-light"
         android:text="@string/app_name"

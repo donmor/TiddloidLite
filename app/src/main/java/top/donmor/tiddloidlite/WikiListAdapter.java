@@ -130,7 +130,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 			int p = builder.length();
 			builder.append(s != null && s.length() > 0 ? MainActivity.KEY_LBL + s : MainActivity.STR_EMPTY);
 			builder.append('\n');
-			ForegroundColorSpan fcs = new ForegroundColorSpan(context.getColor(R.color.content_sub));
+			ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
 			builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 			p = builder.length();
 			builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0);
