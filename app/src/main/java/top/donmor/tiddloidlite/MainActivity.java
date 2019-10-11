@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 
 			@Override
-			public void onItemLongClick(final int position, final String id, final Uri uri, final String name, final String sub, final Bitmap favicon) {
+			public void onItemLongClick(final int position, final String id, final Uri uri, final String name, final String sub, Bitmap favicon) {
 				try {
 					Drawable icon = getDrawable(R.drawable.ic_description);
 					try {
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 						e.printStackTrace();
 					}
 					final IconCompat iconCompat = favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut);
-					final TextView view = new TextView(MainActivity.this);
+					TextView view = new TextView(MainActivity.this);
 					DocumentFile file = DocumentFile.fromSingleUri(MainActivity.this, uri);
 					String fn = file != null ? file.getName() : null;
 					CharSequence s = getString(R.string.provider)
@@ -185,11 +185,11 @@ public class MainActivity extends AppCompatActivity {
 							+ Uri.decode(uri.getLastPathSegment())
 							+ '\n'
 							+ getString(R.string.filename)
-							+ (fn != null && fn.length()>0 ? fn : getString(R.string.unknown));
+							+ (fn != null && fn.length() > 0 ? fn : getString(R.string.unknown));
 					view.setText(s);
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
 						view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
-					final AlertDialog wikiConfigDialog = new AlertDialog.Builder(MainActivity.this)
+					AlertDialog wikiConfigDialog = new AlertDialog.Builder(MainActivity.this)
 							.setTitle(name)
 							.setIcon(icon)
 							.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -315,16 +315,16 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_new) {
 			startActivityForResult(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML), 43);
 		} else if (id == R.id.action_import) {
 			startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML), 42);
 		} else if (id == R.id.action_about) {
-			final SpannableString spannableString = new SpannableString(getString(R.string.about));
+			SpannableString spannableString = new SpannableString(getString(R.string.about));
 			Linkify.addLinks(spannableString, Linkify.ALL);
-			final AlertDialog aboutDialog = new AlertDialog.Builder(this)
+			AlertDialog aboutDialog = new AlertDialog.Builder(this)
 					.setTitle(R.string.action_about)
 					.setMessage(spannableString)
 					.show();
@@ -402,33 +402,13 @@ public class MainActivity extends AppCompatActivity {
 													new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id).delete();
 												} else {
 													w = new JSONObject();
-//													w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
-//													w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
 													w.put(KEY_ID, id);
-//													w.put(DB_KEY_URI, uri.toString());
 													db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
 												}
 												w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
 												w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
 												w.put(DB_KEY_URI, uri.toString());
-												File fi = new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id);
-												if (info.favicon != null) {
-													OutputStream osf = null;
-													try {
-														osf = new FileOutputStream(fi);
-														info.favicon.compress(Bitmap.CompressFormat.PNG, 100, osf);
-														osf.flush();
-													} catch (Exception e) {
-														e.printStackTrace();
-													} finally {
-														if (osf != null)
-															try {
-																osf.close();
-															} catch (Exception e) {
-																e.printStackTrace();
-															}
-													}
-												} else fi.delete();
+												updateIcon(MainActivity.this, info.favicon, id);
 												if (!MainActivity.writeJson(MainActivity.this, db))
 													throw new Exception();
 												getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
@@ -541,25 +521,8 @@ public class MainActivity extends AppCompatActivity {
 									w.put(KEY_ID, id);
 									w.put(DB_KEY_URI, uri.toString());
 									db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
+									updateIcon(this, info.favicon, id);
 								}
-								File fi = new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id);
-								if (info.favicon != null) {
-									OutputStream osf = null;
-									try {
-										osf = new FileOutputStream(fi);
-										info.favicon.compress(Bitmap.CompressFormat.PNG, 100, osf);
-										osf.flush();
-									} catch (Exception e) {
-										e.printStackTrace();
-									} finally {
-										if (osf != null)
-											try {
-												osf.close();
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-									}
-								} else fi.delete();
 								if (!MainActivity.writeJson(MainActivity.this, db))
 									throw new Exception();
 								getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
@@ -656,6 +619,27 @@ public class MainActivity extends AppCompatActivity {
 		return v;
 	}
 
+	static void updateIcon(Context context, Bitmap icon, String id) {
+		File fi = new File(context.getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id);
+		if (icon != null) {
+			OutputStream os = null;
+			try {
+				os = new FileOutputStream(fi);
+				icon.compress(Bitmap.CompressFormat.PNG, 100, os);
+				os.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (os != null)
+					try {
+						os.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			}
+		} else fi.delete();
+	}
+
 	private static String genId() {
 		return UUID.randomUUID().toString();
 	}
@@ -680,8 +664,8 @@ public class MainActivity extends AppCompatActivity {
 					title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
 					subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : subtitle;
 					Element fi = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_FAVICON).first();
-					byte[] b = fi != null ? Base64.decode(fi.getElementsByTag(KEY_PRE).first().html(),Base64.NO_PADDING):new byte[0];
-					favicon = BitmapFactory.decodeByteArray(b,0,b.length);
+					byte[] b = fi != null ? Base64.decode(fi.getElementsByTag(KEY_PRE).first().html(), Base64.NO_PADDING) : new byte[0];
+					favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -21,9 +21,9 @@ properties.load(inputStream)
 android {
     signingConfigs {
         donmor {
-            storeFile file('../../donmor.jks')
+            storeFile file(properties.getProperty('keyFile'))
             storePassword properties.getProperty('signPassword')
-            keyAlias = 'key0'
+            keyAlias = properties.getProperty('keyAlias')
             keyPassword properties.getProperty('signPassword')
         }
     }
@@ -33,7 +33,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
-        versionName "0.9.0a"
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

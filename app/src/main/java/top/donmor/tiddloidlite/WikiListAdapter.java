@@ -43,7 +43,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	private ReloadListener mReloadListener;
 	private final LayoutInflater inflater;
 	private final Vibrator vibrator;
-	private float scale;
+	private final float scale;
 
 	// CONSTANT
 	private static final String
@@ -82,7 +82,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	@Override
 	public void onBindViewHolder(@NonNull final WikiListHolder holder, final int position) {
 		try {
-			final JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
+			JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
 			holder.uri = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
 			String vs = null;
 			try {

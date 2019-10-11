@@ -46,7 +46,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -237,19 +236,7 @@ public class TWEditorWV extends AppCompatActivity {
 			try {
 				is = new FileInputStream(new File(getDir(MainActivity.KEY_FAVICON, Context.MODE_PRIVATE), id));
 				Bitmap icon = BitmapFactory.decodeStream(is);
-				if (icon != null) {
-//					int width = icon.getWidth(), height = icon.getHeight();
-//					Matrix matrix = new Matrix();
-//					matrix.postScale(scale * 32f / icon.getWidth(), scale * 32f / icon.getHeight());
-//					Bitmap icons = Bitmap.createBitmap(Math.round(scale * 40f), Math.round(scale * 32f), Bitmap.Config.ARGB_8888);
-//					Canvas c = new Canvas(icons);
-//					c.drawBitmap(icon, matrix, null);
-//					c.save();
-//					c.restore();
-//					Bitmap icons = Bitmap.createBitmap(icon, 0, 0, width, height, matrix, true);
-					toolbar.setLogo(cIcon(icon));
-//					toolbar.setLogo(new BitmapDrawable(getResources(), icons));
-				}
+				if (icon != null) toolbar.setLogo(cIcon(icon));
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -269,7 +256,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@JavascriptInterface
 			public void isDirtyOnQuit(boolean d) {
 				if (d) {
-					final AlertDialog.Builder isExit = new AlertDialog.Builder(TWEditorWV.this);
+					AlertDialog.Builder isExit = new AlertDialog.Builder(TWEditorWV.this);
 					isExit.setTitle(android.R.string.dialog_alert_title);
 					isExit.setMessage(R.string.confirm_to_exit_wiki);
 					isExit.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -325,7 +312,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@SuppressWarnings({"unused", "WeakerAccess"})
 			@JavascriptInterface
 			public void saveWiki(String data) {
-				final ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(Charset.forName(CHARSET_NAME_UTF_8)));
+				ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(Charset.forName(CHARSET_NAME_UTF_8)));
 				OutputStream os = null;
 				try {
 					os = getContentResolver().openOutputStream(uri);
@@ -346,38 +333,12 @@ public class TWEditorWV extends AppCompatActivity {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								File ff = new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id);
 								if (info.favicon != null) {
-									OutputStream os = null;
-									try {
-										os = new FileOutputStream(ff);
-										info.favicon.compress(Bitmap.CompressFormat.PNG, 100, os);
-										os.flush();
-									} catch (Exception e) {
-										e.printStackTrace();
-									} finally {
-										if (os != null)
-											try {
-												os.close();
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-									}
-//									int width = info.favicon.getWidth(), height = info.favicon.getHeight();
-//									Matrix matrix = new Matrix();
-//									matrix.postScale(scale * 24f / info.favicon.getWidth(), scale * 24f / info.favicon.getHeight());
-//									Bitmap favicon = Bitmap.createBitmap(Math.round(scale * 40f), Math.round(scale * 32f), Bitmap.Config.ARGB_8888);
-//									Canvas c = new Canvas(favicon);
-//									c.drawBitmap(info.favicon, matrix, null);
-//									c.save();
-//									c.restore();
-//									Bitmap favicon = Bitmap.createBitmap(info.favicon, 0, 0, width, height, matrix, true);
 									toolbar.setLogo(cIcon(info.favicon));
-//									toolbar.setLogo(new BitmapDrawable(getResources(), favicon));
 								} else {
 									toolbar.setLogo(null);
-									ff.delete();
 								}
+								MainActivity.updateIcon(TWEditorWV.this, info.favicon, id);
 								TWEditorWV.this.setTitle(info.title);
 								toolbar.setSubtitle(info.subtitle);
 							}
@@ -408,13 +369,13 @@ public class TWEditorWV extends AppCompatActivity {
 		wv.addJavascriptInterface(new JavaScriptCallback(), JSI);
 		wv.setWebViewClient(new WebViewClient() {
 			@Override
-			public boolean shouldOverrideUrlLoading(final WebView view, final WebResourceRequest request) {
+			public boolean shouldOverrideUrlLoading(final WebView view, WebResourceRequest request) {
 				Uri u = request.getUrl();
 				String sch = u.getScheme();
 				if (sch == null || sch.length() == 0)
 					return false;
 				try {
-					Intent intent;
+					final Intent intent;
 					switch (sch) {
 						case SCH_TEL:
 							intent = new Intent(Intent.ACTION_DIAL, u);
@@ -433,7 +394,6 @@ public class TWEditorWV extends AppCompatActivity {
 							break;
 						default:
 							intent = new Intent(Intent.ACTION_VIEW, u);
-							final Intent intent1 = intent;
 							new AlertDialog.Builder(TWEditorWV.this)
 									.setTitle(android.R.string.dialog_alert_title)
 									.setMessage(R.string.third_part_rising)
@@ -442,7 +402,7 @@ public class TWEditorWV extends AppCompatActivity {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
 											try {
-												view.getContext().startActivity(intent1);
+												view.getContext().startActivity(intent);
 											} catch (Exception e) {
 												e.printStackTrace();
 											}
@@ -518,10 +478,10 @@ public class TWEditorWV extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onNewIntent(final Intent intent) {
+	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		Bundle bu = intent.getExtras();
-		final String fid = bu != null ? bu.getString(MainActivity.KEY_ID) : null;
+		String fid = bu != null ? bu.getString(MainActivity.KEY_ID) : null;
 		if (fid != null) {
 			int ser = -1;
 			JSONObject w = null;
@@ -603,19 +563,7 @@ public class TWEditorWV extends AppCompatActivity {
 			try {
 				is = new FileInputStream(new File(getDir(MainActivity.KEY_FAVICON, Context.MODE_PRIVATE), id));
 				Bitmap icon = BitmapFactory.decodeStream(is);
-				if (icon != null) {
-//					int width = icon.getWidth(), height = icon.getHeight();
-//					Matrix matrix = new Matrix();
-//					matrix.postScale(scale * 32f / icon.getWidth(), scale * 32f / icon.getHeight());
-//					Bitmap icons = Bitmap.createBitmap(Math.round(scale * 40f), Math.round(scale * 32f), Bitmap.Config.ARGB_8888);
-//					Canvas c = new Canvas(icons);
-//					c.drawBitmap(icon, matrix, null);
-//					c.save();
-//					c.restore();
-//					Bitmap icons = Bitmap.createBitmap(icon, 0, 0, width, height, matrix, true);
-					toolbar.setLogo(cIcon(icon));
-//					toolbar.setLogo(new BitmapDrawable(getResources(), icons));
-				}
+				if (icon != null) toolbar.setLogo(cIcon(icon));
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -642,7 +590,7 @@ public class TWEditorWV extends AppCompatActivity {
 		c.drawBitmap(icon, matrix, null);
 		c.save();
 		c.restore();
-		return new BitmapDrawable(getResources(),icons);
+		return new BitmapDrawable(getResources(), icons);
 	}
 
 	@Override
