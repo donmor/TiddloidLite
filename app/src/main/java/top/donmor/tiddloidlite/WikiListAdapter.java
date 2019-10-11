@@ -16,6 +16,7 @@ import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.LeadingMarginSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	private ReloadListener mReloadListener;
 	private final LayoutInflater inflater;
 	private final Vibrator vibrator;
+	private float scale;
 
 	// CONSTANT
 	private static final String
@@ -50,6 +52,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	WikiListAdapter(Context context, JSONObject db) {
 		this.context = context;
 		this.db = db;
+		scale = context.getResources().getDisplayMetrics().density;
 		vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 		try {
 			count = db.getJSONArray(MainActivity.DB_KEY_WIKI).length();
@@ -66,6 +69,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		WikiListHolder(View itemView) {
 			super(itemView);
 			btnWiki = itemView.findViewById(R.id.btnWiki);
+			btnWiki.setVisibility(View.GONE);
 		}
 	}
 
@@ -76,20 +80,28 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull WikiListHolder holder, final int position) {
+	public void onBindViewHolder(@NonNull final WikiListHolder holder, final int position) {
 		try {
-			JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
-			FileInputStream is = null;
+			final JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
+			holder.uri = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
+			String vs = null;
 			try {
-				File iconFile = new File(context.getDir(MainActivity.KEY_FAVICON, Context.MODE_PRIVATE), getId(position));
+				vs = w.getString(MainActivity.DB_KEY_SUBTITLE);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			final String n = w.getString(MainActivity.KEY_NAME), s = vs, id = w.getString(MainActivity.KEY_ID);
+			FileInputStream is = null;
+			Bitmap icon = null;
+			try {
+				File iconFile = new File(context.getDir(MainActivity.KEY_FAVICON, Context.MODE_PRIVATE), id);
 				if (iconFile.exists() && iconFile.length() > 0) {
 					is = new FileInputStream(iconFile);
-					Bitmap icon = BitmapFactory.decodeStream(is);
+					icon = BitmapFactory.decodeStream(is);
 					if (icon != null) {
 						int width = icon.getWidth(), height = icon.getHeight();
-						float scale = context.getResources().getDisplayMetrics().density * 24f;
 						Matrix matrix = new Matrix();
-						matrix.postScale(scale / width, scale / height);
+						matrix.postScale(scale * 24f / width, scale * 24f / height);
 						Bitmap favicon = Bitmap.createBitmap(icon, 0, 0, width, height, matrix, true);
 						holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(context.getResources(), favicon), null, null, null);
 					}
@@ -103,40 +115,40 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 					e.printStackTrace();
 				}
 			}
+			final Bitmap fi = icon;
 			holder.btnWiki.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mItemClickListener.onItemClick(position);
+					mItemClickListener.onItemClick(position, id, holder.uri);
 				}
 			});
 			holder.btnWiki.setOnLongClickListener(new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
 					vibrator.vibrate(new long[]{0, 1}, -1);
-					mItemClickListener.onItemLongClick(position);
+					mItemClickListener.onItemLongClick(position, id, holder.uri, n, s, fi);
 					return true;
 				}
 			});
-			holder.uri = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
-			DocumentFile documentFile = DocumentFile.fromSingleUri(context, holder.uri);
-			String s = null;
 			try {
-				s = w.getString(MainActivity.DB_KEY_SUBTITLE);
+				SpannableStringBuilder builder = new SpannableStringBuilder(n);
+				int p = builder.length();
+				LeadingMarginSpan.Standard lms = new LeadingMarginSpan.Standard(Math.round(scale * 8f));
+				builder.setSpan(lms, 0, p, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+				builder.append(s != null && s.length() > 0 ? MainActivity.KEY_LBL + s : MainActivity.STR_EMPTY);
+				builder.append('\n');
+				ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
+				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+				p = builder.length();
+				DocumentFile documentFile = DocumentFile.fromSingleUri(context, holder.uri);
+				builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0);
+				RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
+				builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+				holder.btnWiki.setText(builder);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-			SpannableStringBuilder builder = new SpannableStringBuilder(w.getString(MainActivity.KEY_NAME));
-			int p = builder.length();
-			builder.append(s != null && s.length() > 0 ? MainActivity.KEY_LBL + s : MainActivity.STR_EMPTY);
-			builder.append('\n');
-			ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
-			builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-			p = builder.length();
-			builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0);
-			RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
-			builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-			holder.btnWiki.setText(builder);
+			holder.btnWiki.setVisibility(View.VISIBLE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -147,17 +159,15 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		return count;
 	}
 
-
 	interface ItemClickListener {
-		void onItemClick(int position);
+		void onItemClick(int position, String id, Uri uri);
 
-		void onItemLongClick(int position);
+		void onItemLongClick(int position, String id, Uri uri, String name, String sub, Bitmap favicon);
 	}
 
 	void setOnItemClickListener(ItemClickListener itemClickListener) {
 		this.mItemClickListener = itemClickListener;
 	}
-
 
 	interface ReloadListener {
 		void onReloaded(int count);
@@ -175,15 +185,5 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 			e.printStackTrace();
 		}
 		mReloadListener.onReloaded(this.getItemCount());
-	}
-
-	String getId(int position) {
-		String id = null;
-		try {
-			id = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position).getString(MainActivity.KEY_ID);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return id;
 	}
 }
