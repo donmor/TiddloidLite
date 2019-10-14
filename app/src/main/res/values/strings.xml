@@ -3,21 +3,11 @@
     <string name="tiddlywiki" translatable="false">TiddlyWiki</string>
     <string name="template_repo">https://tiddlywiki.com/empty.html</string>
     <!--JS-->
-<!--
-    <string name="js_version" translatable="false">
-        var appName = typeof(version) == \"object\" &amp;&amp; typeof(version.title) == \"string\" ? version.title : undefined;
-        var verMajor = typeof(version) == \"object\" &amp;&amp; typeof(version.major) == \"number\" ? version.major : undefined;
-        window.twi.getVersion(appName,typeof(verMajor)==\"number\");
+    <string name="js_exit" translatable="false">
+        (function(){
+            return document.body.classList.contains(\"tc-dirty\");
+        })();
     </string>
--->
-    <string name="js_quit" translatable="false">
-        window.twi.isDirtyOnQuit(document.body.classList.contains(\"tc-dirty\"));
-    </string>
-<!--
-    <string name="js_quit_c" translatable="false">
-        window.twi.isDirtyOnQuit(store.dirty || story.areAnyDirty());
-    </string>
--->
     <!--Misc-->
     <string name="logo" translatable="false">logo</string>
     <!--UI-->

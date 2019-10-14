@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
 							}
 						});
 
-						progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
+						progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialogInterface, int i) {
 								progressDialog.cancel();
