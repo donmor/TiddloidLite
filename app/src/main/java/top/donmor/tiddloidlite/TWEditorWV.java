@@ -49,7 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class TWEditorWV extends AppCompatActivity {
 
@@ -71,7 +71,6 @@ public class TWEditorWV extends AppCompatActivity {
 
 	// CONSTANT
 	private static final String
-			CHARSET_NAME_UTF_8 = "UTF-8",
 			JSI = "twi",
 			MIME_ANY = "*/*",
 			SCH_ABOUT = "about",
@@ -260,7 +259,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@SuppressWarnings("unused")
 			@JavascriptInterface
 			public void saveDownload(String data) {
-				TWEditorWV.exData = data.getBytes(Charset.forName(CHARSET_NAME_UTF_8));
+				TWEditorWV.exData = data.getBytes(StandardCharsets.UTF_8);
 				Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
 				intent.addCategory(Intent.CATEGORY_OPENABLE);
 				intent.setType(MIME_ANY);
@@ -270,7 +269,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@SuppressWarnings({"unused", "WeakerAccess"})
 			@JavascriptInterface
 			public void saveWiki(String data) {
-				ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(Charset.forName(CHARSET_NAME_UTF_8)));
+				ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
 				OutputStream os = null;
 				try {
 					os = getContentResolver().openOutputStream(uri);

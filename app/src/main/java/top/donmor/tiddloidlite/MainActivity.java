@@ -49,11 +49,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -650,9 +653,12 @@ public class MainActivity extends AppCompatActivity {
 		Bitmap favicon = null;
 
 		TWInfo(Context context, Uri uri) {
+			InputStream is = null;
 			try {
-				InputStream is = context.getContentResolver().openInputStream(uri);
-				Document doc = Jsoup.parse(is, null, uri.toString());
+				is = new BufferedInputStream(Objects.requireNonNull(context.getContentResolver().openInputStream(uri)));
+				byte[] bytes = new byte[is.available()];
+				is.read(bytes);
+				Document doc = Jsoup.parse(new String(bytes, 0, bytes.length, StandardCharsets.UTF_8), uri.toString());
 				Element an = doc.getElementsByAttributeValue(KEY_NAME, KEY_APPLICATION_NAME).first();
 				isWiki = an != null && an.attr(KEY_CONTENT).equals(context.getString(R.string.tiddlywiki));
 				if (isWiki) {
@@ -669,6 +675,12 @@ public class MainActivity extends AppCompatActivity {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				if (is != null) try {
+					is.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
