@@ -58,9 +58,8 @@ public class TWEditorWV extends AppCompatActivity {
 	private WebChromeClient wcc;
 	private View mCustomView;
 	private WebChromeClient.CustomViewCallback mCustomViewCallback;
-	private int mOriginalOrientation, nextWikiSerial = -1;
+	private int mOriginalOrientation;
 	private float scale;
-	private Intent nextWikiIntent;
 	private ValueCallback<Uri[]> uploadMessage;
 	private WebView wv;
 	private Toolbar toolbar;
@@ -250,23 +249,26 @@ public class TWEditorWV extends AppCompatActivity {
 
 		final class JavaScriptCallback {
 
-			@SuppressWarnings("unused")
 			@JavascriptInterface
 			public void saveFile(String pathname, String data) {
 				saveWiki(data);
 			}
 
-			@SuppressWarnings("unused")
 			@JavascriptInterface
 			public void saveDownload(String data) {
+				saveDownload(data, null);
+			}
+
+			@JavascriptInterface
+			public void saveDownload(String data, String filename) {
 				TWEditorWV.exData = data.getBytes(StandardCharsets.UTF_8);
 				Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
 				intent.addCategory(Intent.CATEGORY_OPENABLE);
 				intent.setType(MIME_ANY);
+				if (filename != null) intent.putExtra(Intent.EXTRA_TITLE, filename);
 				startActivityForResult(intent, 906);
 			}
 
-			@SuppressWarnings({"unused", "WeakerAccess"})
 			@JavascriptInterface
 			public void saveWiki(String data) {
 				ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
@@ -435,7 +437,7 @@ public class TWEditorWV extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent) {
+	protected void onNewIntent(final Intent intent) {
 		super.onNewIntent(intent);
 		Bundle bu = intent.getExtras();
 		String fid = bu != null ? bu.getString(MainActivity.KEY_ID) : null;
@@ -459,12 +461,11 @@ public class TWEditorWV extends AppCompatActivity {
 					final Uri u = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
 					getContentResolver().takePersistableUriPermission(u, MainActivity.TAKE_FLAGS);
 					if (new MainActivity.TWInfo(this, u).isWiki) {
-						nextWikiIntent = intent;
-						nextWikiSerial = ser;
+						final int vs = ser;
 						wv.evaluateJavascript(getString(R.string.js_exit), new ValueCallback<String>() {
 							@Override
 							public void onReceiveValue(String value) {
-								confirmAndExit(Boolean.parseBoolean(value));
+								confirmAndExit(Boolean.parseBoolean(value),intent,vs);
 							}
 						});
 					} else {
@@ -494,7 +495,7 @@ public class TWEditorWV extends AppCompatActivity {
 		}
 	}
 
-	private void confirmAndExit(boolean dirty) {
+	private void confirmAndExit(boolean dirty, final Intent nextWikiIntent, final int nextWikiSerial) {
 		if (dirty) {
 			AlertDialog isExit = new AlertDialog.Builder(TWEditorWV.this)
 					.setTitle(android.R.string.dialog_alert_title)
@@ -504,7 +505,7 @@ public class TWEditorWV extends AppCompatActivity {
 									if (nextWikiIntent == null)
 										TWEditorWV.super.onBackPressed();
 									else
-										nextWiki();
+										nextWiki(nextWikiIntent,nextWikiSerial);
 									dialog.dismiss();
 								}
 							}
@@ -513,8 +514,6 @@ public class TWEditorWV extends AppCompatActivity {
 					.setOnCancelListener(new DialogInterface.OnCancelListener() {
 						@Override
 						public void onCancel(DialogInterface dialog) {
-							nextWikiIntent = null;
-							nextWikiSerial = -1;
 						}
 					})
 					.show();
@@ -523,11 +522,11 @@ public class TWEditorWV extends AppCompatActivity {
 			if (nextWikiIntent == null)
 				TWEditorWV.super.onBackPressed();
 			else
-				nextWiki();
+				nextWiki(nextWikiIntent,nextWikiSerial);
 		}
 	}
 
-	private void nextWiki() {
+	private void nextWiki(Intent nextWikiIntent, int nextWikiSerial) {
 		toolbar.setLogo(null);
 		wApp = null;
 		uri = null;
@@ -573,8 +572,6 @@ public class TWEditorWV extends AppCompatActivity {
 		}
 		wv.getSettings().setJavaScriptEnabled(true);
 		wv.loadUrl(uri.toString());
-		nextWikiIntent = null;
-		nextWikiSerial = -1;
 	}
 
 	private BitmapDrawable cIcon(Bitmap icon) {
@@ -598,7 +595,7 @@ public class TWEditorWV extends AppCompatActivity {
 			wv.evaluateJavascript(getString(R.string.js_exit), new ValueCallback<String>() {
 				@Override
 				public void onReceiveValue(String value) {
-					confirmAndExit(Boolean.parseBoolean(value));
+					confirmAndExit(Boolean.parseBoolean(value), null, -1);
 				}
 			});
 	}

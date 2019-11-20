@@ -346,7 +346,6 @@ public class MainActivity extends AppCompatActivity {
 			if (uri != null)
 				switch (requestCode) {
 					case 43:
-
 						final ProgressDialog progressDialog = new ProgressDialog(this);
 						progressDialog.setMessage(getString(R.string.please_wait));
 						progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
