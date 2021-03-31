@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 			KEY_LBL = " — ",
 			KEY_FAVICON = "favicon",
 			KEY_ID = "id",
+			KEY_INDEX = "index.html",
 			DB_KEY_WIKI = "wiki",
 			DB_KEY_URI = "uri",
 			KEY_SHORTCUT = "shortcut",
@@ -94,6 +95,19 @@ public class MainActivity extends AppCompatActivity {
 			KEY_WIKI_SUBTITLE = "$:/SiteSubTitle",
 			KEY_WIKI_FAVICON = "$:/favicon.ico",
 			KEY_TITLE = "title";
+	/*TODO: 数据文件结构
+	*
+	* {
+    * "id": "30db5f9c-a776-464b-9c6e-3c96a33e350c",	-- 唯一标识
+    * "subtitle": "",	-- 副标题
+    * "uri": "content:\/\/com.android.externalstorage.documents\/document\/0B0B-2016%3A123.htm",	-- 文件Uri (content:// *2.0:file://)
+    * "name": "My TiddlyWiki — a non-linear personal web notebook"	-- 标题
+    * "favicon": "*BASE64*"	-- 图标
+    * -- 以下为Tiddloid-2.0扩充 --
+	* "dir": "false"	-- 目录模式，仅content://
+    * },
+	*
+	* */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
