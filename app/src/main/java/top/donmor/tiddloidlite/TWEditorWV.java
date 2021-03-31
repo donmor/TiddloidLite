@@ -89,6 +89,8 @@ public class TWEditorWV extends AppCompatActivity {
 	private static final String
 			JSI = "twi",
 			MIME_ANY = "*/*",
+			KEY_HASH_1 = "(function(){new $tw.Story().navigateTiddler(\"",
+			KEY_HASH_2 = "\");})();",
 			SCH_ABOUT = "about",
 			SCH_FILE = "file",
 			SCH_HTTP = "http",
@@ -233,18 +235,18 @@ public class TWEditorWV extends AppCompatActivity {
 ////
 					@Override
 					public void onPageFinished(WebView view, String url) {
-						System.out.println(3);
-						System.out.println(url);
-						System.out.println(TWEditorWV.this.uri);
-						String u1 = TWEditorWV.this.uri.toString();
-						if (url.startsWith(u1)) {
-							String p = url.substring(url.indexOf('#'));
-							wv.loadUrl(url);
+//						System.out.println(3);
+//						System.out.println(url);
+//						System.out.println(TWEditorWV.this.uri);
+						if (url.startsWith(TWEditorWV.this.uri.toString())) {
+							String p = url.substring(url.indexOf('#') + 1);
+							wv.evaluateJavascript(KEY_HASH_1 + p + KEY_HASH_2,null);
+//							wv.loadUrl("javascript:window.location.hash=" + p);
 							dialog.dismiss();
 						}
 //
 //						if (URL_BLANK.equals(url))new AlertDialog.Builder(TWEditorWV.this).setView(view).setPositiveButton(android.R.string.ok,null).show();
-//						super.onPageFinished(view, url);
+						super.onPageFinished(view, url);
 					}
 
 					@Override
