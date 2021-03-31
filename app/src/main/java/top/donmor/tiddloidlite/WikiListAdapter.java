@@ -45,10 +45,6 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	private final Vibrator vibrator;
 	private final float scale;
 
-	// CONSTANT
-	private static final String
-			STRING_0 = "";
-
 	WikiListAdapter(Context context, JSONObject db) {
 		this.context = context;
 		this.db = db;
@@ -62,7 +58,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		inflater = LayoutInflater.from(context);
 	}
 
-	class WikiListHolder extends RecyclerView.ViewHolder {
+	static class WikiListHolder extends RecyclerView.ViewHolder {
 		private final Button btnWiki;
 		private Uri uri;
 
@@ -141,7 +137,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 				p = builder.length();
 				DocumentFile documentFile = DocumentFile.fromSingleUri(context, holder.uri);
-				builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : STRING_0);
+				builder.append(documentFile != null && documentFile.exists() ? SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified())) : MainActivity.STR_EMPTY);
 				RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
 				builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 				holder.btnWiki.setText(builder);

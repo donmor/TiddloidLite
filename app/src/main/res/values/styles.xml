@@ -19,6 +19,25 @@
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/content_tint</item>
+    </style>
+
+    <style name="Toolbar.TitleText.Light" parent="Toolbar.TitleText">
+        <item name="android:textColor">@color/content_tint_l</item>
+    </style>
+    <style name="Toolbar.TitleText.Dark" parent="Toolbar.TitleText">
+        <item name="android:textColor">@color/content_tint_d</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Small" parent="Base.TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/content_sub</item>
+    </style>
+
+    <style name="Toolbar.AppCompat.Small.Light" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/content_sub_l</item>
+    </style>
+    <style name="Toolbar.AppCompat.Small.Dark" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/content_sub_d</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -29,6 +29,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -54,7 +56,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
@@ -78,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
 			DB_KEY_URI = "uri",
 			KEY_SHORTCUT = "shortcut",
 			DB_KEY_SUBTITLE = "subtitle",
-			STR_EMPTY = "";
+			STR_EMPTY = "",
+			TYPE_HTML = "text/html";
 	private static final String
 			DB_FILE_NAME = "data.json",
 			KEY_APPLICATION_NAME = "application-name",
@@ -88,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
 			KEY_WIKI_TITLE = "$:/SiteTitle",
 			KEY_WIKI_SUBTITLE = "$:/SiteSubTitle",
 			KEY_WIKI_FAVICON = "$:/favicon.ico",
-			KEY_TITLE = "title",
-			TYPE_HTML = "text/html";
+			KEY_TITLE = "title";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,12 +174,15 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onItemLongClick(final int position, final String id, final Uri uri, final String name, final String sub, Bitmap favicon) {
 				try {
-					Drawable icon = getDrawable(R.drawable.ic_description);
-					try {
-						if (favicon != null)
-							icon = new BitmapDrawable(getResources(), favicon);
-					} catch (Exception e) {
-						e.printStackTrace();
+					Drawable icon = null;
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+						ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_description);
+						try {
+							if (favicon != null)
+								icon = new BitmapDrawable(getResources(), favicon);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					final IconCompat iconCompat = favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut);
 					TextView view = new TextView(MainActivity.this);
@@ -360,11 +367,14 @@ public class MainActivity extends AppCompatActivity {
 								try {
 									os = getContentResolver().openOutputStream(uri);
 									if (os != null) {
-										URL url = new URL(getString(R.string.template_repo));
-										HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-										httpsURLConnection.connect();
+										URL url;//TODO
+										url = new URL(getString(R.string.template_repo));
+										HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+										if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+											urlConnection.setSSLSocketFactory(new TLSSocketFactory());
+										urlConnection.connect();
 										iNet = true;
-										is = httpsURLConnection.getInputStream();
+										is = urlConnection.getInputStream();
 										int length;
 										byte[] bytes = new byte[4096];
 										while ((length = is.read(bytes)) > -1) {

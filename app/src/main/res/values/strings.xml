@@ -8,6 +8,34 @@
             return document.body.classList.contains(\"tc-dirty\");
         })();
     </string>
+    <string name="js_info" translatable="false">
+        (function(){
+            var c_hex = \"\";
+            var conf = $tw.wiki.getTiddler(\"$:/config/TiddloidSaver/ApplyTheme\");
+            if (conf != undefined) {
+                var applyColor = conf.getFieldString(\"text\");
+                var map = $tw.utils.parseFields($tw.wiki.getTiddler($tw.wiki.getTiddler(\"$:/palette\").getFieldString(\"text\")).getFieldString(\"text\"));
+                var color = map[\"page-background\"];
+                if (color != undefined) {
+                    while (color.indexOf(\"&lt;&lt;colour\") == 0) {
+                        color = map[color.substr(9, color.lastIndexOf(\"&gt;&gt;\") - 9)];
+                        if (color == undefined) {
+                             color = \"\";
+                        }
+                    }
+                    c_hex =  \"yes\" == applyColor ? color : \"\";
+                }
+            }
+            var title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
+            var sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
+            var favicon = \"\";
+            var fic = $tw.wiki.getTiddler(\"$:/favicon.ico\");
+            if (fic != undefined) {
+                favicon = fic.getFieldString(\"text\");
+            }
+            return [c_hex, title, sub, favicon]
+        })();
+    </string>
     <!--Misc-->
     <string name="logo" translatable="false">logo</string>
     <!--UI-->
@@ -38,7 +66,7 @@
     <string name="wiki_already_exists">The wiki already exists</string>
     <string name="data_error">Data error</string>
     <string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid?</string>
-    <string name="confirm_to_auto_remove_wiki">The wiki selected no longer exists. Do you want to remove it?</string>
+    <string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
     <string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
     <string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
     <string name="about">
