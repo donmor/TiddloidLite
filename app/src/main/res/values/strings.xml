@@ -10,30 +10,45 @@
     </string>
     <string name="js_info" translatable="false">
         (function(){
-            var c_hex = \"\";
-            var conf = $tw.wiki.getTiddler(\"$:/config/TiddloidSaver/ApplyTheme\");
-            if (conf != undefined) {
-                var applyColor = conf.getFieldString(\"text\");
-                var map = $tw.utils.parseFields($tw.wiki.getTiddler($tw.wiki.getTiddler(\"$:/palette\").getFieldString(\"text\")).getFieldString(\"text\"));
-                var color = map[\"page-background\"];
-                if (color != undefined) {
-                    while (color.indexOf(\"&lt;&lt;colour\") == 0) {
-                        color = map[color.substr(9, color.lastIndexOf(\"&gt;&gt;\") - 9)];
-                        if (color == undefined) {
-                             color = \"\";
+            var tl_title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
+            var tl_sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
+            var tl_c_hex = \"\";
+            var tl_c_conf = $tw.wiki.getTiddler(\"$:/config/TiddloidSaver/ApplyTheme\");
+            if (tl_c_conf != undefined) {
+                var tl_apply_color = tl_c_conf.getFieldString(\"text\");
+                if (\"yes\" == tl_apply_color) {
+                    var tl_c_map = $tw.utils.parseFields($tw.wiki.getTiddler($tw.wiki.getTiddler(\"$:/palette\").getFieldString(\"text\")).getFieldString(\"text\"));
+                    var tl_color = tl_c_map[\"page-background\"];
+                    if (tl_color != undefined) {
+                        while (tl_color.indexOf(\"&lt;&lt;colour\") == 0) {
+                            tl_color = tl_c_map[tl_color.substr(9, tl_color.lastIndexOf(\"&gt;&gt;\") - 9)];
+                            if (tl_color == undefined) {
+                                 tl_color = \"\";
+                            }
                         }
+                        if (tl_color.indexOf(\"rgb(\") == 0) {
+                            var tl_c_o = 4;
+                            var tl_c_p = tl_color.indexOf(\",\",tl_c_o);
+                            var tl_c_red = tl_color.substring(tl_c_o,tl_c_p);
+                            tl_c_o = tl_c_p + 1;
+                            tl_c_p = tl_color.indexOf(\",\",tl_c_o);
+                            var tl_c_green = tl_color.substring(tl_c_o,tl_c_p);
+                            tl_c_o = tl_c_p + 1;
+                            tl_c_p = tl_color.indexOf(\")\",tl_c_o);
+                            var tl_c_blue = tl_color.substring(tl_c_o,tl_c_p);
+                            tl_c_pre = \"#\";
+                            tl_color = tl_c_pre.concat(Number.parseInt(tl_c_red).toString(16),Number.parseInt(tl_c_green).toString(16),Number.parseInt(tl_c_blue).toString(16));
+                        }
+                        tl_c_hex = tl_color;
                     }
-                    c_hex =  \"yes\" == applyColor ? color : \"\";
                 }
             }
-            var title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
-            var sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
-            var favicon = \"\";
-            var fic = $tw.wiki.getTiddler(\"$:/favicon.ico\");
-            if (fic != undefined) {
-                favicon = fic.getFieldString(\"text\");
+            var tl_favicon = \"\";
+            var tl_fic = $tw.wiki.getTiddler(\"$:/favicon.ico\");
+            if (tl_fic != undefined) {
+                tl_favicon = tl_fic.getFieldString(\"text\");
             }
-            return [c_hex, title, sub, favicon]
+            return [tl_title, tl_sub, tl_c_hex, tl_favicon]
         })();
     </string>
     <!--Misc-->
@@ -43,7 +58,8 @@
     <string name="action_import">Import a file</string>
     <string name="action_about">About Tiddloid</string>
     <string name="there_is_no_wiki_here">There is nothing here</string>
-    <string name="provider">Provider:&#160;</string>
+<!--    TODO: translation-->
+    <string name="provider">Source:&#160;</string>
     <string name="pathDir">Path:&#160;</string>
     <string name="filename">Filename:&#160;</string>
     <string name="unknown">Unknown</string>
@@ -69,21 +85,12 @@
     <string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
     <string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
     <string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
+<!--    TODO: translate-->
+    <string name="market" translatable="false">Rate This App</string>
     <string name="about">
         Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
         \n
-        This app is under GPL v2 license,\n
-        (1)Commercial usage\n
-        (2)Modification\n
-        (3)Distribution\n
-        (4)Private usage\n
-        is permitted UNDER THESE CONDITIONS:\n
-        (1)Provide this license and copyright notice\n
-        (2)State changes\n
-        (3)Disclose source under\n
-        (4)Same license\n
-        \n
-        This app is made possible by these open source projects:\n
+        This app is under GPL v2 license, and is made possible by these open source projects:\n
         Json - https://json.org/ ,\n
         Jsoup - https://jsoup.org/ ,\n
         License files provided with source codes.\n

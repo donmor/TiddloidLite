@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/design_default_color_primary"
+    android:orientation="vertical"
     android:paddingTop="144dp"
     android:paddingBottom="144dp"
-    android:background="@color/design_default_color_primary"
     tools:ignore="Overdraw">
 
     <LinearLayout
@@ -26,10 +27,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
         android:paddingTop="24dp"
         android:paddingBottom="24dp"
-        android:gravity="center"
-        android:fontFamily="sans-serif-light"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textAllCaps="false"
