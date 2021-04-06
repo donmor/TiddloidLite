@@ -19,7 +19,7 @@ See https://tiddlywiki.com/ for more details of TiddlyWiki.
 * Creating shortcuts to existing wiki on desktop
 * Tiddler/file export and import(Lollipop and above)
 
-### Please notice (1.1.5 and above)
+### Please notice (1.2 and above)
 
 * Tiddloid/Tiddloid Lite now supports wiki list data importing/exporting. 
     * To import: Copy `data.json` to `INTERNAL/Android/data/top.donmor.tiddloidlite/files/` before running for the first time. If you have previously run the program, clear the data in `Settings/Apps` and copy the file.

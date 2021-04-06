@@ -41,42 +41,33 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 
 	private final Context context;
 	private JSONObject wl;
-//	private int count;
 	private ArrayList<String> ids;
 	private ItemClickListener mItemClickListener;
 	private ReloadListener mReloadListener;
 	private final LayoutInflater inflater;
 	private final Vibrator vibrator;
 	private final float scale;
+
+	// 常量
 	private static final String c160 = "\u00A0", zeroB = "0\u00A0B", PAT_SIZE = "\u00A0\u00A0\u00A0\u00A0#,##0.##";
 	private static final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
 
+	// 初始化
 	WikiListAdapter(Context context, JSONObject db) throws JSONException {
 		this.context = context;
 		scale = context.getResources().getDisplayMetrics().density;
 		vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-//		try {
 		this.wl = db.getJSONObject(MainActivity.DB_KEY_WIKI);
 		Iterator<String> iterator = wl.keys();
-//		int i = 0;
 		ids = new ArrayList<>();
 		while (iterator.hasNext()) {
 			ids.add(iterator.next());
-//			ids[i] = iterator.next();
-//			i++;
 		}
-//		count = wl.length();
-//			count = db.getJSONArray(MainActivity.DB_KEY_WIKI).length();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 		inflater = LayoutInflater.from(context);
 	}
 
 	static class WikiListHolder extends RecyclerView.ViewHolder {
 		private final Button btnWiki;
-		private Uri uri;
-		private String id;
 
 		WikiListHolder(View itemView) {
 			super(itemView);
@@ -92,16 +83,10 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull final WikiListHolder holder, int position) {
+	public void onBindViewHolder(@NonNull WikiListHolder holder, int position) {
 		try {
-			holder.id = ids.get(position);
-			JSONObject w = wl.getJSONObject(holder.id);
-//			JSONObject w = db.getJSONArray(MainActivity.DB_KEY_WIKI).getJSONObject(position);
-			holder.uri = Uri.parse(w.getString(MainActivity.DB_KEY_URI));
-			//			try {
-			//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
+			final String id = ids.get(position);
+			JSONObject w = wl.getJSONObject(id);
 			String n = w.getString(MainActivity.KEY_NAME), s = w.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = w.optString(MainActivity.KEY_FAVICON);
 			if (fib64.length() > 0) {
 				byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
@@ -113,20 +98,22 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 					holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(context.getResources(), Bitmap.createBitmap(favicon, 0, 0, width, height, matrix, true)), null, null, null);
 				}
 			}
+			// 调用接口
 			holder.btnWiki.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mItemClickListener.onItemClick(holder.id);
+					mItemClickListener.onItemClick(id);
 				}
 			});
 			holder.btnWiki.setOnLongClickListener(new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
 					vibrator.vibrate(new long[]{0, 1}, -1);
-					mItemClickListener.onItemLongClick(holder.id);
+					mItemClickListener.onItemLongClick(id);
 					return true;
 				}
 			});
+			// 条目显示
 			try {
 				SpannableStringBuilder builder = new SpannableStringBuilder(n);
 				int p = builder.length();
@@ -137,10 +124,9 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
 				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 				p = builder.length();
-				DocumentFile documentFile = DocumentFile.fromSingleUri(context, holder.uri);
+				DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(w.getString(MainActivity.DB_KEY_URI)));
 				if (documentFile != null && documentFile.exists())
 					builder.append(SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified()))).append(formatSize(documentFile.length()));
-				else builder.append(MainActivity.STR_EMPTY);
 				RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
 				builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 				holder.btnWiki.setText(builder);
@@ -158,12 +144,11 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		return ids.size();
 	}
 
+	// 导出接口
 	interface ItemClickListener {
 		void onItemClick(String id);
-//		void onItemClick(int position, String id, Uri uri);
 
 		void onItemLongClick(String id);
-//		void onItemLongClick(int position, String id, Uri uri, String name, String sub, Bitmap favicon);
 	}
 
 	void setOnItemClickListener(ItemClickListener itemClickListener) {
@@ -178,6 +163,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		this.mReloadListener = reloadListener;
 	}
 
+	// 刷新
 	void reload(JSONObject db) throws JSONException {
 		this.wl = db.getJSONObject(MainActivity.DB_KEY_WIKI);
 		Iterator<String> iterator = wl.keys();
@@ -185,10 +171,10 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		while (iterator.hasNext()) {
 			ids.add(iterator.next());
 		}
-//		count = wl.length();
 		mReloadListener.onReloaded(this.getItemCount());
 	}
 
+	// 格式化大小
 	private String formatSize(long size) {
 		if (size <= 0)
 			return zeroB;
