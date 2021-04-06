@@ -57,7 +57,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Evaluator;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -86,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
 			KEY_LBL = " — ",
 			KEY_FAVICON = "favicon",
 			KEY_ID = "id",
-	//			KEY_INDEX = "index.html",
-	DB_KEY_WIKI = "wiki",
+			DB_KEY_WIKI = "wiki",
 			DB_KEY_COLOR = "color",
 			DB_KEY_URI = "uri",
 			KEY_SHORTCUT = "shortcut",
@@ -98,15 +96,7 @@ public class MainActivity extends AppCompatActivity {
 			DB_FILE_NAME = "data.json",
 			KEY_APPLICATION_NAME = "application-name",
 			KEY_CONTENT = "content",
-	//			KEY_STORE_AREA = "storeArea",
-//			KEY_PRE = "pre",
-	KEY_URI_RATE = "market://details?id="
-//	,
-//			KEY_WIKI_TITLE = "$:/SiteTitle",
-//			KEY_WIKI_SUBTITLE = "$:/SiteSubTitle",
-//			KEY_WIKI_FAVICON = "$:/favicon.ico",
-//			KEY_TITLE = "title"
-			;
+			KEY_URI_RATE = "market://details?id=";
 	private static final int REQUEST_OPEN = 42, REQUEST_CREATE = 43;
 	/*TODO: 数据文件结构
 	 *
@@ -135,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 			db = initJson(this);
 			try {
-//				db.put(DB_KEY_WIKI, new JSONArray());    //TODO: refactor
 				writeJson(this, db);
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -147,14 +136,6 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		noWiki = findViewById(R.id.t_noWiki);
-//		try {
-//			if (db.getJSONArray(DB_KEY_WIKI).length() == 0)
-//				noWiki.setVisibility(View.VISIBLE);
-//			else
-//				noWiki.setVisibility(View.GONE);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 		rvWikiList = findViewById(R.id.rvWikiList);
 		rvWikiList.setLayoutManager(new LinearLayoutManager(this));
 		try {
@@ -172,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 					try {
 						JSONObject wa = db.getJSONObject(DB_KEY_WIKI).getJSONObject(id);
 						Uri uri = Uri.parse(wa.getString(DB_KEY_URI));
-						if (uri != null && new TWInfo(MainActivity.this, uri).isWiki) {
+						if (uri != null && isWiki(MainActivity.this, uri)) {
 							getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
 							if (!loadPage(id))
 								Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
@@ -185,16 +166,6 @@ public class MainActivity extends AppCompatActivity {
 										@Override
 										public void onClick(DialogInterface dialog, int which) {
 											removeWiki(id);
-											//										try {
-											//											db.getJSONObject("DKW2").remove(id);
-											////											db.getJSONArray(DB_KEY_WIKI).remove(position);
-											//											writeJson(MainActivity.this, db);
-											//											if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-											//												revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
-											//										} catch (Exception e) {
-											//											e.printStackTrace();
-											//										}
-											//										MainActivity.this.onResume();
 										}
 									}).show();
 						}
@@ -223,22 +194,24 @@ public class MainActivity extends AppCompatActivity {
 								e.printStackTrace();
 							}
 						}
-						//					final IconCompat iconCompat = favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut);
 						TextView view = new TextView(MainActivity.this);
 						DocumentFile file = DocumentFile.fromSingleUri(MainActivity.this, uri);
 						String fn = file != null ? file.getName() : null, provider = getString(R.string.unknown);
 						// 获取来源名
-						PackageManager pm = getPackageManager();
-						for (ApplicationInfo info : pm.getInstalledApplications(PackageManager.GET_META_DATA)) {
-							if (uri.getAuthority().startsWith(info.packageName)) {
-								provider = pm.getApplicationLabel(info).toString();
-								break;
+						try {
+							PackageManager pm = getPackageManager();
+							for (ApplicationInfo info : pm.getInstalledApplications(PackageManager.GET_META_DATA)) {
+								if (Objects.requireNonNull(uri.getAuthority()).startsWith(info.packageName)) {
+									provider = pm.getApplicationLabel(info).toString();
+									break;
+								}
 							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 						// 显示属性
 						CharSequence s = getString(R.string.provider)
 								+ provider
-								//							+ uri.getAuthority()
 								+ '\n'
 								+ getString(R.string.pathDir)
 								+ Uri.decode(uri.getLastPathSegment())
@@ -252,12 +225,6 @@ public class MainActivity extends AppCompatActivity {
 								.setTitle(name)
 								.setIcon(icon)
 								.setPositiveButton(android.R.string.ok, null)
-								//							.setOnDismissListener(new DialogInterface.OnDismissListener() {
-								//								@Override
-								//								public void onDismiss(DialogInterface dialog) {
-								//									MainActivity.this.onResume();
-								//								}
-								//							})
 								.setNegativeButton(R.string.remove_wiki, new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialogInterface, int i) {
@@ -276,36 +243,12 @@ public class MainActivity extends AppCompatActivity {
 													@Override
 													public void onClick(DialogInterface dialogInterface, int i) {
 														removeWiki(id, true);
-														//													try {
-														//														wl.remove(id);
-														////														db.getJSONArray(DB_KEY_WIKI).remove(position);
-														//														writeJson(MainActivity.this, db);
-														//														DocumentsContract.deleteDocument(getContentResolver(), uri);
-														//														if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-														//															revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
-														//														Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
-														//													} catch (Exception e) {
-														//														e.printStackTrace();
-														//														Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
-														//													}
-														//													MainActivity.this.onResume();
 													}
 												})
 												.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 													@Override
 													public void onClick(DialogInterface dialog, int which) {
 														removeWiki(id);
-														//													try {
-														//														wl.remove(id);
-														////														db.getJSONArray(DB_KEY_WIKI).remove(position);
-														//														writeJson(MainActivity.this, db);
-														//														if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-														//															revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
-														//													} catch (Exception e) {
-														//														e.printStackTrace();
-														//														Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
-														//													}
-														//													MainActivity.this.onResume();
 													}
 												})
 												.create();
@@ -324,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 											if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
 												ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
 														.setShortLabel(name)
-														.setLongLabel(name + (sub != null ? (KEY_LBL + sub) : MainActivity.STR_EMPTY))
+														.setLongLabel(name + (KEY_LBL + sub))
 														.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut))
 														.setIntent(in)
 														.build();
@@ -356,13 +299,6 @@ public class MainActivity extends AppCompatActivity {
 
 	private Boolean loadPage(String id) {
 		try {
-//			String vid = null;
-//			for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-//				if (db.getJSONArray(DB_KEY_WIKI).getJSONObject(i).getString(KEY_ID).equals(id)) {
-//					vid = id;
-//					break;
-//				}
-//			}
 			if (db.getJSONObject(DB_KEY_WIKI).has(id)) {
 				Bundle bu = new Bundle();
 				bu.putString(KEY_ID, id);
@@ -466,108 +402,97 @@ public class MainActivity extends AppCompatActivity {
 		final Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				InputStream is = null;
-				OutputStream os = null;
+				InputStream is = null, is0 = null;
+				OutputStream os = null, os0 = null;
 				boolean interrupted = false;
 				boolean iNet = false;
+				File cache = null;
 				try {
 					// 下载模板
-					os = getContentResolver().openOutputStream(uri);
-					if (os != null) {
-						URL url;
-						url = new URL(getString(R.string.template_repo));
-						HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-							urlConnection.setSSLSocketFactory(new TLSSocketFactory());
-						urlConnection.connect();
-						iNet = true;
-						is = urlConnection.getInputStream();
-						int length;
-						byte[] bytes = new byte[4096];
-						while ((length = is.read(bytes)) > -1) {
-							os.write(bytes, 0, length);
-							if (Thread.currentThread().isInterrupted()) {
-								interrupted = true;
-								break;
-							}
+					String rnd = genId();
+					cache = new File(getCacheDir(), rnd);
+					os0 = new FileOutputStream(cache);
+					URL url;
+					url = new URL(getString(R.string.template_repo));
+					HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+					if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+						urlConnection.setSSLSocketFactory(new TLSSocketFactory());
+					urlConnection.connect();
+					iNet = true;
+					is = urlConnection.getInputStream();
+					int length;
+					byte[] bytes = new byte[4096];
+					while ((length = is.read(bytes)) > -1) {
+						os0.write(bytes, 0, length);
+						if (Thread.currentThread().isInterrupted()) {
+							interrupted = true;
+							break;
 						}
-						os.flush();
-						os.close();
-						os = null;
-						if (!interrupted) {
-							TWInfo info = new TWInfo(MainActivity.this, uri);
-							if (!info.isWiki)
-								throw new IOException();
-							progressDialog.dismiss();
-							String id = null;
-							try {
-								// 查重
+					}
+					os0.flush();
+					os0.close();
+					os0 = null;
+					if (!interrupted) {
+						if (!isWiki(MainActivity.this, cache)) throw new IOException();
+//						TWInfo info = new TWInfo(MainActivity.this, uri);
+//						if (!info.isWiki)
+//							throw new IOException();
+						progressDialog.dismiss();
+						String id = null;
+						try {
+							// 查重
 
-								JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
-								boolean exist = false;
-								Iterator<String> iterator = wl.keys();
-								JSONObject w = null;
-								while (iterator.hasNext()) {
-									id = iterator.next();
-									w = wl.getJSONObject(id);
-									exist = uri.toString().equals(w.getString(DB_KEY_URI));
-									if (exist) break;
-								}
-//								for (int i = 0; i < db.getJSONArray(DB_KEY_WIKI).length(); i++) {
-//									w = db.getJSONArray(DB_KEY_WIKI).getJSONObject(i);
-//									if (w.getString(DB_KEY_URI).equals(uri.toString())) {
-//										exist = true;
-//										id = w.getString(KEY_ID);
-//										break;
-//									}
-//								}
-								if (exist) {
-									runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
-										}
-									});
-//									new File(getDir(MainActivity.KEY_FAVICON, MODE_PRIVATE), id).delete();
-								} else {
-									id = genId();
-									w = new JSONObject();
-									w.put(KEY_ID, id);
-									wl.put(id, w);
-//									db.getJSONArray(DB_KEY_WIKI).put(db.getJSONArray(DB_KEY_WIKI).length(), w);
-								}
-								w.put(KEY_NAME, getString(R.string.tiddlywiki));
-//								w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
-								w.put(DB_KEY_SUBTITLE, STR_EMPTY);
-//								w.put(DB_KEY_SUBTITLE, (info.subtitle != null && info.subtitle.length() > 0) ? info.subtitle : STR_EMPTY);
-								w.put(DB_KEY_URI, uri.toString());
-//								updateIcon(MainActivity.this, info.favicon, id);
-								if (!MainActivity.writeJson(MainActivity.this, db))
-									throw new Exception();
-								getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
-							} catch (Exception e) {
-								e.printStackTrace();
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-									}
-								});
+							JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
+							boolean exist = false;
+							Iterator<String> iterator = wl.keys();
+							JSONObject w = null;
+							while (iterator.hasNext()) {
+								id = iterator.next();
+								w = wl.getJSONObject(id);
+								exist = uri.toString().equals(w.getString(DB_KEY_URI));
+								if (exist) break;
 							}
-//							runOnUiThread(new Runnable() {
-//								@Override
-//								public void run() {
-//									MainActivity.this.onResume();
-//								}
-//							});
-							if (!loadPage(id))
+							if (exist) {
 								runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
-										Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
+										Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
 									}
 								});
+							} else {
+								id = genId();
+								w = new JSONObject();
+								wl.put(id, w);
+							}
+							w.put(KEY_NAME, getString(R.string.tiddlywiki));
+							w.put(DB_KEY_SUBTITLE, STR_EMPTY);
+							w.put(DB_KEY_URI, uri.toString());
+							if (!MainActivity.writeJson(MainActivity.this, db))
+								throw new Exception();
+							is0 = new FileInputStream(cache);
+							os = getContentResolver().openOutputStream(uri);
+							if (os == null) throw new FileNotFoundException();
+							while ((length = is0.read(bytes)) > -1) os.write(bytes, 0, length);
+							os.flush();
+							os.close();
+							os = null;
+							getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
+						} catch (Exception e) {
+							e.printStackTrace();
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
+								}
+							});
 						}
+						if (!loadPage(id))
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
+								}
+							});
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -597,8 +522,20 @@ public class MainActivity extends AppCompatActivity {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+					if (is0 != null)
+						try {
+							is0.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					if (os0 != null)
+						try {
+							os0.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					if (interrupted) try {//TODO
-						DocumentsContract.deleteDocument(getContentResolver(), uri);
+						if (cache != null) cache.delete();
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -635,8 +572,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void importWiki(Uri uri) {
 		String id = genId();
-		TWInfo info = new TWInfo(MainActivity.this, uri);
-		if (info.isWiki) {
+		if (isWiki(this, uri)) {
 			try {
 				JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
 				boolean exist = false;
@@ -730,9 +666,8 @@ public class MainActivity extends AppCompatActivity {
 		try {
 			jsonObject.put(DB_KEY_WIKI, new JSONObject());
 			File ext = context.getExternalFilesDir(null);
-			System.out.println(ext.getAbsolutePath());
 			if (ext == null) return jsonObject;
-			is = new FileInputStream(ext.getPath() + File.separator + DB_FILE_NAME);
+			is = new FileInputStream(new File(ext, DB_FILE_NAME));
 			b = new byte[is.available()];
 			if (is.read(b) < 0) throw new Exception();
 			System.out.println(new String(b));
@@ -789,7 +724,7 @@ public class MainActivity extends AppCompatActivity {
 		try {
 			File ext = context.getExternalFilesDir(null);
 			if (ext == null) return;
-			os = new FileOutputStream(ext.getPath() + File.separator + DB_FILE_NAME);
+			os = new FileOutputStream(new File(ext, DB_FILE_NAME));
 //			os = context.openFileOutput(DB_FILE_NAME, MODE_PRIVATE);
 			byte[] b = vdb.toString(2).getBytes();
 			os.write(b);
@@ -831,47 +766,77 @@ public class MainActivity extends AppCompatActivity {
 		return UUID.randomUUID().toString();
 	}
 
-	static class TWInfo {
-		boolean isWiki;
-//		private String title = null, subtitle = null;
-//		private Bitmap favicon = null;
-
-		TWInfo(final Context context, Uri uri) {
-			InputStream is = null;
-			try {
-				is = new BufferedInputStream(Objects.requireNonNull(context.getContentResolver().openInputStream(uri)));
-				Document doc = Jsoup.parse(is, StandardCharsets.UTF_8.name(), uri.toString());
-				Element an = doc.selectFirst(new Evaluator.AttributeKeyPair(KEY_NAME, KEY_APPLICATION_NAME) {
-					@Override
-					public boolean matches(Element root, Element element) {
-						return context.getString(R.string.tiddlywiki).equals(element.attr(KEY_CONTENT));
-					}
-				});
-				isWiki = an != null;
-//				if (isWiki = an != null) {
-//					Element ti = doc.getElementsByTag(KEY_TITLE).first();
-//					title = ti != null ? ti.html() : title;
-//					Element sa = doc.getElementsByAttributeValue(KEY_ID, KEY_STORE_AREA).first();
-//					Element t1 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE).first();
-//					Element t2 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE).first();
-//					title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
-//					subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : subtitle;
-//					Element fi = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_FAVICON).first();
-//					byte[] b = fi != null ? Base64.decode(fi.getElementsByTag(KEY_PRE).first().html(), Base64.NO_PADDING) : new byte[0];
-//					favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
+//	static class TWInfo {
+//		boolean isWiki;
+////		private String title = null, subtitle = null;
+////		private Bitmap favicon = null;
+//
+//		TWInfo(final Context context, Uri uri) {
+//			InputStream is = null;
+//			try {
+//				is = new BufferedInputStream(Objects.requireNonNull(context.getContentResolver().openInputStream(uri)));
+//				Document doc = Jsoup.parse(is, StandardCharsets.UTF_8.name(), uri.toString());
+//				Element an = doc.selectFirst(new Evaluator.AttributeKeyPair(KEY_NAME, KEY_APPLICATION_NAME) {
+//					@Override
+//					public boolean matches(Element root, Element element) {
+//						return context.getString(R.string.tiddlywiki).equals(element.attr(KEY_CONTENT));
+//					}
+//				});
+//				isWiki = an != null;
+////				if (isWiki = an != null) {
+////					Element ti = doc.getElementsByTag(KEY_TITLE).first();
+////					title = ti != null ? ti.html() : title;
+////					Element sa = doc.getElementsByAttributeValue(KEY_ID, KEY_STORE_AREA).first();
+////					Element t1 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_TITLE).first();
+////					Element t2 = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_SUBTITLE).first();
+////					title = t1 != null ? t1.getElementsByTag(KEY_PRE).first().html() : title;
+////					subtitle = t2 != null ? t2.getElementsByTag(KEY_PRE).first().html() : subtitle;
+////					Element fi = sa.getElementsByAttributeValue(KEY_TITLE, KEY_WIKI_FAVICON).first();
+////					byte[] b = fi != null ? Base64.decode(fi.getElementsByTag(KEY_PRE).first().html(), Base64.NO_PADDING) : new byte[0];
+////					favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
+////				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			} finally {
+//				if (is != null) try {
+//					is.close();
+//				} catch (Exception e) {
+//					e.printStackTrace();
 //				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (is != null) try {
-					is.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+//			}
+//		}
+//	}
+
+	static boolean isWiki(Context context, Uri uri) {
+		try {
+			return isWiki(context, context.getContentResolver().openInputStream(uri), uri);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 
+	static boolean isWiki(Context context, File file) {
+		try {
+			return isWiki(context, new FileInputStream(file), Uri.fromFile(file));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private static boolean isWiki(final Context context, InputStream is, Uri u) throws IOException {
+		Document doc = Jsoup.parse(is, StandardCharsets.UTF_8.name(), u.toString());
+		Element an = doc.selectFirst(new Evaluator.AttributeKeyPair(KEY_NAME, KEY_APPLICATION_NAME) {
+			@Override
+			public boolean matches(Element root, Element element) {
+				return context.getString(R.string.tiddlywiki).equals(element.attr(KEY_CONTENT));
+			}
+		});
+		return an != null;
+	}
+
+	@SuppressWarnings("ConstantConditions")
 	static void trimDB115(Context context, JSONObject db) {
 		try {
 			JSONArray wl = db.optJSONArray(DB_KEY_WIKI);

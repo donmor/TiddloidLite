@@ -1002,7 +1002,7 @@ public class TWEditorWV extends AppCompatActivity {
 			finish();
 			return;
 		}
-		if ((u = Uri.parse(wa.optString(MainActivity.DB_KEY_URI))) == null || bu.getBoolean(KEY_SHORTCUT) && !new MainActivity.TWInfo(this, u).isWiki) {
+		if ((u = Uri.parse(wa.optString(MainActivity.DB_KEY_URI))) == null || bu.getBoolean(KEY_SHORTCUT) && !MainActivity.isWiki(this,u)) {
 			new AlertDialog.Builder(this)    //TODO: 自动移除机制重构
 					.setTitle(android.R.string.dialog_alert_title)
 					.setMessage(R.string.confirm_to_auto_remove_wiki)

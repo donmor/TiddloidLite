@@ -113,37 +113,10 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 					holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(context.getResources(), Bitmap.createBitmap(favicon, 0, 0, width, height, matrix, true)), null, null, null);
 				}
 			}
-
-//			FileInputStream is = null;
-//			Bitmap icon = null;
-//			try {
-//				File iconFile = new File(context.getDir(MainActivity.KEY_FAVICON, Context.MODE_PRIVATE), id);
-//				if (iconFile.exists() && iconFile.length() > 0) {
-//					is = new FileInputStream(iconFile);
-//					icon = BitmapFactory.decodeStream(is);
-//					if (icon != null) {
-//						int width = icon.getWidth(), height = icon.getHeight();
-//						Matrix matrix = new Matrix();
-//						matrix.postScale(scale * 24f / width, scale * 24f / height);
-//						Bitmap favicon = Bitmap.createBitmap(icon, 0, 0, width, height, matrix, true);
-//						holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(context.getResources(), favicon), null, null, null);
-//					}
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			} finally {
-//				if (is != null) try {
-//					is.close();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			final Bitmap fi = icon;
 			holder.btnWiki.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					mItemClickListener.onItemClick(holder.id);
-//					mItemClickListener.onItemClick(position, id, holder.uri);
 				}
 			});
 			holder.btnWiki.setOnLongClickListener(new View.OnLongClickListener() {
@@ -151,7 +124,6 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				public boolean onLongClick(View v) {
 					vibrator.vibrate(new long[]{0, 1}, -1);
 					mItemClickListener.onItemLongClick(holder.id);
-//					mItemClickListener.onItemLongClick(position, id, holder.uri, n, s, fi);
 					return true;
 				}
 			});
@@ -160,7 +132,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				int p = builder.length();
 				LeadingMarginSpan.Standard lms = new LeadingMarginSpan.Standard(Math.round(scale * 8f));
 				builder.setSpan(lms, 0, p, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-				builder.append(s != null && s.length() > 0 ? MainActivity.KEY_LBL + s : MainActivity.STR_EMPTY);
+				builder.append(s.length() > 0 ? MainActivity.KEY_LBL + s : s);
 				builder.append('\n');
 				ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
 				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
