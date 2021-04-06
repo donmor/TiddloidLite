@@ -25,13 +25,13 @@
     <string name="error_loading_page">Erreur lors du chargement de la page</string>
 	<string name="error_processing_file">Erreur lors du traitement du fichier</string>
 	<string name="wiki_already_exists">Le wiki existe déjà</string>
-	<string name="wiki_not_exist">Wiki n\'existe pas</string>
-	<string name="data_error">Erreur de donnée</string>
+    <string name="data_error">Erreur de donnée</string>
 	<string name="confirm_to_remove_wiki">Êtes-vous sûr de vouloir supprimer ce Wiki de Tiddloid?</string>
 	<string name="confirm_to_auto_remove_wiki">Le wiki sélectionné n\'existe plus. Voulez-vous l\'enlever?</string>
 	<string name="confirm_to_exit_wiki">Les modifications non enregistrées détectés. Êtes-vous sûr de vouloir quitter?</string>
 	<string name="third_part_rising">La page tente de démarrer une autre application. Voulez-vous continuer?</string>
     <string name="action_about">À propos de Tiddloid</string>
+	<string name="market">Évaluer l\'application</string>
 	<string name="about">
         Tiddloid Lite, une version allégée de Tiddloid, est une application pour travailler avec les TiddlyWikis stockés localement. Une fois avoir des idées, vous pouvez les écrire immédiatement vers le bas afin que vous puissiez y accéder partout. Pour plus de détails sur TiddlyWiki, veuillez consulter https://tiddlywiki.com/ .\n
         \n

@@ -17,7 +17,6 @@ See https://tiddlywiki.com/ for more details of TiddlyWiki.
 * TiddlyWiki detection
 * Saving TiddlyWikis to the source file by clicking the Save button
 * Creating shortcuts to existing wiki on desktop
-* Tiddler/file export and import(Lollipop and above)
 
 ### Please notice (1.2 and above)
 
@@ -52,3 +51,11 @@ License files provided in /lic.
 ### Localization
 
 The localization of this app is currently provided by Google Translation. Pull requests are welcomed if you have better localization.
+
+### About us
+
+Thank you for trying donmor's productions. I'd really appreciate it if you kindly support us via the buttons below, and take more effect to improve our productions.
+
+&ensp;&ensp;<a href="https://liberapay.com/donmor3000/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="30" /></a>&ensp;&ensp;<a href="https://donmor.top/#DonationQrCode"><img alt="Donate using Alipay and Wechat Pay" src="https://donmor.top/img/aliwechat.svg" height="30" /></a>
+
+If you take an interest in us, fell free to visit [our homepage](https://donmor.top/).

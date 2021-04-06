@@ -35,6 +35,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -357,121 +358,6 @@ public class TWEditorWV extends AppCompatActivity {
 		});
 	}
 
-	// 加载内容
-	private void nextWiki(Intent nextWikiIntent) {
-		// 读取数据
-		final JSONObject wl, wa;
-		Bundle bu;
-		final String nextWikiId;
-		Uri u;
-		if ((bu = nextWikiIntent.getExtras()) == null
-				|| (nextWikiId = bu.getString(MainActivity.KEY_ID)) == null
-				|| nextWikiId.length() == 0
-				|| (wl = db.optJSONObject(MainActivity.DB_KEY_WIKI)) == null
-				|| (wa = wl.optJSONObject(nextWikiId)) == null) {
-			Toast.makeText(this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
-			finish();
-			return;
-		}
-		if ((u = Uri.parse(wa.optString(MainActivity.DB_KEY_URI))) == null || bu.getBoolean(KEY_SHORTCUT) && !MainActivity.isWiki(this, u)) {
-			new AlertDialog.Builder(this)    //TODO: 自动移除机制重构
-					.setTitle(android.R.string.dialog_alert_title)
-					.setMessage(R.string.confirm_to_auto_remove_wiki)
-					.setNegativeButton(android.R.string.no, null)
-					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							try {
-								wl.remove(nextWikiId);
-								MainActivity.writeJson(TWEditorWV.this, db);
-								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-									revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}).setOnDismissListener(new DialogInterface.OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialogInterface) {
-					TWEditorWV.this.finish();
-				}
-			}).show();
-			return;
-		}
-		// 重置
-		if (wv.getUrl() != null) {
-			toolbar.setLogo(null);
-			setTitle(R.string.app_name);
-			toolbar.setSubtitle(null);
-			wv.getSettings().setJavaScriptEnabled(false);
-			wv.loadUrl(URL_BLANK);
-		}
-		// 解取Title/Subtitle/favicon
-		wApp = wa;
-		uri = u;
-		if (nextWikiIntent != getIntent()) setIntent(nextWikiIntent);
-		String wvTitle = wApp.optString(MainActivity.KEY_NAME);
-		String wvSubTitle = wApp.optString(MainActivity.DB_KEY_SUBTITLE);
-		String fib64 = wApp.optString(MainActivity.KEY_FAVICON);
-		if (wvTitle.length() > 0) this.setTitle(wvTitle);
-		if (wvSubTitle.length() > 0) toolbar.setSubtitle(wvSubTitle);
-		if (fib64.length() > 0) {
-			byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
-			Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
-			toolbar.setLogo(favicon != null ? cIcon(favicon) : null);
-		}
-		try {
-			themeColor = wApp.getInt(MainActivity.DB_KEY_COLOR);
-		} catch (JSONException e) {
-			themeColor = null;
-		}
-		onConfigurationChanged(getResources().getConfiguration());
-		wv.getSettings().setJavaScriptEnabled(true);
-		getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);  //保持读写权限
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			wv.loadUrl(uri != null ? uri.toString() : MainActivity.STR_EMPTY);
-		else {
-			// KitKat fallback
-			if (uri == null) {
-				wv.loadUrl(MainActivity.STR_EMPTY);
-				return;
-			}
-			BufferedInputStream is = null;
-			ByteArrayOutputStream os = null;
-			String data = null;
-			try {
-				is = new BufferedInputStream(Objects.requireNonNull(getContentResolver().openInputStream(uri)));
-				os = new ByteArrayOutputStream(BUF_SIZE);   //读全部数据
-				int len = is.available();
-				int length, lenTotal = 0;
-				byte[] b = new byte[BUF_SIZE];
-				while ((length = is.read(b)) != -1) {
-					os.write(b, 0, length);
-					lenTotal += length;
-				}
-				os.flush();
-				if (lenTotal != len) throw new IOException();
-				is.close();
-				os.close();
-				data = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(os.toByteArray())).toString();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (is != null) try {
-					is.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (os != null) try {
-					os.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			wv.loadDataWithBaseURL(uri.toString(), data != null ? data : MainActivity.STR_EMPTY, MainActivity.TYPE_HTML, StandardCharsets.UTF_8.name(), null);
-		}
-	}
-
 	// 处理跳转App
 	private boolean overrideUrlLoading(final WebView view, Uri u) {
 		String sch = u.getScheme();
@@ -524,7 +410,6 @@ public class TWEditorWV extends AppCompatActivity {
 		view.evaluateJavascript(getString(R.string.js_info), new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
-				System.out.println(value);
 				try {
 					JSONArray array = new JSONArray(value);
 					// 解取标题
@@ -643,6 +528,121 @@ public class TWEditorWV extends AppCompatActivity {
 		}
 	}
 
+	// 加载内容
+	private void nextWiki(Intent nextWikiIntent) {
+		// 读取数据
+		final JSONObject wl, wa;
+		Bundle bu;
+		final String nextWikiId;
+		Uri u;
+		if ((bu = nextWikiIntent.getExtras()) == null
+				|| (nextWikiId = bu.getString(MainActivity.KEY_ID)) == null
+				|| nextWikiId.length() == 0
+				|| (wl = db.optJSONObject(MainActivity.DB_KEY_WIKI)) == null
+				|| (wa = wl.optJSONObject(nextWikiId)) == null) {
+			Toast.makeText(this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
+		if ((u = Uri.parse(wa.optString(MainActivity.DB_KEY_URI))) == null || bu.getBoolean(KEY_SHORTCUT) && !MainActivity.isWiki(this, u)) {
+			new AlertDialog.Builder(this)
+					.setTitle(android.R.string.dialog_alert_title)
+					.setMessage(R.string.confirm_to_auto_remove_wiki)
+					.setNegativeButton(android.R.string.no, null)
+					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							try {
+								wl.remove(nextWikiId);
+								MainActivity.writeJson(TWEditorWV.this, db);
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+									revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}).setOnDismissListener(new DialogInterface.OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialogInterface) {
+					TWEditorWV.this.finish();
+				}
+			}).show();
+			return;
+		}
+		// 重置
+		if (wv.getUrl() != null) {
+			toolbar.setLogo(null);
+			setTitle(R.string.app_name);
+			toolbar.setSubtitle(null);
+			wv.getSettings().setJavaScriptEnabled(false);
+			wv.loadUrl(URL_BLANK);
+		}
+		// 解取Title/Subtitle/favicon
+		wApp = wa;
+		uri = u;
+		if (nextWikiIntent != getIntent()) setIntent(nextWikiIntent);
+		String wvTitle = wApp.optString(MainActivity.KEY_NAME);
+		String wvSubTitle = wApp.optString(MainActivity.DB_KEY_SUBTITLE);
+		String fib64 = wApp.optString(MainActivity.KEY_FAVICON);
+		if (wvTitle.length() > 0) this.setTitle(wvTitle);
+		if (wvSubTitle.length() > 0) toolbar.setSubtitle(wvSubTitle);
+		if (fib64.length() > 0) {
+			byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
+			Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
+			toolbar.setLogo(favicon != null ? cIcon(favicon) : null);
+		}
+		try {
+			themeColor = wApp.getInt(MainActivity.DB_KEY_COLOR);
+		} catch (JSONException e) {
+			themeColor = null;
+		}
+		onConfigurationChanged(getResources().getConfiguration());
+		wv.getSettings().setJavaScriptEnabled(true);
+		getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);  //保持读写权限
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			wv.loadUrl(uri != null ? uri.toString() : MainActivity.STR_EMPTY);
+		else {
+			// KitKat fallback
+			if (uri == null) {
+				wv.loadUrl(MainActivity.STR_EMPTY);
+				return;
+			}
+			BufferedInputStream is = null;
+			ByteArrayOutputStream os = null;
+			String data = null;
+			try {
+				is = new BufferedInputStream(Objects.requireNonNull(getContentResolver().openInputStream(uri)));
+				os = new ByteArrayOutputStream(BUF_SIZE);   //读全部数据
+				int len = is.available();
+				int length, lenTotal = 0;
+				byte[] b = new byte[BUF_SIZE];
+				while ((length = is.read(b)) != -1) {
+					os.write(b, 0, length);
+					lenTotal += length;
+				}
+				os.flush();
+				if (lenTotal != len) throw new IOException();
+				is.close();
+				os.close();
+				data = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(os.toByteArray())).toString();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (is != null) try {
+					is.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (os != null) try {
+					os.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			wv.loadDataWithBaseURL(uri.toString(), data != null ? data : MainActivity.STR_EMPTY, MainActivity.TYPE_HTML, StandardCharsets.UTF_8.name(), null);
+		}
+	}
+
 	private BitmapDrawable cIcon(Bitmap icon) {
 		Matrix matrix = new Matrix();
 		matrix.postScale(scale * 32f / icon.getWidth(), scale * 32f / icon.getHeight());
@@ -690,6 +690,7 @@ public class TWEditorWV extends AppCompatActivity {
 			}
 			getWindow().getDecorView().setSystemUiVisibility(bar | (landscape ? View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY : View.SYSTEM_UI_FLAG_VISIBLE));
 			findViewById(R.id.wv_appbar).setBackgroundColor(primColor);
+			((LinearLayout)findViewById(R.id.wv_ll)).setBackgroundColor(primColor);
 			toolbar.setTitleTextAppearance(this, R.style.Toolbar_TitleText);
 			toolbar.setSubtitleTextAppearance(this, R.style.TextAppearance_AppCompat_Small);
 			if (themeColor != null) {    // 有主题色则根据灰度切换字色

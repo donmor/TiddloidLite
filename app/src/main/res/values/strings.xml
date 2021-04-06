@@ -61,7 +61,6 @@
     <string name="action_import">Import a file</string>
     <string name="action_about">About Tiddloid</string>
     <string name="there_is_no_wiki_here">There is nothing here</string>
-<!--    TODO: translation-->
     <string name="provider">Source:&#160;</string>
     <string name="pathDir">Path:&#160;</string>
     <string name="filename">Filename:&#160;</string>
@@ -81,15 +80,13 @@
     <string name="failed_creating_file">Failed creating the file</string>
     <string name="error_loading_page">Error loading the page</string>
     <string name="error_processing_file">Error processing the file</string>
-    <string name="wiki_not_exist">Wiki does not exist</string>
     <string name="wiki_already_exists">The wiki already exists</string>
     <string name="data_error">Data error</string>
     <string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid?</string>
     <string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
     <string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
     <string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
-<!--    TODO: translate-->
-    <string name="market" translatable="false">Rate This App</string>
+    <string name="market">Rate This App</string>
     <string name="about">
         Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
         \n

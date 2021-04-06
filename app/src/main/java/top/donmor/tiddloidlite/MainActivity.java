@@ -98,19 +98,7 @@ public class MainActivity extends AppCompatActivity {
 			KEY_CONTENT = "content",
 			KEY_URI_RATE = "market://details?id=";
 	private static final int REQUEST_OPEN = 42, REQUEST_CREATE = 43;
-	/*TODO: 数据文件结构
-	 *
-	 * "30db5f9c-a776-464b-9c6e-3c96a33e350c" = {
-	 * "id": "30db5f9c-a776-464b-9c6e-3c96a33e350c",
-	 * "subtitle": "",	-- 副标题
-	 * "uri": "content:\/\/com.android.externalstorage.documents\/document\/0B0B-2016%3A123.htm",	-- 文件Uri (content:// *2.0:file://*)
-	 * "name": "My TiddlyWiki — a non-linear personal web notebook"	-- 标题
-	 * "favicon": "*BASE64*"	-- 图标
-	 * -- 以下为Tiddloid-2.0扩充 --
-	 * "dir": "false"	-- 目录模式，仅content://
-	 * },
-	 *
-	 * */
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -322,12 +310,12 @@ public class MainActivity extends AppCompatActivity {
 			Uri uri = Uri.parse(wl.getJSONObject(id).getString(DB_KEY_URI));
 			wl.remove(id);
 			writeJson(MainActivity.this, db);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
 			if (del) {
 				DocumentsContract.deleteDocument(getContentResolver(), uri);
 				Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
 			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+				revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
@@ -747,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
 		Element an = doc.selectFirst(new Evaluator.AttributeKeyPair(KEY_NAME, KEY_APPLICATION_NAME) {
 			@Override
 			public boolean matches(Element root, Element element) {
-				return context.getString(R.string.tiddlywiki).equals(element.attr(KEY_CONTENT));
+				return KEY_APPLICATION_NAME.equals(element.attr(KEY_NAME)) && context.getString(R.string.tiddlywiki).equals(element.attr(KEY_CONTENT));
 			}
 		});
 		return an != null;
