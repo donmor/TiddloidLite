@@ -41,7 +41,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 
 	private final Context context;
 	private JSONObject wl;
-	private int count;
+//	private int count;
 	private ArrayList<String> ids;
 	private ItemClickListener mItemClickListener;
 	private ReloadListener mReloadListener;
@@ -65,7 +65,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 //			ids[i] = iterator.next();
 //			i++;
 		}
-		count = wl.length();
+//		count = wl.length();
 //			count = db.getJSONArray(MainActivity.DB_KEY_WIKI).length();
 //		} catch (Exception e) {
 //			e.printStackTrace();
@@ -183,7 +183,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 
 	@Override
 	public int getItemCount() {
-		return count;
+		return ids.size();
 	}
 
 	interface ItemClickListener {
@@ -213,7 +213,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		while (iterator.hasNext()) {
 			ids.add(iterator.next());
 		}
-		count = wl.length();
+//		count = wl.length();
 		mReloadListener.onReloaded(this.getItemCount());
 	}
 

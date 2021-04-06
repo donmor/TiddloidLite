@@ -62,7 +62,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -112,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 	/*TODO: 数据文件结构
 	 *
 	 * "30db5f9c-a776-464b-9c6e-3c96a33e350c" = {
-	 * "id": "30db5f9c-a776-464b-9c6e-3c96a33e350c",	-- 唯一标识	//TODO: new structure
+	 * "id": "30db5f9c-a776-464b-9c6e-3c96a33e350c",
 	 * "subtitle": "",	-- 副标题
 	 * "uri": "content:\/\/com.android.externalstorage.documents\/document\/0B0B-2016%3A123.htm",	-- 文件Uri (content:// *2.0:file://*)
 	 * "name": "My TiddlyWiki — a non-linear personal web notebook"	-- 标题
@@ -137,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
 			db = initJson(this);
 			try {
 //				db.put(DB_KEY_WIKI, new JSONArray());    //TODO: refactor
-				db.put(DB_KEY_WIKI, new JSONObject());
 				writeJson(this, db);
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -661,6 +659,7 @@ public class MainActivity extends AppCompatActivity {
 				if (exist) {
 					Toast.makeText(MainActivity.this, R.string.wiki_already_exists, Toast.LENGTH_SHORT).show();
 				} else {
+					id = genId();
 					w = new JSONObject();
 					w.put(KEY_NAME, getString(R.string.tiddlywiki));
 //					w.put(KEY_NAME, (info.title != null && info.title.length() > 0) ? info.title : getString(R.string.tiddlywiki));
@@ -697,6 +696,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onResume();
 		try {
 			db = readJson(this);
+			System.out.println(db);
 			wikiListAdapter.reload(db);
 			rvWikiList.setAdapter(wikiListAdapter);
 			noWiki.setVisibility(wikiListAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
@@ -726,19 +726,16 @@ public class MainActivity extends AppCompatActivity {
 		byte[] b;
 		InputStream is = null;
 		JSONObject jsonObject = new JSONObject();
+
 		try {
+			jsonObject.put(DB_KEY_WIKI, new JSONObject());
 			File ext = context.getExternalFilesDir(null);
+			System.out.println(ext.getAbsolutePath());
 			if (ext == null) return jsonObject;
-			File[] exd = ext.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return DB_FILE_NAME.equals(name);
-				}
-			});
-			if (exd == null) return jsonObject;
-			is = new FileInputStream(exd[0]);
+			is = new FileInputStream(ext.getPath() + File.separator + DB_FILE_NAME);
 			b = new byte[is.available()];
 			if (is.read(b) < 0) throw new Exception();
+			System.out.println(new String(b));
 			jsonObject = new JSONObject(new String(b));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -750,6 +747,7 @@ public class MainActivity extends AppCompatActivity {
 					e.printStackTrace();
 				}
 		}
+		System.out.println(jsonObject);
 		return jsonObject;
 	}
 
@@ -760,8 +758,6 @@ public class MainActivity extends AppCompatActivity {
 		if (is.read(b) < 0) throw new Exception();
 		JSONObject jsonObject = new JSONObject(new String(b));
 		is.close();
-
-
 		return jsonObject;
 	}
 

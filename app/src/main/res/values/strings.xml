@@ -13,7 +13,10 @@
             var tl_title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
             var tl_sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
             var tl_c_hex = \"\";
-            var tl_c_conf = $tw.wiki.getTiddler(\"$:/config/TiddloidSaver/ApplyTheme\");
+            var tl_tb_hide = \"no\";
+            var tl_tb_conf = $tw.wiki.getTiddler(\"$:/config/Tiddloid/HideToolbar\");
+            if (tl_tb_conf != undefined) tl_tb_hide = tl_tb_conf.getFieldString(\"text\");
+            var tl_c_conf = $tw.wiki.getTiddler(\"$:/config/Tiddloid/ApplyTheme\");
             if (tl_c_conf != undefined) {
                 var tl_apply_color = tl_c_conf.getFieldString(\"text\");
                 if (\"yes\" == tl_apply_color) {
@@ -48,7 +51,7 @@
             if (tl_fic != undefined) {
                 tl_favicon = tl_fic.getFieldString(\"text\");
             }
-            return [tl_title, tl_sub, tl_c_hex, tl_favicon]
+            return [tl_title, tl_sub, tl_tb_hide, tl_c_hex, tl_favicon]
         })();
     </string>
     <!--Misc-->

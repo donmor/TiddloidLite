@@ -75,6 +75,7 @@ public class TWEditorWV extends AppCompatActivity {
 	private WebChromeClient.CustomViewCallback mCustomViewCallback;
 	private int mOriginalOrientation;
 	private Integer themeColor = null;
+	private boolean hideAppbar = false, ready = false;
 	//	private Integer themeColor = Color.argb(255, 243, 243, 183);
 	private float scale;
 	private ValueCallback<Uri[]> uploadMessage;
@@ -91,6 +92,7 @@ public class TWEditorWV extends AppCompatActivity {
 			MIME_ANY = "*/*",
 			KEY_HASH_1 = "(function(){new $tw.Story().navigateTiddler(\"",
 			KEY_HASH_2 = "\");})();",
+			KEY_YES = "yes",
 			SCH_ABOUT = "about",
 			SCH_FILE = "file",
 			SCH_HTTP = "http",
@@ -147,12 +149,10 @@ public class TWEditorWV extends AppCompatActivity {
 			// 进度条
 			@Override
 			public void onProgressChanged(WebView view, int newProgress) {
-				if (newProgress == 100) {
-					wvProgress.setVisibility(View.GONE);
-				} else {
-					wvProgress.setVisibility(View.VISIBLE);
-					wvProgress.setProgress(newProgress);
-				}
+				ready = newProgress == 100;
+				toolbar.setVisibility(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE || hideAppbar && ready ? View.GONE : View.VISIBLE);
+				wvProgress.setVisibility(ready ? View.GONE : View.VISIBLE);
+				wvProgress.setProgress(newProgress);
 				super.onProgressChanged(view, newProgress);
 			}
 
@@ -1164,13 +1164,17 @@ public class TWEditorWV extends AppCompatActivity {
 					String title = array.getString(0), subtitle = array.getString(1);
 					TWEditorWV.this.setTitle(title);
 					toolbar.setSubtitle(subtitle);
+					// appbar隐藏
+					hideAppbar = KEY_YES.equals(array.getString(2));
+					Configuration newConfig = getResources().getConfiguration();
+					toolbar.setVisibility(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE || hideAppbar && ready ? View.GONE : View.VISIBLE);
 					// 解取主题色
-					String color = array.getString(2);
+					String color = array.getString(3);
 					if (color.length() == 7) themeColor = Color.parseColor(color);
 					else themeColor = null;
-					TWEditorWV.this.onConfigurationChanged(getResources().getConfiguration());
+					TWEditorWV.this.onConfigurationChanged(newConfig);
 					// 解取favicon
-					String fib64 = array.getString(3);
+					String fib64 = array.getString(4);
 					byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 					Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
 					toolbar.setLogo(favicon != null ? cIcon(favicon) : null);
@@ -1345,7 +1349,7 @@ public class TWEditorWV extends AppCompatActivity {
 		try {
 			int bar = 0;
 			boolean landscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
-			findViewById(R.id.wv_toolbar).setVisibility(landscape ? View.GONE : View.VISIBLE);
+			toolbar.setVisibility(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE || hideAppbar && ready ? View.GONE : View.VISIBLE);
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 				getWindow().setStatusBarColor(primColor);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
