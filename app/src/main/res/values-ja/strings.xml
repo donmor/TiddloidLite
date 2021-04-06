@@ -35,22 +35,11 @@
     <string name="about">
 		Tiddloid Liteは、ローカルに保存されているTiddlyWikiを操作するためのアプリであり、Tiddloidの軽量バージョンです。いくつかのアイデアを得たら、すぐにそれらを書き留めてどこにでもアクセスできるようにすることができます。TiddlyWikiの詳細については、https://tiddlywiki.com を参照してください。\n
         \n
-        このアプリはGPLv2ライセンスの下でリリースされています、\n
-        （1）商用利用\n
-        （2）修正する\n
-        （3）配付\n
-        （4）私的使用\n
-        は、これらの条件で許可されています：\n
-        （1）このライセンスと著作権表示の提供\n
-        （2）変更の宣言\n
-        （3）同じライセンスを使用して\n
-        （4）ソースコードを公開します\n
-        \n
-        このアプリの完成は、これらのオープンソースプロジェクトの助けを借りることと不可分です：\n
+        このアプリは、これらのオープンソースプロジェクトの助けを借りて、GPLv2ライセンスの下でリリースされています：\n
         Json - https://json.org/ ,\n
         Jsoup - https://jsoup.org/ ,\n
         ライセンスファイルはソースコードとともに提供されます。\n
         \n
-        このアプリの詳細については、https://github.com/donmor/TiddloidLite をご覧ください。
+        このアプリの詳細については、プロジェクトページ（ https://github.com/donmor/Tiddloidlite/ ）または私のホームページ（ https://donmor.top/ ）をご覧ください。
 	</string>
 </resources>

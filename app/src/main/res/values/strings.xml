@@ -90,11 +90,11 @@
     <string name="about">
         Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
         \n
-        This app is under GPL v2 license, and is made possible by these open source projects:\n
+        This app is under GPL v2 license　with the help of these open source projects:\n
         Json - https://json.org/ ,\n
         Jsoup - https://jsoup.org/ ,\n
         License files provided with source codes.\n
         \n
-        For more details about this app, please visit https://github.com/donmor/Tiddloid .
+        For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).
     </string>
 </resources>
