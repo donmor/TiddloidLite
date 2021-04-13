@@ -15,6 +15,7 @@
 	<string name="remove_wiki">Eliminar Wiki</string>
 	<string name="please_wait">Por favor espera&#8230;</string>
 	<string name="no_internet">Sin conexión a Internet</string>
+	<string name="download_failed">Descarga fracasó</string>
 	<string name="failed">Ha fallado</string>
 	<string name="cancelled">Cancelado</string>
 	<string name="wiki_replaced">Wiki existente fue sobrescrito</string>
@@ -24,10 +25,11 @@
     <string name="failed_creating_file">Error al crear el archivo</string>
     <string name="error_loading_page">Error al cargar la página</string>
 	<string name="error_processing_file">Error al procesar el archivo</string>
+	<string name="wiki_not_exist">Wiki no existe</string>
 	<string name="wiki_already_exists">El wiki ya existe</string>
     <string name="data_error">Error de datos</string>
-	<string name="confirm_to_remove_wiki">¿Estás seguro de que deseas eliminar esta Wiki de Tiddloid?</string>
-	<string name="confirm_to_auto_remove_wiki">El wiki seleccionado ya no existe. ¿Quieres eliminarlo?</string>
+	<string name="confirm_to_remove_wiki">¿Estás seguro de que deseas eliminar esta Wiki de Tiddloid Lite?</string>
+	<string name="confirm_to_auto_remove_wiki">La wiki ya no está disponible. ¿Quieres eliminarlo?</string>
     <string name="confirm_to_exit_wiki">Los cambios no se han guardado. ¿Estás seguro de que quieres dejar de fumar?</string>
     <string name="third_part_rising">La página está intentando iniciar otra aplicación. ¿Quieres continuar?</string>
     <string name="action_about">Acerca de Tiddloid</string>

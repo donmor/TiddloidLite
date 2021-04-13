@@ -86,8 +86,8 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	public void onBindViewHolder(@NonNull WikiListHolder holder, int position) {
 		try {
 			final String id = ids.get(position);
-			JSONObject w = wl.getJSONObject(id);
-			String n = w.getString(MainActivity.KEY_NAME), s = w.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = w.optString(MainActivity.KEY_FAVICON);
+			JSONObject wa = wl.getJSONObject(id);
+			String n = wa.getString(MainActivity.KEY_NAME), s = wa.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = wa.optString(MainActivity.KEY_FAVICON);
 			if (fib64.length() > 0) {
 				byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 				Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -123,12 +123,13 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				builder.append('\n');
 				ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
 				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-				p = builder.length();
-				DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(w.getString(MainActivity.DB_KEY_URI)));
-				if (documentFile != null && documentFile.exists())
+				DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(wa.getString(MainActivity.DB_KEY_URI)));
+				if (documentFile != null && documentFile.exists()) {
+					p = builder.length();
 					builder.append(SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified()))).append(formatSize(documentFile.length()));
-				RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
-				builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+					RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
+					builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+				}
 				holder.btnWiki.setText(builder);
 			} catch (Exception e) {
 				e.printStackTrace();

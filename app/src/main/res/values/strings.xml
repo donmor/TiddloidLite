@@ -71,6 +71,7 @@
     <string name="remove_wiki">Remove</string>
     <string name="please_wait">Please wait&#8230;</string>
     <string name="no_internet">No Internet connection</string>
+    <string name="download_failed">Download failed</string>
     <string name="failed">Failed</string>
     <string name="cancelled">Cancelled</string>
     <string name="wiki_replaced">Existing Wiki Overwritten</string>
@@ -80,9 +81,10 @@
     <string name="failed_creating_file">Failed creating the file</string>
     <string name="error_loading_page">Error loading the page</string>
     <string name="error_processing_file">Error processing the file</string>
+    <string name="wiki_not_exist">Wiki does not exist</string>
     <string name="wiki_already_exists">The wiki already exists</string>
     <string name="data_error">Data error</string>
-    <string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid?</string>
+    <string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid Lite?</string>
     <string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
     <string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
     <string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>

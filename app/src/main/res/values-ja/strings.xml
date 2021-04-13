@@ -15,7 +15,8 @@
 	<string name="remove_wiki">削除</string>
 	<string name="please_wait">お待ちください…</string>
 	<string name="no_internet">インターネット接続なし</string>
-	<string name="failed">失敗しました</string>
+	<string name="download_failed">ダウンロード失敗</string>
+	<string name="failed">失敗</string>
 	<string name="cancelled">キャンセル</string>
 	<string name="wiki_replaced">既存のWikiを上書きされました</string>
 	<string name="file_deleted">ファイルが削除されました</string>
@@ -24,10 +25,11 @@
     <string name="failed_creating_file">ファイルの作成に失敗しました</string>
     <string name="error_loading_page">ページの読み込み中にエラーが発生しました</string>
 	<string name="error_processing_file">ファイルの処理中にエラーが発生しました</string>
+	<string name="wiki_not_exist">Wikiは存在しません</string>
 	<string name="wiki_already_exists">Wikiは既に存在します</string>
     <string name="data_error">データエラー</string>
-	<string name="confirm_to_remove_wiki">このWikiをTiddloidから削除しますか？</string>
-	<string name="confirm_to_auto_remove_wiki">選択したWikiは存在しません。削除しますか？</string>
+	<string name="confirm_to_remove_wiki">このWikiをTiddloid Liteから削除しますか？</string>
+	<string name="confirm_to_auto_remove_wiki">Wikiは利用できなくなりました。削除しますか？</string>
 	<string name="confirm_to_exit_wiki">未保存の変更があります。本当に終了しますか？</string>
 	<string name="third_part_rising">このページから別のアプリケーションが開かれます。続行しますか？</string>
     <string name="action_about">Tiddloidについて</string>

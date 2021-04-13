@@ -15,6 +15,7 @@
 	<string name="remove_wiki">刪除Wiki</string>
 	<string name="please_wait">請耐心等待…</string>
 	<string name="no_internet">沒有網路連接</string>
+	<string name="download_failed">下載失敗</string>
 	<string name="failed">失敗</string>
 	<string name="cancelled">取消</string>
 	<string name="wiki_replaced">現有的Wiki被覆蓋</string>
@@ -24,10 +25,11 @@
     <string name="failed_creating_file">創建檔案失敗</string>
     <string name="error_loading_page">載入頁面時出錯</string>
 	<string name="error_processing_file">處理檔案時出錯</string>
+	<string name="wiki_not_exist">維基不存在</string>
 	<string name="wiki_already_exists">維基已經存在</string>
     <string name="data_error">數據錯誤</string>
-	<string name="confirm_to_remove_wiki">你確定要從Tiddloid中刪除這個維基嗎？</string>
-	<string name="confirm_to_auto_remove_wiki">所選的維基不再存在。你想刪除它嗎？</string>
+	<string name="confirm_to_remove_wiki">你確定要從Tiddloid Lite中刪除這個維基嗎？</string>
+	<string name="confirm_to_auto_remove_wiki">所選的維基不再可用。。你想刪除它嗎？</string>
 	<string name="confirm_to_exit_wiki">檢測到未保存的更改。你確定要退出嗎？</string>
 	<string name="third_part_rising">另一個應用程式將由此頁面打開。你想繼續嗎？</string>
 	<string name="action_about">關於Tiddloid</string>
