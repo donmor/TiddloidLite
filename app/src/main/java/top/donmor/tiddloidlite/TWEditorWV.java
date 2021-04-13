@@ -431,7 +431,7 @@ public class TWEditorWV extends AppCompatActivity {
 			if (exData == null) return;
 			Uri uri = resultData.getData();
 			if (uri != null) try (OutputStream os = getContentResolver().openOutputStream(uri);InputStream is = new ByteArrayInputStream(exData)) {
-				if (os != null && exData != null) throw new FileNotFoundException();
+				if (os == null || exData == null) throw new FileNotFoundException();
 					int len = is.available();
 					int length;
 					int lengthTotal = 0;
@@ -499,7 +499,7 @@ public class TWEditorWV extends AppCompatActivity {
 				|| nextWikiId.length() == 0
 				|| (wl = db.optJSONObject(MainActivity.DB_KEY_WIKI)) == null
 				|| (wa = wl.optJSONObject(nextWikiId)) == null) {
-			Toast.makeText(this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.wiki_not_exist, Toast.LENGTH_SHORT).show();
 			finish();
 			return;
 		}
