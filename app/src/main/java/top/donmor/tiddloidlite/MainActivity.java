@@ -402,21 +402,12 @@ public class MainActivity extends AppCompatActivity {
 		final Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-//				InputStream isw = null, is = null;
-//				OutputStream osw = null, os = null;
 				boolean interrupted = false;
 				final boolean[] iNet = new boolean[3];
-				File cache;
 				class AdaptiveUriInputStream {
 					private final InputStream is;
 
 					AdaptiveUriInputStream(Uri uri) throws NoSuchAlgorithmException, KeyManagementException, IOException {
-//						if (uri.getScheme() != null && uri.getScheme().equals(SCHEME_BLOB_B64)) {
-//							String b64 = uri.getSchemeSpecificPart();
-//							byte[] bytes = Base64.decode(b64, Base64.NO_PADDING);
-//							is = new ByteArrayInputStream(bytes);
-////							len[0] = bytes.length;
-//						} else {
 						HttpURLConnection httpURLConnection;
 						URL url = new URL(uri.normalizeScheme().toString());
 						if (uri.getScheme() != null && uri.getScheme().equals("https")) {
@@ -425,29 +416,21 @@ public class MainActivity extends AppCompatActivity {
 								((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new TLSSocketFactory());
 						} else httpURLConnection = (HttpURLConnection) url.openConnection();
 						httpURLConnection.connect();
-//							len[0] = httpURLConnection.getContentLength();
 						is = httpURLConnection.getInputStream();
 						iNet[0] = true;
-//						}
 					}
 
 					InputStream get() {
 						return is;
 					}
 				}
+				//noinspection UnusedAssignment
+				File cache = null;
 				try (InputStream isw = new AdaptiveUriInputStream(Uri.parse(getString(R.string.template_repo))).get();
 					 OutputStream osw = new FileOutputStream(cache = new File(getCacheDir(), genId()));
 					 InputStream is = new FileInputStream(cache);
 					 OutputStream os = getContentResolver().openOutputStream(uri)) {
 					// 下载到缓存
-
-//					URL url;
-//					url = new URL(getString(R.string.template_repo));
-//					HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-//					if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-//						urlConnection.setSSLSocketFactory(new TLSSocketFactory());
-//					urlConnection.connect();
-//					isw = urlConnection.getInputStream();
 					int length;
 					byte[] bytes = new byte[4096];
 					while ((length = isw.read(bytes)) > -1) {
@@ -459,17 +442,6 @@ public class MainActivity extends AppCompatActivity {
 					}
 					osw.flush();
 					if (interrupted) throw new InterruptedException();
-//					if (interrupted) {
-//						if (cache != null) cache.delete();
-//						runOnUiThread(new Runnable() {
-//							@Override
-//							public void run() {
-//								Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
-//							}
-//						});
-//						return;
-//					}
-//					if (!interrupted) {
 					if (!isWiki(cache)) throw new IOException();
 					progressDialog.dismiss();
 					iNet[1] = true;
@@ -503,8 +475,6 @@ public class MainActivity extends AppCompatActivity {
 						throw new IOException();
 					iNet[2] = true;
 					// 从缓存写入文件
-//						is = new FileInputStream(cache);
-//						os = getContentResolver().openOutputStream(uri);
 					if (os == null) throw new FileNotFoundException();
 					while ((length = is.read(bytes)) > -1) os.write(bytes, 0, length);
 					os.flush();
@@ -516,15 +486,6 @@ public class MainActivity extends AppCompatActivity {
 								Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
 							}
 						});
-//					} catch (NegativeArraySizeException e) {
-//						e.printStackTrace();
-//						runOnUiThread(new Runnable() {
-//							@Override
-//							public void run() {
-//								Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
-//							}
-//						});
-					//					}
 				} catch (JSONException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
 					e.printStackTrace();
 					progressDialog.dismiss();
@@ -549,26 +510,6 @@ public class MainActivity extends AppCompatActivity {
 							Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
 						}
 					});
-//				} finally {
-//					try {
-//						if (isw != null) isw.close();
-//						if (osw != null) osw.close();
-//						if (os != null) os.close();
-//						if (is != null) is.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//					if (interrupted) try {
-//						if (cache != null) cache.delete();
-//						runOnUiThread(new Runnable() {
-//							@Override
-//							public void run() {
-//								Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
-//							}
-//						});
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
 				}
 			}
 		});
@@ -668,7 +609,6 @@ public class MainActivity extends AppCompatActivity {
 
 	static JSONObject initJson(Context context) {
 		File ext = context.getExternalFilesDir(null);
-//		InputStream is = null;
 		if (ext != null) try (InputStream is = new FileInputStream(new File(ext, DB_FILE_NAME))) {
 			byte[] b = new byte[is.available()];
 			if (is.read(b) < 0) throw new Exception();
@@ -677,12 +617,6 @@ public class MainActivity extends AppCompatActivity {
 			return jsonObject;
 		} catch (Exception e) {
 			e.printStackTrace();
-//		} finally {
-//			try {
-//				if (is != null) is.close();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
 		}
 		try {
 			JSONObject jsonObject = new JSONObject();
@@ -692,7 +626,6 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 			return null;
 		}
-//		return jsonObject;
 	}
 
 	static JSONObject readJson(Context context) throws Exception {
@@ -704,7 +637,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	static boolean writeJson(Context context, JSONObject vdb) {
-		//		OutputStream os = null;
 		try (FileOutputStream os = context.openFileOutput(DB_FILE_NAME, MODE_PRIVATE)) {
 			byte[] b = vdb.toString(2).getBytes();
 			os.write(b);
@@ -713,12 +645,6 @@ public class MainActivity extends AppCompatActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-//		} finally {
-//			try {
-//				if (os != null) os.close();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
 		}
 	}
 
@@ -731,12 +657,6 @@ public class MainActivity extends AppCompatActivity {
 			os.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
-//		} finally {
-//			try {
-//				if (os != null) os.close();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
 		}
 	}
 
@@ -772,8 +692,6 @@ public class MainActivity extends AppCompatActivity {
 				}
 			});
 			return an != null;
-//		} finally {
-//			is.close();
 		}
 	}
 

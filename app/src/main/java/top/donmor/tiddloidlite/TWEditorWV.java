@@ -281,13 +281,6 @@ public class TWEditorWV extends AppCompatActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Toast.makeText(TWEditorWV.this, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
-//				} finally {
-//					try {
-//						if (is != null) is.close();
-//						if (os != null) os.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
 				}
 			}
 
@@ -459,14 +452,6 @@ public class TWEditorWV extends AppCompatActivity {
 					e.printStackTrace();
 				}
 				Toast.makeText(this, R.string.failed_creating_file, Toast.LENGTH_SHORT).show();
-//			} finally {
-//
-//				try {
-//					if (is != null) is.close();
-//					if (os != null) os.close();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
 			}
 		}
 		if (requestCode == MainActivity.REQUEST_OPEN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && uploadMessage != null)
@@ -581,8 +566,6 @@ public class TWEditorWV extends AppCompatActivity {
 				wv.loadUrl(MainActivity.STR_EMPTY);
 				return;
 			}
-//			BufferedInputStream is = null;
-//			ByteArrayOutputStream os = null;
 			String data = null;
 			try (BufferedInputStream is = new BufferedInputStream(Objects.requireNonNull(getContentResolver().openInputStream(uri)));
 					ByteArrayOutputStream os = new ByteArrayOutputStream(BUF_SIZE)) {   //读全部数据
@@ -598,13 +581,6 @@ public class TWEditorWV extends AppCompatActivity {
 				data = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(os.toByteArray())).toString();
 			} catch (Exception e) {
 				e.printStackTrace();
-//			} finally {
-//				try {
-//					if (is != null) is.close();
-//					if (os != null) os.close();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
 			}
 			wv.loadDataWithBaseURL(uri.toString(), data != null ? data : MainActivity.STR_EMPTY, MainActivity.TYPE_HTML, StandardCharsets.UTF_8.name(), null);
 		}
