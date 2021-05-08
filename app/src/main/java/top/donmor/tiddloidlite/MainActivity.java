@@ -137,12 +137,7 @@ public class MainActivity extends AppCompatActivity {
 			e.printStackTrace();
 		}
 		rvWikiList.setAdapter(wikiListAdapter);
-		wikiListAdapter.setReloadListener(new WikiListAdapter.ReloadListener() {
-			@Override
-			public void onReloaded(int count) {
-				noWiki.setVisibility(count > 0 ? View.GONE : View.VISIBLE);
-			}
-		});
+		wikiListAdapter.setReloadListener(count -> noWiki.setVisibility(count > 0 ? View.GONE : View.VISIBLE));
 		wikiListAdapter.setOnItemClickListener(new WikiListAdapter.ItemClickListener() {
 			// 点击打开
 			@Override
@@ -160,14 +155,11 @@ public class MainActivity extends AppCompatActivity {
 								.setTitle(android.R.string.dialog_alert_title)
 								.setMessage(R.string.confirm_to_auto_remove_wiki)
 								.setNegativeButton(android.R.string.no, null)
-								.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										removeWiki(id);
-										if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-											wikiListAdapter.notifyDataSetChanged();
-										else wikiListAdapter.notifyItemRemoved(pos);
-									}
+								.setPositiveButton(android.R.string.yes, (dialog, which) -> {
+									removeWiki(id);
+									if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+										wikiListAdapter.notifyDataSetChanged();
+									else wikiListAdapter.notifyItemRemoved(pos);
 								}).show();
 					}
 				} catch (Exception e) {
@@ -223,61 +215,49 @@ public class MainActivity extends AppCompatActivity {
 							.setTitle(name)
 							.setIcon(icon)
 							.setPositiveButton(android.R.string.ok, null)
-							.setNegativeButton(R.string.remove_wiki, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialogInterface, int i) {
-									dialogInterface.dismiss();
-									// 移除确认
-									AlertDialog removeWikiConfirmationDialog = new AlertDialog.Builder(MainActivity.this)
-											.setTitle(android.R.string.dialog_alert_title)
-											.setMessage(R.string.confirm_to_remove_wiki)
-											.setNegativeButton(android.R.string.no, null)
-											.setNeutralButton(R.string.delete_the_html_file, new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialogInterface, int i) {
-													removeWiki(id, true);
-													if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-														wikiListAdapter.notifyDataSetChanged();
-													else wikiListAdapter.notifyItemRemoved(pos);
-												}
-											})
-											.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
-													removeWiki(id);
-													if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-														wikiListAdapter.notifyDataSetChanged();
-													else wikiListAdapter.notifyItemRemoved(pos);
-												}
-											})
-											.create();
-									removeWikiConfirmationDialog.show();
-								}
+							.setNegativeButton(R.string.remove_wiki, (dialogInterface, i) -> {
+								dialogInterface.dismiss();
+								// 移除确认
+								AlertDialog removeWikiConfirmationDialog = new AlertDialog.Builder(MainActivity.this)
+										.setTitle(android.R.string.dialog_alert_title)
+										.setMessage(R.string.confirm_to_remove_wiki)
+										.setNegativeButton(android.R.string.no, null)
+										.setNeutralButton(R.string.delete_the_html_file, (dialogInterface1, i1) -> {
+											removeWiki(id, true);
+											if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+												wikiListAdapter.notifyDataSetChanged();
+											else wikiListAdapter.notifyItemRemoved(pos);
+										})
+										.setPositiveButton(android.R.string.yes, (dialog, which) -> {
+											removeWiki(id);
+											if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+												wikiListAdapter.notifyDataSetChanged();
+											else wikiListAdapter.notifyItemRemoved(pos);
+										})
+										.create();
+								removeWikiConfirmationDialog.show();
 							})
-							.setNeutralButton(R.string.create_shortcut, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialogInterface, int i) {
-									try {
-										// 快捷方式
-										Bundle bu = new Bundle();
-										bu.putString(KEY_ID, id);
-										bu.putBoolean(KEY_SHORTCUT, true);
-										Intent in = new Intent(MainActivity.this, TWEditorWV.class).putExtras(bu).setAction(Intent.ACTION_MAIN);
-										if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
-											ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
-													.setShortLabel(name)
-													.setLongLabel(name + (sub.length() > 0 ? KEY_LBL + sub : sub))
-													.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT ? R.drawable.ic_shortcut : R.mipmap.ic_shortcut))
-													.setIntent(in)
-													.build();
-											if (ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcut, null))
-												Toast.makeText(MainActivity.this, R.string.shortcut_created, Toast.LENGTH_SHORT).show();
-											else throw new Exception();
-										}
-									} catch (Exception e) {
-										e.printStackTrace();
-										Toast.makeText(MainActivity.this, R.string.shortcut_failed, Toast.LENGTH_SHORT).show();
+							.setNeutralButton(R.string.create_shortcut, (dialogInterface, i) -> {
+								try {
+									// 快捷方式
+									Bundle bu = new Bundle();
+									bu.putString(KEY_ID, id);
+									bu.putBoolean(KEY_SHORTCUT, true);
+									Intent in = new Intent(MainActivity.this, TWEditorWV.class).putExtras(bu).setAction(Intent.ACTION_MAIN);
+									if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
+										ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
+												.setShortLabel(name)
+												.setLongLabel(name + (sub.length() > 0 ? KEY_LBL + sub : sub))
+												.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT ? R.drawable.ic_shortcut : R.mipmap.ic_shortcut))
+												.setIntent(in)
+												.build();
+										if (ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcut, null))
+											Toast.makeText(MainActivity.this, R.string.shortcut_created, Toast.LENGTH_SHORT).show();
+										else throw new Exception();
 									}
+								} catch (Exception e) {
+									e.printStackTrace();
+									Toast.makeText(MainActivity.this, R.string.shortcut_failed, Toast.LENGTH_SHORT).show();
 								}
 							})
 							.create();
@@ -361,14 +341,11 @@ public class MainActivity extends AppCompatActivity {
 						.setTitle(R.string.action_about)
 						.setMessage(spannableString)
 						.setPositiveButton(android.R.string.ok, null)
-						.setNeutralButton(R.string.market, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								try {
-									startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(KEY_URI_RATE + getPackageName())));
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+						.setNeutralButton(R.string.market, (dialog, which) -> {
+							try {
+								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(KEY_URI_RATE + getPackageName())));
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
 						})
 						.show();
@@ -404,138 +381,100 @@ public class MainActivity extends AppCompatActivity {
 		progressDialog.setMessage(getString(R.string.please_wait));
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setCanceledOnTouchOutside(false);
-		final Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				boolean interrupted = false;
-				final boolean[] iNet = new boolean[3];
-				class AdaptiveUriInputStream {
-					private final InputStream is;
+		final Thread thread = new Thread(() -> {
+			boolean interrupted = false;
+			final boolean[] iNet = new boolean[3];
+			class AdaptiveUriInputStream {
+				private final InputStream is;
 
-					AdaptiveUriInputStream(Uri uri) throws NoSuchAlgorithmException, KeyManagementException, IOException {
-						HttpURLConnection httpURLConnection;
-						URL url = new URL(uri.normalizeScheme().toString());
-						if (uri.getScheme() != null && uri.getScheme().equals("https")) {
-							httpURLConnection = (HttpsURLConnection) url.openConnection();
-							if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-								((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new TLSSocketFactory());
-						} else httpURLConnection = (HttpURLConnection) url.openConnection();
-						httpURLConnection.connect();
-						is = httpURLConnection.getInputStream();
-						iNet[0] = true;
-					}
+				AdaptiveUriInputStream(Uri uri1) throws NoSuchAlgorithmException, KeyManagementException, IOException {
+					HttpURLConnection httpURLConnection;
+					URL url = new URL(uri1.normalizeScheme().toString());
+					if (uri1.getScheme() != null && uri1.getScheme().equals("https")) {
+						httpURLConnection = (HttpsURLConnection) url.openConnection();
+						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+							((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new TLSSocketFactory());
+					} else httpURLConnection = (HttpURLConnection) url.openConnection();
+					httpURLConnection.connect();
+					is = httpURLConnection.getInputStream();
+					iNet[0] = true;
+				}
 
-					InputStream get() {
-						return is;
+				InputStream get() {
+					return is;
+				}
+			}
+			File cache = new File(getCacheDir(), genId());
+			try (InputStream isw = new AdaptiveUriInputStream(Uri.parse(getString(R.string.template_repo))).get();
+				 OutputStream osw = new FileOutputStream(cache);
+				 InputStream is = new FileInputStream(cache);
+				 OutputStream os = getContentResolver().openOutputStream(uri)) {
+				// 下载到缓存
+				int length;
+				byte[] bytes = new byte[4096];
+				while ((length = isw.read(bytes)) > -1) {
+					osw.write(bytes, 0, length);
+					if (Thread.currentThread().isInterrupted()) {
+						interrupted = true;
+						break;
 					}
 				}
-				File cache = new File(getCacheDir(), genId());
-				try (InputStream isw = new AdaptiveUriInputStream(Uri.parse(getString(R.string.template_repo))).get();
-					 OutputStream osw = new FileOutputStream(cache);
-					 InputStream is = new FileInputStream(cache);
-					 OutputStream os = getContentResolver().openOutputStream(uri)) {
-					// 下载到缓存
-					int length;
-					byte[] bytes = new byte[4096];
-					while ((length = isw.read(bytes)) > -1) {
-						osw.write(bytes, 0, length);
-						if (Thread.currentThread().isInterrupted()) {
-							interrupted = true;
-							break;
-						}
-					}
-					osw.flush();
-					if (interrupted) throw new InterruptedException();
-					if (!isWiki(cache)) throw new IOException();
-					progressDialog.dismiss();
-					iNet[1] = true;
-					String id = null;
-					// 查重
-					JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
-					boolean exist = false;
-					Iterator<String> iterator = wl.keys();
-					JSONObject w = null;
-					while (iterator.hasNext()) {
-						exist = uri.toString().equals((w = wl.getJSONObject(id = iterator.next())).getString(DB_KEY_URI));
-						if (exist) break;
-					}
-					if (exist) {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show();
-							}
-						});
-					} else {
-						id = genId();
-						w = new JSONObject();
-						wl.put(id, w);
-					}
-					// 初始化键对
-					w.put(KEY_NAME, KEY_TW);
-					w.put(DB_KEY_SUBTITLE, STR_EMPTY);
-					w.put(DB_KEY_URI, uri.toString());
-					if (!MainActivity.writeJson(MainActivity.this, db))
-						throw new IOException();
-					iNet[2] = true;
-					// 从缓存写入文件
-					if (os == null) throw new FileNotFoundException();
-					while ((length = is.read(bytes)) > -1) os.write(bytes, 0, length);
-					os.flush();
-					getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
-					if (!loadPage(id))
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show();
-							}
-						});
-				} catch (JSONException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
+				osw.flush();
+				if (interrupted) throw new InterruptedException();
+				if (!isWiki(cache)) throw new IOException();
+				progressDialog.dismiss();
+				iNet[1] = true;
+				String id = null;
+				// 查重
+				JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
+				boolean exist = false;
+				Iterator<String> iterator = wl.keys();
+				JSONObject w = null;
+				while (iterator.hasNext()) {
+					exist = uri.toString().equals((w = wl.getJSONObject(id = iterator.next())).getString(DB_KEY_URI));
+					if (exist) break;
+				}
+				if (exist) {
+					runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.wiki_replaced, Toast.LENGTH_SHORT).show());
+				} else {
+					id = genId();
+					w = new JSONObject();
+					wl.put(id, w);
+				}
+				// 初始化键对
+				w.put(KEY_NAME, KEY_TW);
+				w.put(DB_KEY_SUBTITLE, STR_EMPTY);
+				w.put(DB_KEY_URI, uri.toString());
+				if (!MainActivity.writeJson(MainActivity.this, db))
+					throw new IOException();
+				iNet[2] = true;
+				// 从缓存写入文件
+				if (os == null) throw new FileNotFoundException();
+				while ((length = is.read(bytes)) > -1) os.write(bytes, 0, length);
+				os.flush();
+				getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
+				if (!loadPage(id))
+					runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show());
+			} catch (JSONException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
+				e.printStackTrace();
+				progressDialog.dismiss();
+				if (iNet[1]) try {
+					DocumentsContract.deleteDocument(getContentResolver(), uri);
+				} catch (Exception e1) {
 					e.printStackTrace();
-					progressDialog.dismiss();
-					if (iNet[1]) try {
-						DocumentsContract.deleteDocument(getContentResolver(), uri);
-					} catch (Exception e1) {
-						e.printStackTrace();
-					}
-					final int fid = iNet[2] ? R.string.failed_creating_file : iNet[1] ? R.string.data_error : iNet[0] ? R.string.download_failed : R.string.no_internet;
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(MainActivity.this, fid, Toast.LENGTH_SHORT).show();
-						}
-					});
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-					cache.delete();
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show();
-						}
-					});
 				}
+				final int fid = iNet[2] ? R.string.failed_creating_file : iNet[1] ? R.string.data_error : iNet[0] ? R.string.download_failed : R.string.no_internet;
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, fid, Toast.LENGTH_SHORT).show());
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+				cache.delete();
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show());
 			}
 		});
 
-		progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialogInterface, int i) {
-				progressDialog.cancel();
-			}
-		});
-		progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-			@Override
-			public void onShow(DialogInterface dialog) {
-				thread.start();
-			}
-		});
-		progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			@Override
-			public void onCancel(DialogInterface dialogInterface) {
-				thread.interrupt();
-			}
-		});
+		progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getText(android.R.string.cancel), (dialogInterface, i) -> progressDialog.cancel());
+		progressDialog.setOnShowListener(dialog -> thread.start());
+		progressDialog.setOnCancelListener(dialogInterface -> thread.interrupt());
 		progressDialog.show();
 	}
 

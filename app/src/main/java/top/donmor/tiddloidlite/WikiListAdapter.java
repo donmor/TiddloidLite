@@ -101,19 +101,11 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				}
 			}
 			// 调用接口
-			holder.btnWiki.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mItemClickListener.onItemClick(holder.getAdapterPosition(), id);
-				}
-			});
-			holder.btnWiki.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					vibrator.vibrate(new long[]{0, 1}, -1);
-					mItemClickListener.onItemLongClick(holder.getAdapterPosition(), id);
-					return true;
-				}
+			holder.btnWiki.setOnClickListener(v -> mItemClickListener.onItemClick(holder.getAdapterPosition(), id));
+			holder.btnWiki.setOnLongClickListener(v -> {
+				vibrator.vibrate(new long[]{0, 1}, -1);
+				mItemClickListener.onItemLongClick(holder.getAdapterPosition(), id);
+				return true;
 			});
 			// 条目显示
 			try {
