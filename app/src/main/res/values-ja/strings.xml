@@ -4,6 +4,7 @@
     <!--UI-->
     <string name="action_new">新しいWikiを作成する</string>
 	<string name="action_import">ファイルをインポートする</string>
+	<string name="action_about">Tiddloid Liteについて</string>
 	<string name="there_is_no_wiki_here">ここには何もありません</string>
 	<string name="provider">"ソース:&#160;"</string>
 	<string name="pathDir">"パス:&#160;"</string>
@@ -14,7 +15,7 @@
 	<string name="shortcut_failed">ショートカットを作成できませんでした</string>
 	<string name="remove_wiki">削除</string>
 	<string name="please_wait">お待ちください…</string>
-	<string name="no_internet">インターネット接続なし</string>
+	<string name="no_internet">インターネット接続がありません</string>
 	<string name="download_failed">ダウンロード失敗</string>
 	<string name="failed">失敗</string>
 	<string name="cancelled">キャンセル</string>
@@ -32,7 +33,6 @@
 	<string name="confirm_to_auto_remove_wiki">Wikiは利用できなくなりました。削除しますか？</string>
 	<string name="confirm_to_exit_wiki">未保存の変更があります。本当に終了しますか？</string>
 	<string name="third_part_rising">このページから別のアプリケーションが開かれます。続行しますか？</string>
-    <string name="action_about">Tiddloidについて</string>
 	<string name="market">評価する</string>
     <string name="about">
 		Tiddloid Liteは、ローカルに保存されているTiddlyWikiを操作するためのアプリであり、Tiddloidの軽量バージョンです。いくつかのアイデアを得たら、すぐにそれらを書き留めてどこにでもアクセスできるようにすることができます。TiddlyWikiの詳細については、https://tiddlywiki.com を参照してください。\n
@@ -42,6 +42,6 @@
         Jsoup - https://jsoup.org/ ,\n
         ライセンスファイルはソースコードとともに提供されます。\n
         \n
-        このアプリの詳細については、プロジェクトページ（ https://github.com/donmor/Tiddloidlite/ ）または私のホームページ（ https://donmor.top/ ）をご覧ください。
+        このアプリの詳細については、プロジェクトページ（ https://github.com/donmor/TiddloidLite/ ）または私のホームページ（ https://donmor.top/ ）をご覧ください。
 	</string>
 </resources>

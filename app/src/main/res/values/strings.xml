@@ -5,7 +5,7 @@
     <!--JS-->
     <string name="js_exit" translatable="false">
         (function(){
-            return document.body.classList.contains(\"tc-dirty\");
+            return $tw.saverHandler.isDirty();
         })();
     </string>
     <string name="js_info" translatable="false">
@@ -59,7 +59,7 @@
     <!--UI-->
     <string name="action_new">New Wiki</string>
     <string name="action_import">Import a file</string>
-    <string name="action_about">About Tiddloid</string>
+    <string name="action_about">About Tiddloid Lite</string>
     <string name="there_is_no_wiki_here">There is nothing here</string>
     <string name="provider">Source:&#160;</string>
     <string name="pathDir">Path:&#160;</string>
@@ -92,7 +92,7 @@
     <string name="about">
         Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
         \n
-        This app is under GPL v2 license　with the help of these open source projects:\n
+        This app is released under GPL v2 license　with the help of these open source projects:\n
         Json - https://json.org/ ,\n
         Jsoup - https://jsoup.org/ ,\n
         License files provided with source codes.\n

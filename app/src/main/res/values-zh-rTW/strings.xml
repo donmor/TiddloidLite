@@ -4,6 +4,7 @@
     <!--UI-->
     <string name="action_new">新維基</string>
 	<string name="action_import">導入現有維基</string>
+	<string name="action_about">關於Tiddloid Lite</string>
 	<string name="there_is_no_wiki_here">這裡什麼都沒有</string>
 	<string name="provider">"來源:&#160;"</string>
 	<string name="pathDir">"路徑:&#160;"</string>
@@ -14,7 +15,7 @@
 	<string name="shortcut_failed">無法建立捷徑</string>
 	<string name="remove_wiki">刪除Wiki</string>
 	<string name="please_wait">請耐心等待…</string>
-	<string name="no_internet">沒有網路連接</string>
+	<string name="no_internet">沒有網絡連接</string>
 	<string name="download_failed">下載失敗</string>
 	<string name="failed">失敗</string>
 	<string name="cancelled">取消</string>
@@ -29,10 +30,9 @@
 	<string name="wiki_already_exists">維基已經存在</string>
     <string name="data_error">數據錯誤</string>
 	<string name="confirm_to_remove_wiki">你確定要從Tiddloid Lite中刪除這個維基嗎？</string>
-	<string name="confirm_to_auto_remove_wiki">所選的維基不再可用。。你想刪除它嗎？</string>
+	<string name="confirm_to_auto_remove_wiki">所選的維基不再可用。你想刪除它嗎？</string>
 	<string name="confirm_to_exit_wiki">檢測到未保存的更改。你確定要退出嗎？</string>
 	<string name="third_part_rising">另一個應用程式將由此頁面打開。你想繼續嗎？</string>
-	<string name="action_about">關於Tiddloid</string>
 	<string name="market">為此應用評分</string>
 	<string name="about">
 		Tiddloid Lite是Tiddloid的輕量化版本，是一款適用於本地儲存的TiddlyWiki的應用程式。一旦有了一些想法，您可以立即將它們寫下來，以便您可以隨時隨地訪問這些想法。有關TiddlyWiki的更多詳細信息，請參閱https://tiddlywiki.com/。 \n

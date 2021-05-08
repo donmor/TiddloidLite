@@ -4,6 +4,7 @@
     <!--UI-->
     <string name="action_new">创建新的Wiki</string>
 	<string name="action_import">导入已有Wiki文件</string>
+	<string name="action_about">关于Tiddloid Lite</string>
 	<string name="there_is_no_wiki_here">没有内容</string>
 	<string name="provider">来源:&#160;</string>
 	<string name="pathDir">"路径:&#160;"</string>
@@ -29,10 +30,9 @@
 	<string name="wiki_already_exists">Wiki已存在</string>
     <string name="data_error">数据错误</string>
 	<string name="confirm_to_remove_wiki">你确定要从Tiddloid Lite中删除这个Wiki吗？</string>
-	<string name="confirm_to_auto_remove_wiki">所选的Wiki不可用。。要从列表中移除它吗？</string>
+	<string name="confirm_to_auto_remove_wiki">所选的Wiki不可用。要从列表中移除它吗？</string>
 	<string name="confirm_to_exit_wiki">一些更改尚未保存。确定要退出吗？</string>
 	<string name="third_part_rising">此页面正在请求打开另一个应用程序。要继续吗？</string>
-	<string name="action_about">关于Tiddloid</string>
 	<string name="market">打分并评价</string>
 	<string name="about">
 		Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是Tiddloid的轻量版。一旦有了一些想法，您可以立即将它们写下来以供随时查阅。有关TiddlyWiki的更多详细信息，请参阅https://tiddlywiki.com/。\n
@@ -42,6 +42,6 @@
         Jsoup - https://jsoup.org/ ,\n
 		许可证文件随源代码提供。\n
 		\n
-		有关本应用程序的更多详细信息，请访问项目页面（ https://github.com/donmor/Tiddloidlite/ ）或我的主页（ https://donmor.top/ ）。
+		有关本应用程序的更多详细信息，请访问项目页面（ https://github.com/donmor/TiddloidLite/ ）或我的主页（ https://donmor.top/ ）。
 	</string>
 </resources>

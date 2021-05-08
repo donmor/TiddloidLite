@@ -6,7 +6,6 @@
 
 package top.donmor.tiddloidlite;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -40,12 +39,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.documentfile.provider.DocumentFile;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,7 +76,6 @@ import java.util.UUID;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-	private RecyclerView rvWikiList;
 	private TextView noWiki;
 	private WikiListAdapter wikiListAdapter = null;
 	private JSONObject db;
@@ -129,13 +128,15 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		noWiki = findViewById(R.id.t_noWiki);
-		rvWikiList = findViewById(R.id.rvWikiList);
+		RecyclerView rvWikiList = findViewById(R.id.rvWikiList);
 		rvWikiList.setLayoutManager(new LinearLayoutManager(this));
+		rvWikiList.setItemAnimator(new DefaultItemAnimator());
 		try {
 			wikiListAdapter = new WikiListAdapter(this, db);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		rvWikiList.setAdapter(wikiListAdapter);
 		wikiListAdapter.setReloadListener(new WikiListAdapter.ReloadListener() {
 			@Override
 			public void onReloaded(int count) {
@@ -145,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
 		wikiListAdapter.setOnItemClickListener(new WikiListAdapter.ItemClickListener() {
 			// 点击打开
 			@Override
-			public void onItemClick(final String id) {
+			public void onItemClick(final int pos, final String id) {
+				if (pos == -1) return;
 				try {
 					JSONObject wa = db.getJSONObject(DB_KEY_WIKI).getJSONObject(id);
 					Uri uri = Uri.parse(wa.getString(DB_KEY_URI));
@@ -162,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
 										removeWiki(id);
+										if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+											wikiListAdapter.notifyDataSetChanged();
+										else wikiListAdapter.notifyItemRemoved(pos);
 									}
 								}).show();
 					}
@@ -172,23 +177,20 @@ public class MainActivity extends AppCompatActivity {
 			}
 
 			// 长按属性
-			@SuppressLint("QueryPermissionsNeeded")
 			@Override
-			public void onItemLongClick(final String id) {
+			public void onItemLongClick(final int pos, final String id) {
+				if (pos == -1) return;
 				try {
 					JSONObject wl = db.getJSONObject(DB_KEY_WIKI), wa = wl.getJSONObject(id);
 					Uri uri = Uri.parse(wa.getString(DB_KEY_URI));
-					final String name = wa.optString(KEY_NAME), sub = wa.optString(DB_KEY_SUBTITLE);
-					Drawable icon = null;
+					final String name = wa.optString(KEY_NAME, KEY_TW), sub = wa.optString(DB_KEY_SUBTITLE);
 					byte[] b = Base64.decode(wa.optString(KEY_FAVICON), Base64.NO_PADDING);
 					final Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-						icon = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_description);
-						if (favicon != null) try {
-							icon = new BitmapDrawable(getResources(), favicon);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					Drawable icon = AppCompatResources.getDrawable(MainActivity.this, R.drawable.ic_description);
+					if (favicon != null) try {
+						icon = new BitmapDrawable(getResources(), favicon);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 					TextView view = new TextView(MainActivity.this);
 					DocumentFile file = DocumentFile.fromSingleUri(MainActivity.this, uri);
@@ -229,22 +231,23 @@ public class MainActivity extends AppCompatActivity {
 									AlertDialog removeWikiConfirmationDialog = new AlertDialog.Builder(MainActivity.this)
 											.setTitle(android.R.string.dialog_alert_title)
 											.setMessage(R.string.confirm_to_remove_wiki)
-											.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialogInterface, int i) {
-													MainActivity.this.onResume();
-												}
-											})
+											.setNegativeButton(android.R.string.no, null)
 											.setNeutralButton(R.string.delete_the_html_file, new DialogInterface.OnClickListener() {
 												@Override
 												public void onClick(DialogInterface dialogInterface, int i) {
 													removeWiki(id, true);
+													if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+														wikiListAdapter.notifyDataSetChanged();
+													else wikiListAdapter.notifyItemRemoved(pos);
 												}
 											})
 											.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 												@Override
 												public void onClick(DialogInterface dialog, int which) {
 													removeWiki(id);
+													if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+														wikiListAdapter.notifyDataSetChanged();
+													else wikiListAdapter.notifyItemRemoved(pos);
 												}
 											})
 											.create();
@@ -263,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
 										if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
 											ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
 													.setShortLabel(name)
-													.setLongLabel(name + (KEY_LBL + sub))
-													.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut))
+													.setLongLabel(name + (sub.length() > 0 ? KEY_LBL + sub : sub))
+													.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT ? R.drawable.ic_shortcut : R.mipmap.ic_shortcut))
 													.setIntent(in)
 													.build();
 											if (ShortcutManagerCompat.requestPinShortcut(MainActivity.this, shortcut, null))
@@ -312,20 +315,22 @@ public class MainActivity extends AppCompatActivity {
 	private void removeWiki(String id, boolean del) {
 		try {
 			JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
-			Uri uri = Uri.parse(wl.getJSONObject(id).getString(DB_KEY_URI));
-			wl.remove(id);
+			JSONObject xw = (JSONObject) wl.remove(id);
 			writeJson(MainActivity.this, db);
-			if (del) {
-				DocumentsContract.deleteDocument(getContentResolver(), uri);
-				Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+			if (xw != null) {
+				Uri uri = Uri.parse(xw.optString(DB_KEY_URI));
+				if (del) {
+					DocumentsContract.deleteDocument(getContentResolver(), uri);
+					Toast.makeText(MainActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+				}
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+					revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
 			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-				revokeUriPermission(getPackageName(), uri, TAKE_FLAGS);
+			wikiListAdapter.reload(db);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(MainActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
 		}
-		onResume();
 	}
 
 
@@ -424,10 +429,9 @@ public class MainActivity extends AppCompatActivity {
 						return is;
 					}
 				}
-				//noinspection UnusedAssignment
-				File cache = null;
+				File cache = new File(getCacheDir(), genId());
 				try (InputStream isw = new AdaptiveUriInputStream(Uri.parse(getString(R.string.template_repo))).get();
-					 OutputStream osw = new FileOutputStream(cache = new File(getCacheDir(), genId()));
+					 OutputStream osw = new FileOutputStream(cache);
 					 InputStream is = new FileInputStream(cache);
 					 OutputStream os = getContentResolver().openOutputStream(uri)) {
 					// 下载到缓存
@@ -503,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
 					});
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
-					if (cache != null) cache.delete();
+					cache.delete();
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -584,7 +588,7 @@ public class MainActivity extends AppCompatActivity {
 		try {
 			db = readJson(this);
 			wikiListAdapter.reload(db);
-			rvWikiList.setAdapter(wikiListAdapter);
+			wikiListAdapter.notifyDataSetChanged();
 			noWiki.setVisibility(wikiListAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -608,16 +612,19 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	static JSONObject initJson(Context context) {
-		File ext = context.getExternalFilesDir(null);
-		if (ext != null) try (InputStream is = new FileInputStream(new File(ext, DB_FILE_NAME))) {
-			byte[] b = new byte[is.available()];
-			if (is.read(b) < 0) throw new Exception();
-			JSONObject jsonObject = new JSONObject(new String(b));
-			if (!jsonObject.has(DB_KEY_WIKI)) jsonObject.put(DB_KEY_WIKI, new JSONObject());
-			return jsonObject;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		File ext = context.getExternalFilesDir(null), file = null;
+		if (ext != null)
+			try (InputStream is = new FileInputStream(file = new File(ext, DB_FILE_NAME))) {
+				byte[] b = new byte[is.available()];
+				if (is.read(b) < 0) throw new Exception();
+				JSONObject jsonObject = new JSONObject(new String(b));
+				if (!jsonObject.has(DB_KEY_WIKI)) jsonObject.put(DB_KEY_WIKI, new JSONObject());
+				return jsonObject;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (file != null) file.delete();
+			}
 		try {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put(DB_KEY_WIKI, new JSONObject());
@@ -667,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
 	static boolean isWiki(Context context, Uri uri) {
 		try {
 			return isWiki(context.getContentResolver().openInputStream(uri), uri);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -703,10 +710,10 @@ public class MainActivity extends AppCompatActivity {
 			for (int i = 0; i < wl1.length(); i++) {
 				JSONObject wiki = new JSONObject(), w0 = wl1.optJSONObject(i);
 				if (w0 == null) continue;
-				wiki.put(KEY_NAME, w0.getString(KEY_NAME));
-				wiki.put(DB_KEY_SUBTITLE, w0.optString(DB_KEY_SUBTITLE, null));
-				wiki.put(DB_KEY_URI, w0.getString(DB_KEY_URI));
-				wl2.put(wl1.getJSONObject(i).getString(KEY_ID), wiki);
+				wiki.put(KEY_NAME, w0.optString(KEY_NAME, KEY_TW));
+				wiki.put(DB_KEY_SUBTITLE, w0.optString(DB_KEY_SUBTITLE));
+				wiki.put(DB_KEY_URI, w0.optString(DB_KEY_URI));
+				wl2.put(w0.optString(KEY_ID, genId()), wiki);
 			}
 			db.remove(DB_KEY_WIKI);
 			db.put(DB_KEY_WIKI, wl2);

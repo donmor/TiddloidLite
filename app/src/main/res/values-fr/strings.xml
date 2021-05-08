@@ -4,6 +4,7 @@
 	<!--UI-->
 	<string name="action_new">Créer un nouveau wiki</string>
 	<string name="action_import">Importer un fichier</string>
+	<string name="action_about">À propos de Tiddloid Lite</string>
 	<string name="there_is_no_wiki_here">Il n\'y a rien ici</string>
 	<string name="provider">Pourvoyeur:&#160;</string>
 	<string name="pathDir">"Chemin:&#160;"</string>
@@ -32,7 +33,6 @@
 	<string name="confirm_to_auto_remove_wiki">Le wiki n\'est plus disponible. Voulez-vous l\'enlever?</string>
 	<string name="confirm_to_exit_wiki">Les modifications non enregistrées détectés. Êtes-vous sûr de vouloir quitter?</string>
 	<string name="third_part_rising">La page tente de démarrer une autre application. Voulez-vous continuer?</string>
-    <string name="action_about">À propos de Tiddloid</string>
 	<string name="market">Évaluer l\'application</string>
 	<string name="about">
         Tiddloid Lite, une version allégée de Tiddloid, est une application pour travailler avec les TiddlyWikis stockés localement. Une fois avoir des idées, vous pouvez les écrire immédiatement vers le bas afin que vous puissiez y accéder partout. Pour plus de détails sur TiddlyWiki, veuillez consulter https://tiddlywiki.com/ .\n
@@ -42,6 +42,6 @@
         Jsoup - https://jsoup.org/ ,\n
         Les fichiers de licence sont fournis avec les codes sources.\n
         \n
-        Pour plus de détails sur cette application, veuillez visiter la page du projet ( https://github.com/donmor/Tiddloidlite/ ) ou ma page d\'accueil ( https://donmor.top/ ).
+        Pour plus de détails sur cette application, veuillez visiter la page du projet ( https://github.com/donmor/TiddloidLite/ ) ou ma page d\'accueil ( https://donmor.top/ ).
     </string>
 </resources>

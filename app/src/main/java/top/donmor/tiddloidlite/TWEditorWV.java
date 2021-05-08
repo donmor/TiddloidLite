@@ -6,6 +6,7 @@
 
 package top.donmor.tiddloidlite;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -21,6 +22,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.provider.DocumentsContract;
 import android.util.Base64;
 import android.view.View;
@@ -35,7 +39,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -83,8 +86,9 @@ public class TWEditorWV extends AppCompatActivity {
 	private static final String
 			JSI = "twi",
 			MIME_ANY = "*/*",
-			KEY_HASH_1 = "(function(){new $tw.Story().navigateTiddler(\"",
-			KEY_HASH_2 = "\");})();",
+			STR_JS_POP_PRE = "(function(){new $tw.Story().navigateTiddler(\"",
+			STR_JS_POP_POST = "\");})();",
+			STR_JS_PRINT = "(function(){window.print=function(){window.twi.print();}})();",
 			KEY_YES = "yes",
 			SCH_ABOUT = "about",
 			SCH_FILE = "file",
@@ -191,7 +195,7 @@ public class TWEditorWV extends AppCompatActivity {
 			public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
 				WebView.HitTestResult result = view.getHitTestResult();
 				String data = result.getExtra();
-				if (data != null) return overrideUrlLoading(view, Uri.parse(data));
+				if (data != null && !isDialog) return overrideUrlLoading(view, Uri.parse(data));
 				final WebView nwv = new WebView(TWEditorWV.this);
 				final AlertDialog dialog = new AlertDialog.Builder(TWEditorWV.this).setView(nwv).setPositiveButton(android.R.string.ok, null).setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
@@ -204,7 +208,7 @@ public class TWEditorWV extends AppCompatActivity {
 					public void onPageFinished(WebView view, String url) {
 						if (url.startsWith(TWEditorWV.this.uri.toString())) {
 							String p = url.substring(url.indexOf('#') + 1);
-							wv.evaluateJavascript(KEY_HASH_1 + Uri.decode(p) + KEY_HASH_2, null);
+							wv.evaluateJavascript(STR_JS_POP_PRE + Uri.decode(p) + STR_JS_POP_POST, null);
 							dialog.dismiss();
 						}
 						super.onPageFinished(view, url);
@@ -233,6 +237,19 @@ public class TWEditorWV extends AppCompatActivity {
 		wv.setWebChromeClient(wcc);
 		// JS请求处理
 		final class JavaScriptCallback {
+			// 打印
+			@JavascriptInterface
+			public void print() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						PrintManager printManager = (PrintManager) TWEditorWV.this.getSystemService(Context.PRINT_SERVICE);
+						PrintDocumentAdapter printDocumentAdapter = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? wv.createPrintDocumentAdapter(getTitle().toString()) : wv.createPrintDocumentAdapter();
+						printManager.print(getTitle().toString(), printDocumentAdapter, new PrintAttributes.Builder().build());
+					}
+				});
+			}
+
 			// AndTidWiki fallback
 			@JavascriptInterface
 			public void saveFile(String pathname, String data) {
@@ -260,7 +277,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@JavascriptInterface
 			public void saveWiki(String data) {
 				try (ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
-					OutputStream os = getContentResolver().openOutputStream(uri)) {
+					 OutputStream os = getContentResolver().openOutputStream(uri)) {
 					if (os == null) throw new FileNotFoundException();
 					int len = is.available();
 					int length, lengthTotal = 0;
@@ -307,6 +324,7 @@ public class TWEditorWV extends AppCompatActivity {
 
 			// 加载完成回调
 			public void onPageFinished(WebView view, String url) {
+				view.evaluateJavascript(STR_JS_PRINT, null);
 				view.clearHistory();
 				if (!URL_BLANK.equals(url)) getInfo(view);
 			}
@@ -327,7 +345,9 @@ public class TWEditorWV extends AppCompatActivity {
 		Bundle bu;
 		String fid;
 		JSONObject wl, wa;
-		if ((bu = intent.getExtras()) == null || (fid = bu.getString(MainActivity.KEY_ID)) == null || (wl = db.optJSONObject(MainActivity.DB_KEY_WIKI)) == null || (wa = wl.optJSONObject(fid)) == null) {
+		if ((bu = intent.getExtras()) == null || (fid = bu.getString(MainActivity.KEY_ID)) == null)
+			return;
+		if ((wl = db.optJSONObject(MainActivity.DB_KEY_WIKI)) == null || (wa = wl.optJSONObject(fid)) == null) {
 			Toast.makeText(this, R.string.wiki_not_exist, Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -430,8 +450,9 @@ public class TWEditorWV extends AppCompatActivity {
 		if (requestCode == KEY_REQ_DOWN) {
 			if (exData == null) return;
 			Uri uri = resultData.getData();
-			if (uri != null) try (OutputStream os = getContentResolver().openOutputStream(uri);InputStream is = new ByteArrayInputStream(exData)) {
-				if (os == null || exData == null) throw new FileNotFoundException();
+			if (uri != null)
+				try (OutputStream os = getContentResolver().openOutputStream(uri); InputStream is = new ByteArrayInputStream(exData)) {
+					if (os == null || exData == null) throw new FileNotFoundException();
 					int len = is.available();
 					int length;
 					int lengthTotal = 0;
@@ -444,15 +465,15 @@ public class TWEditorWV extends AppCompatActivity {
 					if (lengthTotal != len) throw new IOException();
 
 
-			} catch (Exception e) {
-				e.printStackTrace();
-				try {
-					DocumentsContract.deleteDocument(getContentResolver(), uri);
-				} catch (Exception e1) {
+				} catch (Exception e) {
 					e.printStackTrace();
+					try {
+						DocumentsContract.deleteDocument(getContentResolver(), uri);
+					} catch (Exception e1) {
+						e.printStackTrace();
+					}
+					Toast.makeText(this, R.string.failed_creating_file, Toast.LENGTH_SHORT).show();
 				}
-				Toast.makeText(this, R.string.failed_creating_file, Toast.LENGTH_SHORT).show();
-			}
 		}
 		if (requestCode == MainActivity.REQUEST_OPEN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && uploadMessage != null)
 			uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, resultData));
@@ -540,11 +561,11 @@ public class TWEditorWV extends AppCompatActivity {
 		wApp = wa;
 		uri = u;
 		if (nextWikiIntent != getIntent()) setIntent(nextWikiIntent);
-		String wvTitle = wApp.optString(MainActivity.KEY_NAME);
+		String wvTitle = wApp.optString(MainActivity.KEY_NAME, MainActivity.KEY_TW);
 		String wvSubTitle = wApp.optString(MainActivity.DB_KEY_SUBTITLE);
 		String fib64 = wApp.optString(MainActivity.KEY_FAVICON);
-		if (wvTitle.length() > 0) this.setTitle(wvTitle);
-		if (wvSubTitle.length() > 0) toolbar.setSubtitle(wvSubTitle);
+		this.setTitle(wvTitle);
+		toolbar.setSubtitle(wvSubTitle.length() > 0 ? wvSubTitle : null);
 		if (fib64.length() > 0) {
 			byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 			Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -568,7 +589,7 @@ public class TWEditorWV extends AppCompatActivity {
 			}
 			String data = null;
 			try (BufferedInputStream is = new BufferedInputStream(Objects.requireNonNull(getContentResolver().openInputStream(uri)));
-					ByteArrayOutputStream os = new ByteArrayOutputStream(BUF_SIZE)) {   //读全部数据
+				 ByteArrayOutputStream os = new ByteArrayOutputStream(BUF_SIZE)) {   //读全部数据
 				int len = is.available();
 				int length, lenTotal = 0;
 				byte[] b = new byte[BUF_SIZE];
@@ -634,7 +655,6 @@ public class TWEditorWV extends AppCompatActivity {
 			}
 			getWindow().getDecorView().setSystemUiVisibility(bar | (landscape ? View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY : View.SYSTEM_UI_FLAG_VISIBLE));
 			findViewById(R.id.wv_appbar).setBackgroundColor(primColor);
-			((LinearLayout) findViewById(R.id.wv_ll)).setBackgroundColor(primColor);
 			toolbar.setTitleTextAppearance(this, R.style.Toolbar_TitleText);
 			toolbar.setSubtitleTextAppearance(this, R.style.TextAppearance_AppCompat_Small);
 			if (themeColor != null) {    // 有主题色则根据灰度切换字色

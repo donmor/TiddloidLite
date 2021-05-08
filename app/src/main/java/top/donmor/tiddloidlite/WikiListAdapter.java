@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Vibrator;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,11 +60,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		scale = context.getResources().getDisplayMetrics().density;
 		vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 		this.wl = db.getJSONObject(MainActivity.DB_KEY_WIKI);
-		Iterator<String> iterator = wl.keys();
-		ids = new ArrayList<>();
-		while (iterator.hasNext()) {
-			ids.add(iterator.next());
-		}
+		reload(db);
 		inflater = LayoutInflater.from(context);
 	}
 
@@ -83,11 +81,15 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull WikiListHolder holder, int position) {
+	public void onBindViewHolder(@NonNull final WikiListHolder holder, int position) {
 		try {
 			final String id = ids.get(position);
 			JSONObject wa = wl.getJSONObject(id);
-			String n = wa.getString(MainActivity.KEY_NAME), s = wa.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = wa.optString(MainActivity.KEY_FAVICON);
+			String n = wa.optString(MainActivity.KEY_NAME, MainActivity.KEY_TW), s = wa.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = wa.optString(MainActivity.KEY_FAVICON);
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+				holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_description, 0, 0, 0);
+			else
+				holder.btnWiki.setCompoundDrawablesWithIntrinsicBounds(AppCompatResources.getDrawable(context, R.drawable.ic_description), null, null, null);
 			if (fib64.length() > 0) {
 				byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 				Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -102,14 +104,14 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 			holder.btnWiki.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mItemClickListener.onItemClick(id);
+					mItemClickListener.onItemClick(holder.getAdapterPosition(), id);
 				}
 			});
 			holder.btnWiki.setOnLongClickListener(new View.OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
 					vibrator.vibrate(new long[]{0, 1}, -1);
-					mItemClickListener.onItemLongClick(id);
+					mItemClickListener.onItemLongClick(holder.getAdapterPosition(), id);
 					return true;
 				}
 			});
@@ -147,9 +149,9 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 
 	// 导出接口
 	interface ItemClickListener {
-		void onItemClick(String id);
+		void onItemClick(int pos, String id);
 
-		void onItemLongClick(String id);
+		void onItemLongClick(int pos, String id);
 	}
 
 	void setOnItemClickListener(ItemClickListener itemClickListener) {
@@ -172,7 +174,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		while (iterator.hasNext()) {
 			ids.add(iterator.next());
 		}
-		mReloadListener.onReloaded(this.getItemCount());
+		if (mReloadListener != null) mReloadListener.onReloaded(this.getItemCount());
 	}
 
 	// 格式化大小
