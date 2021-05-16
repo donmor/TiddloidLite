@@ -88,6 +88,7 @@ public class TWEditorWV extends AppCompatActivity {
 			STR_JS_POP_PRE = "(function(){new $tw.Story().navigateTiddler(\"",
 			STR_JS_POP_POST = "\");})();",
 			STR_JS_PRINT = "(function(){window.print=function(){window.twi.print();}})();",
+			KEY_ENC = "enc",
 			KEY_YES = "yes",
 			SCH_ABOUT = "about",
 			SCH_FILE = "file",
@@ -137,6 +138,7 @@ public class TWEditorWV extends AppCompatActivity {
 		wvs.setAllowFileAccessFromFileURLs(true);
 		wvs.setAllowUniversalAccessFromFileURLs(true);
 		wvs.setSupportMultipleWindows(true);
+		wvs.setMediaPlaybackRequiresUserGesture(false);
 		scale = getResources().getDisplayMetrics().density;
 		wcc = new WebChromeClient() {
 			// 进度条
@@ -235,6 +237,11 @@ public class TWEditorWV extends AppCompatActivity {
 		wv.setWebChromeClient(wcc);
 		// JS请求处理
 		final class JavaScriptCallback {
+			@JavascriptInterface
+			public void onDecrypted() {
+				runOnUiThread(() -> getInfo(wv));
+			}
+
 			// 打印
 			@JavascriptInterface
 			public void print() {
@@ -315,6 +322,7 @@ public class TWEditorWV extends AppCompatActivity {
 			// 加载完成回调
 			public void onPageFinished(WebView view, String url) {
 				view.evaluateJavascript(STR_JS_PRINT, null);
+				view.evaluateJavascript(getString(R.string.js_decrypt), null);
 				view.clearHistory();
 				if (!URL_BLANK.equals(url)) getInfo(view);
 			}
@@ -389,6 +397,8 @@ public class TWEditorWV extends AppCompatActivity {
 		view.evaluateJavascript(getString(R.string.js_info), value -> {
 			try {
 				JSONArray array = new JSONArray(value);
+				if (KEY_ENC.equals(array.getString(2)) || KEY_ENC.equals(array.getString(3)) || KEY_ENC.equals(array.getString(4)))
+					return;
 				// 解取标题
 				String title = array.getString(0), subtitle = array.getString(1);
 				TWEditorWV.this.setTitle(title);
@@ -462,12 +472,12 @@ public class TWEditorWV extends AppCompatActivity {
 					.setTitle(android.R.string.dialog_alert_title)
 					.setMessage(R.string.confirm_to_exit_wiki)
 					.setPositiveButton(android.R.string.yes, (dialog, which) -> {
-						if (nextWikiIntent == null)
-							TWEditorWV.super.onBackPressed();
-						else
-							nextWiki(nextWikiIntent);
-						dialog.dismiss();
-					}
+								if (nextWikiIntent == null)
+									TWEditorWV.super.onBackPressed();
+								else
+									nextWiki(nextWikiIntent);
+								dialog.dismiss();
+							}
 					)
 					.setNegativeButton(android.R.string.no, null)
 					.show();

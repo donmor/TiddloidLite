@@ -3,13 +3,28 @@
     <string name="tiddlywiki" translatable="false">TiddlyWiki</string>
     <string name="template_repo">https://tiddlywiki.com/empty.html</string>
     <!--JS-->
+    <string name="js_decrypt" translatable="false">
+        (function(){
+            if ($tw.wiki == undefined) {
+                document.body.addEventListener(\"DOMNodeInserted\", cbDecrypt = function () {
+                    if ((arg0 = arguments[0].srcElement.classList) != undefined &amp;&amp; arg0.value==\" tc-page-container-wrapper\") {
+                        document.body.removeEventListener(\"DOMNodeInserted\", cbDecrypt);
+                        window.twi.onDecrypted();
+                    }
+                });
+            }
+        })();
+    </string>
     <string name="js_exit" translatable="false">
         (function(){
-            return $tw.saverHandler.isDirty();
+            return $tw.saverHandler != undefined &amp;&amp; $tw.saverHandler.isDirty();
         })();
     </string>
     <string name="js_info" translatable="false">
         (function(){
+            if (undefined == $tw.wiki) {
+                return [document.title, \"\", \"enc\", \"enc\", \"enc\"]
+            }
             var tl_title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
             var tl_sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
             var tl_c_hex = \"\";
