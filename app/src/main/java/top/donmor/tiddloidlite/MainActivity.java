@@ -6,6 +6,7 @@
 
 package top.donmor.tiddloidlite;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -63,8 +64,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -112,14 +113,16 @@ public class MainActivity extends AppCompatActivity {
 		// 读取/初始化db，转换新格式
 		try {
 			db = readJson(this);
-			db.getJSONObject(DB_KEY_WIKI);
 		} catch (Exception e) {
 			e.printStackTrace();
-			db = initJson(this);
 			try {
+				db = initJson(this);
 				writeJson(this, db);
 			} catch (Exception e1) {
 				e1.printStackTrace();
+				Toast.makeText(this, R.string.data_error, Toast.LENGTH_SHORT).show();
+				finish();
+				return;
 			}
 		}
 		trimDB120(this, db);
@@ -135,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 			wikiListAdapter = new WikiListAdapter(this, db);
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return;
 		}
 		rvWikiList.setAdapter(wikiListAdapter);
 		wikiListAdapter.setReloadListener(count -> noWiki.setVisibility(count > 0 ? View.GONE : View.VISIBLE));
@@ -383,21 +387,24 @@ public class MainActivity extends AppCompatActivity {
 		progressDialog.setCanceledOnTouchOutside(false);
 		final Thread thread = new Thread(() -> {
 			boolean interrupted = false;
-			final boolean[] iNet = new boolean[3];
 			class AdaptiveUriInputStream {
 				private final InputStream is;
 
-				AdaptiveUriInputStream(Uri uri1) throws NoSuchAlgorithmException, KeyManagementException, IOException {
-					HttpURLConnection httpURLConnection;
-					URL url = new URL(uri1.normalizeScheme().toString());
-					if (uri1.getScheme() != null && uri1.getScheme().equals("https")) {
+				private AdaptiveUriInputStream(Uri uri1) throws NetworkErrorException, InterruptedIOException {
+					try {
+						HttpsURLConnection httpURLConnection;
+						URL url = new URL(uri1.normalizeScheme().toString());
 						httpURLConnection = (HttpsURLConnection) url.openConnection();
 						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-							((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(new TLSSocketFactory());
-					} else httpURLConnection = (HttpURLConnection) url.openConnection();
-					httpURLConnection.connect();
-					is = httpURLConnection.getInputStream();
-					iNet[0] = true;
+							httpURLConnection.setSSLSocketFactory(new TLSSocketFactory());
+						httpURLConnection.connect();
+						is = httpURLConnection.getInputStream();
+					} catch (InterruptedIOException e) {
+						throw e;
+					} catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
+						e.printStackTrace();
+						throw new NetworkErrorException();
+					}
 				}
 
 				InputStream get() {
@@ -406,9 +413,9 @@ public class MainActivity extends AppCompatActivity {
 			}
 			File cache = new File(getCacheDir(), genId());
 			try (InputStream isw = new AdaptiveUriInputStream(Uri.parse(getString(R.string.template_repo))).get();
-				 OutputStream osw = new FileOutputStream(cache);
-				 InputStream is = new FileInputStream(cache);
-				 OutputStream os = getContentResolver().openOutputStream(uri)) {
+					OutputStream osw = new FileOutputStream(cache);
+					InputStream is = new FileInputStream(cache);
+					OutputStream os = getContentResolver().openOutputStream(uri)) {
 				// 下载到缓存
 				int length;
 				byte[] bytes = new byte[4096];
@@ -423,7 +430,6 @@ public class MainActivity extends AppCompatActivity {
 				if (interrupted) throw new InterruptedException();
 				if (!isWiki(cache)) throw new IOException();
 				progressDialog.dismiss();
-				iNet[1] = true;
 				String id = null;
 				// 查重
 				JSONObject wl = db.getJSONObject(DB_KEY_WIKI);
@@ -445,9 +451,7 @@ public class MainActivity extends AppCompatActivity {
 				w.put(KEY_NAME, KEY_TW);
 				w.put(DB_KEY_SUBTITLE, STR_EMPTY);
 				w.put(DB_KEY_URI, uri.toString());
-				if (!MainActivity.writeJson(MainActivity.this, db))
-					throw new IOException();
-				iNet[2] = true;
+				MainActivity.writeJson(MainActivity.this, db);
 				// 从缓存写入文件
 				if (os == null) throw new FileNotFoundException();
 				while ((length = is.read(bytes)) > -1) os.write(bytes, 0, length);
@@ -455,20 +459,32 @@ public class MainActivity extends AppCompatActivity {
 				getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
 				if (!loadPage(id))
 					runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.error_loading_page, Toast.LENGTH_SHORT).show());
-			} catch (JSONException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
+			} catch (InterruptedException ignored) {
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show());
+			} catch (NetworkErrorException e) {
 				e.printStackTrace();
 				progressDialog.dismiss();
-				if (iNet[1]) try {
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show());
+			} catch (JSONException e) {
+				e.printStackTrace();
+				progressDialog.dismiss();
+				try {
 					DocumentsContract.deleteDocument(getContentResolver(), uri);
 				} catch (Exception e1) {
 					e.printStackTrace();
 				}
-				final int fid = iNet[2] ? R.string.failed_creating_file : iNet[1] ? R.string.data_error : iNet[0] ? R.string.download_failed : R.string.no_internet;
-				runOnUiThread(() -> Toast.makeText(MainActivity.this, fid, Toast.LENGTH_SHORT).show());
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show());
+			} catch (IOException e) {
+				e.printStackTrace();
+				progressDialog.dismiss();
+				try {
+					DocumentsContract.deleteDocument(getContentResolver(), uri);
+				} catch (Exception e1) {
+					e.printStackTrace();
+				}
+				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.download_failed, Toast.LENGTH_SHORT).show());
+			} finally {
 				cache.delete();
-				runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.cancelled, Toast.LENGTH_SHORT).show());
 			}
 		});
 
@@ -502,10 +518,9 @@ public class MainActivity extends AppCompatActivity {
 					w.put(DB_KEY_URI, uri.toString());
 					wl.put(id, w);
 				}
-				if (!MainActivity.writeJson(MainActivity.this, db))
-					throw new Exception();
+				MainActivity.writeJson(MainActivity.this, db);
 				getContentResolver().takePersistableUriPermission(uri, TAKE_FLAGS);
-			} catch (Exception e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 				Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
 			}
@@ -550,47 +565,41 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	static JSONObject initJson(Context context) {
-		File ext = context.getExternalFilesDir(null), file = null;
-		if (ext != null)
-			try (InputStream is = new FileInputStream(file = new File(ext, DB_FILE_NAME))) {
+	static JSONObject initJson(Context context) throws JSONException {
+		File ext = context.getExternalFilesDir(null), file = new File(ext, DB_FILE_NAME);
+		if (ext != null && file.isFile())
+			try (InputStream is = new FileInputStream(file)) {
 				byte[] b = new byte[is.available()];
-				if (is.read(b) < 0) throw new Exception();
+				if (is.read(b) < 0) throw new IOException();
 				JSONObject jsonObject = new JSONObject(new String(b));
 				if (!jsonObject.has(DB_KEY_WIKI)) jsonObject.put(DB_KEY_WIKI, new JSONObject());
 				return jsonObject;
-			} catch (Exception e) {
+			} catch (IOException | JSONException e) {
 				e.printStackTrace();
 			} finally {
-				if (file != null) file.delete();
+				file.delete();
 			}
-		try {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put(DB_KEY_WIKI, new JSONObject());
-			return jsonObject;
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
-		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(DB_KEY_WIKI, new JSONObject());
+		return jsonObject;
 	}
 
-	static JSONObject readJson(Context context) throws Exception {
+	static JSONObject readJson(Context context) throws IOException, JSONException {
 		try (InputStream is = context.openFileInput(DB_FILE_NAME)) {
 			byte[] b = new byte[is.available()];
-			if (is.read(b) < 0) throw new Exception();
+			if (is.read(b) < 0) throw new IOException();
 			return new JSONObject(new String(b));
 		}
 	}
 
-	static boolean writeJson(Context context, JSONObject vdb) {
+	static void writeJson(Context context, JSONObject vdb) throws JSONException {
 		try (FileOutputStream os = context.openFileOutput(DB_FILE_NAME, MODE_PRIVATE)) {
 			byte[] b = vdb.toString(2).getBytes();
 			os.write(b);
 			os.flush();
-			return true;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
+			throw new JSONException(e.getMessage());
 		}
 	}
 

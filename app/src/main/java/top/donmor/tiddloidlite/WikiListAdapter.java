@@ -7,6 +7,7 @@
 package top.donmor.tiddloidlite;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -108,26 +109,21 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 				return true;
 			});
 			// 条目显示
+			SpannableStringBuilder builder = new SpannableStringBuilder(n);
+			builder.setSpan(new LeadingMarginSpan.Standard(Math.round(scale * 8f)), 0, builder.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 			try {
-				SpannableStringBuilder builder = new SpannableStringBuilder(n);
-				int p = builder.length();
-				LeadingMarginSpan.Standard lms = new LeadingMarginSpan.Standard(Math.round(scale * 8f));
-				builder.setSpan(lms, 0, p, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-				builder.append(s.length() > 0 ? MainActivity.KEY_LBL + s : s);
-				builder.append('\n');
-				ForegroundColorSpan fcs = new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub));
-				builder.setSpan(fcs, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-				DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(wa.getString(MainActivity.DB_KEY_URI)));
-				if (documentFile != null && documentFile.exists()) {
-					p = builder.length();
-					builder.append(SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified()))).append(formatSize(documentFile.length()));
-					RelativeSizeSpan rss = new RelativeSizeSpan(0.8f);
-					builder.setSpan(rss, p, builder.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-				}
-				holder.btnWiki.setText(builder);
-			} catch (Exception e) {
+				builder.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.content_sub)), builder.length(), builder.length(), Spanned.SPAN_MARK_POINT);
+			} catch (Resources.NotFoundException e) {
 				e.printStackTrace();
 			}
+			builder.append(s.length() > 0 ? MainActivity.KEY_LBL + s : s);
+			builder.setSpan(new RelativeSizeSpan(0.8f), builder.length(), builder.length(), Spanned.SPAN_MARK_POINT);
+			DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(wa.getString(MainActivity.DB_KEY_URI)));
+			if (documentFile != null && documentFile.exists()) {
+				builder.append('\n');
+				builder.append(SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified()))).append(formatSize(documentFile.length()));
+			}
+			holder.btnWiki.setText(builder);
 			holder.btnWiki.setVisibility(View.VISIBLE);
 		} catch (Exception e) {
 			e.printStackTrace();

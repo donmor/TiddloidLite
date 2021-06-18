@@ -203,6 +203,8 @@ public class TWEditorWV extends AppCompatActivity {
 						.setPositiveButton(android.R.string.ok, null)
 						.setOnDismissListener(dialog1 -> nwv.destroy())
 						.create();
+				if (themeColor != null && dialog.getWindow() != null)
+					dialog.getWindow().getDecorView().setBackgroundColor(themeColor);
 				nwv.setWebViewClient(new WebViewClient() {
 					@Override
 					public void onPageFinished(WebView view, String url) {
@@ -279,7 +281,7 @@ public class TWEditorWV extends AppCompatActivity {
 			@JavascriptInterface
 			public void saveWiki(String data) {
 				try (ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
-					 OutputStream os = getContentResolver().openOutputStream(uri)) {
+						OutputStream os = getContentResolver().openOutputStream(uri)) {
 					if (os == null) throw new FileNotFoundException();
 					int len = is.available();
 					int length, lengthTotal = 0;
@@ -420,7 +422,7 @@ public class TWEditorWV extends AppCompatActivity {
 				// 写Json
 				wApp.put(MainActivity.KEY_NAME, title).put(MainActivity.DB_KEY_SUBTITLE, subtitle).put(MainActivity.DB_KEY_COLOR, themeColor).put(MainActivity.KEY_FAVICON, fib64.length() > 0 ? fib64 : null);
 				MainActivity.writeJson(TWEditorWV.this, db);
-			} catch (Exception e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		});
@@ -516,8 +518,8 @@ public class TWEditorWV extends AppCompatActivity {
 							wl.remove(nextWikiId);
 							MainActivity.writeJson(TWEditorWV.this, db);
 							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-								revokeUriPermission(getPackageName(), uri, MainActivity.TAKE_FLAGS);
-						} catch (Exception e) {
+								revokeUriPermission(getPackageName(), u, MainActivity.TAKE_FLAGS);
+						} catch (JSONException e) {
 							e.printStackTrace();
 						}
 					}).setOnDismissListener(dialogInterface -> TWEditorWV.this.finish()).show();
@@ -563,7 +565,7 @@ public class TWEditorWV extends AppCompatActivity {
 			}
 			String data = null;
 			try (BufferedInputStream is = new BufferedInputStream(Objects.requireNonNull(getContentResolver().openInputStream(uri)));
-				 ByteArrayOutputStream os = new ByteArrayOutputStream(BUF_SIZE)) {   //读全部数据
+					ByteArrayOutputStream os = new ByteArrayOutputStream(BUF_SIZE)) {   //读全部数据
 				int len = is.available();
 				int length, lenTotal = 0;
 				byte[] b = new byte[BUF_SIZE];
