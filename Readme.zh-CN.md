@@ -52,7 +52,7 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 
     以下是不同版本之间的差异：
 
-    | 功能                               | [Tiddloid](https://github.com/donmor/Tiddloid) 1.x | [Tiddloid](https://github.com/donmor/Tiddloid) 2.0 及以上 | Tiddloid Lite |
+    | 功能                               | [Tiddloid](https://gitee.com/donmor/Tiddloid) 1.x | [Tiddloid](https://gitee.com/donmor/Tiddloid) 2.0 及以上 | Tiddloid Lite |
     | ----------------------------------------- | ------------- | ------------------------------------------------------------ | -------------------------------- |
     | 文件API                                | Java文件API | Android SAF以及 Java文件API  | Android SAF |
     | 备份系统                        | 有          | 有                                                         | 无                              |
