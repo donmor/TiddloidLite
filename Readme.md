@@ -12,7 +12,7 @@ See https://tiddlywiki.com/ for more details of TiddlyWiki.
 
 ### Discontinuance Announcement
 
-There will be no feature updates since version 1.2.0, because all unique features have been merged into version 2.0.0 of [Tiddloid](https://github.com/donmor/Tiddloid). However, there'll still be updates for bug fixes for Tiddloid Lite, and it will remain LITE.
+There will be no feature updates since version 1.2.0, because all unique features have been merged into version 2.0.0 of [Tiddloid](https://github.com/donmor/Tiddloid). However, it'll still be updates for bug fixes for Tiddloid Lite, and it will remain LITE.
 
 ### Features
 
