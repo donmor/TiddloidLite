@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/values-de/strings.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 14:04:33 2021/04/15
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <resources>
 	<string name="template_repo">https://tiddlywiki.com/languages/de-DE/empty.html</string>
 	<!--UI-->
@@ -23,12 +28,12 @@
 	<string name="file_deleted">Datei gelöscht</string>
 	<string name="delete_the_html_file">Löschen Sie die HTML-Datei (Kann nicht rückgängig gemacht werden!)</string>
 	<string name="not_a_wiki">Die ausgewählte Datei ist kein TiddlyWiki</string>
-    <string name="failed_creating_file">Fehler beim Erstellen der Datei</string>
-    <string name="error_loading_page">Fehler beim Laden der Seite</string>
+	<string name="failed_creating_file">Fehler beim Erstellen der Datei</string>
+	<string name="error_loading_page">Fehler beim Laden der Seite</string>
 	<string name="error_processing_file">Fehler beim Verarbeiten der Datei</string>
 	<string name="wiki_not_exist">Wiki existiert nicht</string>
 	<string name="wiki_already_exists">Das Wiki existiert bereits</string>
-    <string name="data_error">Datenfehler</string>
+	<string name="data_error">Datenfehler</string>
 	<string name="confirm_to_remove_wiki">Möchtest du dieses Wiki wirklich von Tiddloid Lite entfernen?</string>
 	<string name="confirm_to_auto_remove_wiki">Das Wiki ist nicht mehr verfügbar. Möchten Sie es entfernen?</string>
 	<string name="confirm_to_exit_wiki">Nicht gespeicherte Änderungen erkannt. Möchtest du kündigen?</string>

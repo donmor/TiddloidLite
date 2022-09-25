@@ -1,9 +1,26 @@
+<!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/values/strings.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 13:18:32 2021/05/09
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <resources>
-    <string name="app_name" translatable="false">Tiddloid Lite</string>
-    <string name="tiddlywiki" translatable="false">TiddlyWiki</string>
-    <string name="template_repo">https://tiddlywiki.com/empty.html</string>
-    <!--JS-->
-    <string name="js_decrypt" translatable="false">
+	<!--JS-->
+	<string name="js_is_wiki" translatable="false">
+        (function() {
+            var isTW = (mta = document.getElementsByTagName(\"meta\")[\"application-name\"])!= null &amp;&amp; mta.content==\"TiddlyWiki\" || typeof(version) == \"object\" &amp;&amp; typeof(version.title) == \"string\";
+            if (isTW &amp;&amp; typeof(version) == \"undefined\" &amp;&amp; $tw.wiki == undefined) {
+                document.body.addEventListener(\"DOMNodeInserted\", cbDecrypt = function () {
+                    if ((arg0 = arguments[0].srcElement.classList) != undefined &amp;&amp; arg0.value==\" tc-page-container-wrapper\") {
+                        document.body.removeEventListener(\"DOMNodeInserted\", cbDecrypt);
+                        window.twi.onDecrypted();
+                    }
+                });
+            }
+            return isTW;
+        })();
+    </string>
+	<string name="js_decrypt" translatable="false">
         (function(){
             if ($tw.wiki == undefined) {
                 document.body.addEventListener(\"DOMNodeInserted\", cbDecrypt = function () {
@@ -15,96 +32,107 @@
             }
         })();
     </string>
-    <string name="js_exit" translatable="false">
+	<string name="js_exit" translatable="false">
         (function(){
             return $tw.saverHandler != undefined &amp;&amp; $tw.saverHandler.isDirty();
         })();
     </string>
-    <string name="js_info" translatable="false">
+	<string name="js_pop" translatable="false">
+        (function() {
+            new $tw.Story().navigateTiddler(\"%1$s\");
+        })();
+    </string>
+	<string name="js_print" translatable="false">
+        (function() {
+            window.print = function() {
+                window.twi.print();
+            }
+        })();
+    </string>
+	<string name="js_info" translatable="false">
         (function(){
             if (undefined == $tw.wiki) {
                 return [document.title, \"\", \"enc\", \"enc\", \"enc\"]
             }
-            var tl_title = $tw.wiki.getTiddler(\"$:/SiteTitle\").getFieldString(\"text\");
-            var tl_sub = $tw.wiki.getTiddler(\"$:/SiteSubtitle\").getFieldString(\"text\");
+            var tl_title = $tw.wiki.getTiddlerText(\"$:/SiteTitle\");
+            var tl_sub = $tw.wiki.getTiddlerText(\"$:/SiteSubtitle\");
             var tl_c_hex = \"\";
-            var tl_tb_hide = \"no\";
-            var tl_tb_conf = $tw.wiki.getTiddler(\"$:/config/Tiddloid/HideToolbar\");
-            if (tl_tb_conf != undefined) tl_tb_hide = tl_tb_conf.getFieldString(\"text\");
-            var tl_c_conf = $tw.wiki.getTiddler(\"$:/config/Tiddloid/ApplyTheme\");
-            if (tl_c_conf != undefined) {
-                var tl_apply_color = tl_c_conf.getFieldString(\"text\");
-                if (\"yes\" == tl_apply_color) {
-                    var tl_c_map = $tw.utils.parseFields($tw.wiki.getTiddler($tw.wiki.getTiddler(\"$:/palette\").getFieldString(\"text\")).getFieldString(\"text\"));
-                    var tl_color = tl_c_map[\"page-background\"];
-                    if (tl_color != undefined) {
-                        while (tl_color.indexOf(\"&lt;&lt;colour\") == 0) {
-                            tl_color = tl_c_map[tl_color.substr(9, tl_color.lastIndexOf(\"&gt;&gt;\") - 9)];
-                            if (tl_color == undefined) {
-                                 tl_color = \"\";
-                            }
-                        }
-                        if (tl_color.indexOf(\"rgb(\") == 0) {
-                            var tl_c_o = 4;
-                            var tl_c_p = tl_color.indexOf(\",\",tl_c_o);
-                            var tl_c_red = tl_color.substring(tl_c_o,tl_c_p);
-                            tl_c_o = tl_c_p + 1;
-                            tl_c_p = tl_color.indexOf(\",\",tl_c_o);
-                            var tl_c_green = tl_color.substring(tl_c_o,tl_c_p);
-                            tl_c_o = tl_c_p + 1;
-                            tl_c_p = tl_color.indexOf(\")\",tl_c_o);
-                            var tl_c_blue = tl_color.substring(tl_c_o,tl_c_p);
-                            tl_c_pre = \"#\";
-                            tl_color = tl_c_pre.concat(Number.parseInt(tl_c_red).toString(16),Number.parseInt(tl_c_green).toString(16),Number.parseInt(tl_c_blue).toString(16));
-                        }
-                        tl_c_hex = tl_color;
-                    }
-                }
-            }
-            var tl_favicon = \"\";
-            var tl_fic = $tw.wiki.getTiddler(\"$:/favicon.ico\");
-            if (tl_fic != undefined) {
-                tl_favicon = tl_fic.getFieldString(\"text\");
-            }
+            var tl_tb_conf = $tw.wiki.getTiddlerText(\"$:/config/Tiddloid/HideToolbar\");
+            var tl_tb_hide = tl_tb_conf != null ? tl_tb_conf : \"no\";
+            var tl_apply_color = $tw.wiki.getTiddlerText(\"$:/config/Tiddloid/ApplyTheme\");;
+			if (\"yes\" == tl_apply_color) {
+                var tl_c_map = $tw.utils.parseFields($tw.wiki.getTiddlerText($tw.wiki.getTiddlerText(\"$:/palette\")));
+				var tl_color = tl_c_map[\"page-background\"];
+				if (tl_color != undefined) {
+					while (tl_color.indexOf(\"&lt;&lt;colour\") == 0) {
+						tl_color = tl_c_map[tl_color.substr(9, tl_color.lastIndexOf(\"&gt;&gt;\") - 9)];
+						if (tl_color == undefined) {
+							 tl_color = \"\";
+						}
+					}
+					if (tl_color.indexOf(\"rgb(\") == 0) {
+						var tl_c_o = 4;
+						var tl_c_p = tl_color.indexOf(\",\",tl_c_o);
+						var tl_c_red = tl_color.substring(tl_c_o,tl_c_p);
+						tl_c_o = tl_c_p + 1;
+						tl_c_p = tl_color.indexOf(\",\",tl_c_o);
+						var tl_c_green = tl_color.substring(tl_c_o,tl_c_p);
+						tl_c_o = tl_c_p + 1;
+						tl_c_p = tl_color.indexOf(\")\",tl_c_o);
+						var tl_c_blue = tl_color.substring(tl_c_o,tl_c_p);
+						tl_c_pre = \"#\";
+						tl_color = tl_c_pre.concat(Number.parseInt(tl_c_red).toString(16),Number.parseInt(tl_c_green).toString(16),Number.parseInt(tl_c_blue).toString(16));
+					}
+					tl_c_hex = tl_color;
+				}
+			}
+            var tl_fic = $tw.wiki.getTiddlerText(\"$:/favicon.ico\");
+            var tl_favicon = tl_fic != null ? tl_fic : \"\";
             return [tl_title, tl_sub, tl_tb_hide, tl_c_hex, tl_favicon]
         })();
     </string>
-    <!--Misc-->
-    <string name="logo" translatable="false">logo</string>
-    <!--UI-->
-    <string name="action_new">New Wiki</string>
-    <string name="action_import">Import a file</string>
-    <string name="action_about">About Tiddloid Lite</string>
-    <string name="there_is_no_wiki_here">There is nothing here</string>
-    <string name="provider">Source:&#160;</string>
-    <string name="pathDir">Path:&#160;</string>
-    <string name="filename">Filename:&#160;</string>
-    <string name="unknown">Unknown</string>
-    <string name="create_shortcut">Create Shortcut</string>
-    <string name="shortcut_created">Shortcut successfully created</string>
-    <string name="shortcut_failed">Failed to create shortcut</string>
-    <string name="remove_wiki">Remove</string>
-    <string name="please_wait">Please wait&#8230;</string>
-    <string name="no_internet">No Internet connection</string>
-    <string name="download_failed">Download failed</string>
-    <string name="failed">Failed</string>
-    <string name="cancelled">Cancelled</string>
-    <string name="wiki_replaced">Existing Wiki Overwritten</string>
-    <string name="file_deleted">File deleted</string>
-    <string name="delete_the_html_file">Delete file (Can\'t be undone!)</string>
-    <string name="not_a_wiki">The file selected is not a TiddlyWiki</string>
-    <string name="failed_creating_file">Failed creating the file</string>
-    <string name="error_loading_page">Error loading the page</string>
-    <string name="error_processing_file">Error processing the file</string>
-    <string name="wiki_not_exist">Wiki does not exist</string>
-    <string name="wiki_already_exists">The wiki already exists</string>
-    <string name="data_error">Data error</string>
-    <string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid Lite?</string>
-    <string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
-    <string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
-    <string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
-    <string name="market">Rate This App</string>
-    <string name="about">
+	<!--Misc-->
+	<string name="app_name" translatable="false">Tiddloid Lite</string>
+	<string name="tiddlywiki" translatable="false">TiddlyWiki</string>
+	<string name="logo" translatable="false">logo</string>
+	<!--JSON and Settings-->
+	<string name="template_repo">https://tiddlywiki.com/empty.html</string>
+	<!--UI-->
+	<string name="action_new">New Wiki</string>
+	<string name="action_import">Import a file</string>
+	<string name="action_about">About Tiddloid Lite</string>
+	<string name="there_is_no_wiki_here">There is nothing here</string>
+	<string name="provider">Source:&#160;</string>
+	<string name="pathDir">Path:&#160;</string>
+	<string name="filename">Filename:&#160;</string>
+	<string name="unknown">Unknown</string>
+	<string name="create_shortcut">Create Shortcut</string>
+	<string name="shortcut_created">Shortcut successfully created</string>
+	<string name="shortcut_failed">Failed to create shortcut</string>
+	<string name="remove_wiki">Remove</string>
+	<string name="server_error">Unable to connect to the server</string>
+	<string name="please_wait">Please wait&#8230;</string>
+	<string name="no_internet">No Internet connection</string>
+	<string name="download_failed">Download failed</string>
+	<string name="failed">Failed</string>
+	<string name="cancelled">Cancelled</string>
+	<string name="wiki_replaced">Existing Wiki Overwritten</string>
+	<string name="file_deleted">File deleted</string>
+	<string name="delete_the_html_file">Delete file (Can\'t be undone!)</string>
+	<string name="not_a_wiki_page">The page is not a TiddlyWiki.</string>
+	<string name="not_a_wiki">The file selected is not a TiddlyWiki</string>
+	<string name="failed_creating_file">Failed creating the file</string>
+	<string name="error_loading_page">Error loading the page</string>
+	<string name="error_processing_file">Error processing the file</string>
+	<string name="wiki_not_exist">Wiki does not exist</string>
+	<string name="wiki_already_exists">The wiki already exists</string>
+	<string name="data_error">Data error</string>
+	<string name="confirm_to_remove_wiki">Are you sure you want to remove this Wiki from Tiddloid Lite?</string>
+	<string name="confirm_to_auto_remove_wiki">The wiki is no longer available. Do you want to remove it?</string>
+	<string name="confirm_to_exit_wiki">Unsaved changes detected. Are you sure you want to quit?</string>
+	<string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
+	<string name="market">Rate This App</string>
+	<string name="about">
         Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
         \n
         This app is released under GPL v2 license　with the help of these open source projects:\n
@@ -114,4 +142,17 @@
         \n
         For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).
     </string>
+	<string name="about_title" translatable="false">Tiddloid - %s</string>
+	<string name="agreements_title">Terms of Use</string>
+	<string name="agreements_desc1">Tiddloid is published under GPL v2:</string>
+	<string name="agreements_desc2">Tiddloid require these permissions to work properly:</string>
+	<string name="agreements_privacy">
+        [Internet Connection]
+        \nFor fetching remote templates
+        \n[Creating Shortcut]
+        \nOptional, for creating shortcuts
+    </string>
+	<string name="agreements_desc3">To continue, you have to accept the agreements above.</string>
+	<string name="agreements_accept">Accept</string>
+	<string name="agreements_decline">Decline</string>
 </resources>

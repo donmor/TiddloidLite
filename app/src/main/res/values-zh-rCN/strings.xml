@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/values-zh-rCN/strings.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 14:05:10 2021/04/15
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <resources>
 	<string name="template_repo">https://tiddlywiki.com/languages/zh-Hans/empty.html</string>
-    <!--UI-->
-    <string name="action_new">创建新的Wiki</string>
+	<!--UI-->
+	<string name="action_new">创建新的Wiki</string>
 	<string name="action_import">导入已有Wiki文件</string>
 	<string name="action_about">关于Tiddloid Lite</string>
 	<string name="there_is_no_wiki_here">没有内容</string>
@@ -23,12 +28,12 @@
 	<string name="file_deleted">文件已删除</string>
 	<string name="delete_the_html_file">删除HTML源文件(无法撤销!)</string>
 	<string name="not_a_wiki">所选文件不是TiddlyWiki</string>
-    <string name="failed_creating_file">创建文件失败</string>
-    <string name="error_loading_page">加载页面时出错</string>
+	<string name="failed_creating_file">创建文件失败</string>
+	<string name="error_loading_page">加载页面时出错</string>
 	<string name="error_processing_file">处理文件时出错</string>
 	<string name="wiki_not_exist">Wiki不存在</string>
 	<string name="wiki_already_exists">Wiki已存在</string>
-    <string name="data_error">数据错误</string>
+	<string name="data_error">数据错误</string>
 	<string name="confirm_to_remove_wiki">你确定要从Tiddloid Lite中删除这个Wiki吗？</string>
 	<string name="confirm_to_auto_remove_wiki">所选的Wiki不可用。要从列表中移除它吗？</string>
 	<string name="confirm_to_exit_wiki">一些更改尚未保存。确定要退出吗？</string>

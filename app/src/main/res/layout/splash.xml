@@ -1,28 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/layout/splash.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 15:19:37 2021/05/12
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center"
+	android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="216dp"
-        android:layout_height="216dp"
-        android:layout_marginBottom="60dp"
-        android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/ic_splash" />
+	<androidx.appcompat.widget.AppCompatImageView
+		android:layout_width="216dp"
+		android:layout_height="216dp"
+		android:layout_marginBottom="60dp"
+		android:contentDescription="@string/logo"
+		app:srcCompat="@drawable/ic_splash" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="24dp"
-        android:fontFamily="sans-serif-light"
-        android:text="@string/app_name"
-        android:textSize="36sp" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginVertical="24dp"
+		android:fontFamily="sans-serif-light"
+		android:text="@string/app_name"
+		android:textSize="36sp" />
 
-    <TextView
-        android:id="@+id/textVersionSplash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/versionName"
+		android:textColor="@color/content_sub" />
 </LinearLayout>

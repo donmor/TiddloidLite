@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/values-es/strings.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 14:04:42 2021/04/15
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <resources>
 	<string name="template_repo">https://tiddlywiki.com/languages/es-ES/empty.html</string>
 	<!--UI-->
@@ -23,17 +28,17 @@
 	<string name="file_deleted">Archivo borrado</string>
 	<string name="delete_the_html_file">Eliminar el archivo HTML (no se puede deshacer!)</string>
 	<string name="not_a_wiki">El archivo seleccionado no es un TiddlyWiki</string>
-    <string name="failed_creating_file">Error al crear el archivo</string>
-    <string name="error_loading_page">Error al cargar la página</string>
+	<string name="failed_creating_file">Error al crear el archivo</string>
+	<string name="error_loading_page">Error al cargar la página</string>
 	<string name="error_processing_file">Error al procesar el archivo</string>
 	<string name="wiki_not_exist">Wiki no existe</string>
 	<string name="wiki_already_exists">El wiki ya existe</string>
-    <string name="data_error">Error de datos</string>
+	<string name="data_error">Error de datos</string>
 	<string name="confirm_to_remove_wiki">¿Estás seguro de que deseas eliminar esta Wiki de Tiddloid Lite?</string>
 	<string name="confirm_to_auto_remove_wiki">La wiki ya no está disponible. ¿Quieres eliminarlo?</string>
-    <string name="confirm_to_exit_wiki">Los cambios no se han guardado. ¿Estás seguro de que quieres dejar de fumar?</string>
-    <string name="third_part_rising">La página está intentando iniciar otra aplicación. ¿Quieres continuar?</string>
-    <string name="market">Califica esta aplicación</string>
+	<string name="confirm_to_exit_wiki">Los cambios no se han guardado. ¿Estás seguro de que quieres dejar de fumar?</string>
+	<string name="third_part_rising">La página está intentando iniciar otra aplicación. ¿Quieres continuar?</string>
+	<string name="market">Califica esta aplicación</string>
 	<string name="about">
         Tiddloid Lite, una versión ligera de Tiddloid, es una aplicación para trabajar con TiddlyWikis almacenados localmente. Una vez que tenga algunas ideas, puede escribirlas inmediatamente para que pueda acceder a ellas desde cualquier lugar. Para obtener más detalles sobre TiddlyWiki, consulte https://tiddlywiki.com/ .\n
         \n

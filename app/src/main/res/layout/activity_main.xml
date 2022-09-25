@@ -1,39 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /home/donmor/AndroidStudioProjects/TiddloidLite/app/src/main/res/layout/activity_main.xml <= [P|Tiddloid Lite]
+  ~ Last modified: 21:43:46 2021/04/13
+  ~ Copyright (c) 2022 donmor
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:animateLayoutChanges="true"
-    tools:context=".MainActivity">
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:animateLayoutChanges="true"
+	android:orientation="vertical"
+	tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+	<include
+		android:id="@+id/splash_layout"
+		layout="@layout/splash"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
-    </com.google.android.material.appbar.AppBarLayout>
+	<com.google.android.material.appbar.AppBarLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
-    <TextView
-        android:id="@+id/t_noWiki"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:gravity="center"
-        android:background="@color/design_default_color_primary"
-        android:text="@string/there_is_no_wiki_here"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize" />
+	</com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvWikiList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/design_default_color_primary" />
+	<TextView
+		android:id="@+id/t_noWiki"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/design_default_color_primary"
+		android:gravity="center"
+		android:padding="8dp"
+		android:text="@string/there_is_no_wiki_here"
+		android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/rvWikiList"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:background="@color/design_default_color_primary" />
 
 </LinearLayout>
