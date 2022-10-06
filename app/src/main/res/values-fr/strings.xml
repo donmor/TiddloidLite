@@ -19,15 +19,15 @@
 	<string name="shortcut_created">Raccourci créé avec succès</string>
 	<string name="shortcut_failed">Impossible de créer un raccourci</string>
 	<string name="remove_wiki">Supprimer le wiki</string>
+	<string name="server_error">Impossible de se connecter au serveur</string>
 	<string name="please_wait">S\'il vous plaît, attendez&#8230;</string>
-	<string name="no_internet">Pas de connexion Internet</string>
 	<string name="download_failed">Échec du téléchargement</string>
 	<string name="failed">Échoué</string>
 	<string name="cancelled">Annulé</string>
 	<string name="wiki_replaced">Le wiki existant a été écrasé</string>
 	<string name="file_deleted">Fichier supprimé</string>
 	<string name="delete_the_html_file">Supprimer le fichier HTML (ne peut pas être annulé!)</string>
-	<string name="not_a_wiki">Le fichier sélectionné n\'est pas un TiddlyWiki</string>
+	<string name="not_a_wiki_page">La page n\'est pas un TiddlyWiki.</string>
 	<string name="failed_creating_file">Échec de la création du fichier</string>
 	<string name="error_loading_page">Erreur lors du chargement de la page</string>
 	<string name="error_processing_file">Erreur lors du traitement du fichier</string>
@@ -40,13 +40,24 @@
 	<string name="third_part_rising">La page tente de démarrer une autre application. Voulez-vous continuer?</string>
 	<string name="market">Évaluer l\'application</string>
 	<string name="about">
-        Tiddloid Lite, une version allégée de Tiddloid, est une application pour travailler avec les TiddlyWikis stockés localement. Une fois avoir des idées, vous pouvez les écrire immédiatement vers le bas afin que vous puissiez y accéder partout. Pour plus de détails sur TiddlyWiki, veuillez consulter https://tiddlywiki.com/ .\n
-        \n
-        Cette application est publiée sous la licence GPLv2 à l\'aide de ces projets:\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        Les fichiers de licence sont fournis avec les codes sources.\n
-        \n
-        Pour plus de détails sur cette application, veuillez visiter la page du projet ( https://github.com/donmor/TiddloidLite/ ) ou ma page d\'accueil ( https://donmor.top/ ).
+		Tiddloid Lite, une version allégée de Tiddloid, est une application pour travailler avec les TiddlyWikis stockés localement. Une fois avoir des idées, vous pouvez les écrire immédiatement vers le bas afin que vous puissiez y accéder partout. Pour plus de détails sur TiddlyWiki, veuillez consulter https://tiddlywiki.com/ .\n
+		\n
+		Cette application est publiée sous la licence GPLv2 à l\'aide de ces projets:\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		Les fichiers de licence sont fournis avec les codes sources.\n
+		\n
+		Pour plus de détails sur cette application, veuillez visiter la page du projet ( https://github.com/donmor/TiddloidLite/ ) ou ma page d\'accueil ( https://donmor.top/ ).
     </string>
+	<string name="agreements_title">Conditions d\'utilisation</string>
+	<string name="agreements_desc1">Cette application est publiée sous la licence GPLv2:</string>
+	<string name="agreements_desc2">Tiddloid nécessite ces autorisations pour fonctionner correctement :</string>
+	<string name="agreements_privacy">
+		[Connexion Internet]
+		\nPour récupérer des modèles distants
+		\n[Création d\'un raccourci]
+		\nFacultatif, pour créer des raccourcis</string>
+	<string name="agreements_desc3">Pour continuer, vous devez accepter les accords ci-dessus.</string>
+	<string name="agreements_accept">Accepter</string>
+	<string name="agreements_decline">Déclin</string>
 </resources>

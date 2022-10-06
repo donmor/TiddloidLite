@@ -20,18 +20,6 @@
             return isTW;
         })();
     </string>
-	<string name="js_decrypt" translatable="false">
-        (function(){
-            if ($tw.wiki == undefined) {
-                document.body.addEventListener(\"DOMNodeInserted\", cbDecrypt = function () {
-                    if ((arg0 = arguments[0].srcElement.classList) != undefined &amp;&amp; arg0.value==\" tc-page-container-wrapper\") {
-                        document.body.removeEventListener(\"DOMNodeInserted\", cbDecrypt);
-                        window.twi.onDecrypted();
-                    }
-                });
-            }
-        })();
-    </string>
 	<string name="js_exit" translatable="false">
         (function(){
             return $tw.saverHandler != undefined &amp;&amp; $tw.saverHandler.isDirty();
@@ -112,7 +100,6 @@
 	<string name="remove_wiki">Remove</string>
 	<string name="server_error">Unable to connect to the server</string>
 	<string name="please_wait">Please wait&#8230;</string>
-	<string name="no_internet">No Internet connection</string>
 	<string name="download_failed">Download failed</string>
 	<string name="failed">Failed</string>
 	<string name="cancelled">Cancelled</string>
@@ -120,7 +107,6 @@
 	<string name="file_deleted">File deleted</string>
 	<string name="delete_the_html_file">Delete file (Can\'t be undone!)</string>
 	<string name="not_a_wiki_page">The page is not a TiddlyWiki.</string>
-	<string name="not_a_wiki">The file selected is not a TiddlyWiki</string>
 	<string name="failed_creating_file">Failed creating the file</string>
 	<string name="error_loading_page">Error loading the page</string>
 	<string name="error_processing_file">Error processing the file</string>
@@ -133,16 +119,16 @@
 	<string name="third_part_rising">The page is trying to start another application. Do you want to continue?</string>
 	<string name="market">Rate This App</string>
 	<string name="about">
-        Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
-        \n
-        This app is released under GPL v2 license　with the help of these open source projects:\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        License files provided with source codes.\n
-        \n
-        For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).
+		Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
+		\n
+		This app is released under GPL v2 license　with the help of these open source projects:\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		License files provided with source codes.\n
+		\n
+		For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).
     </string>
-	<string name="about_title" translatable="false">Tiddloid - %s</string>
+	<string name="about_title" translatable="false">Tiddloid Lite - %s</string>
 	<string name="agreements_title">Terms of Use</string>
 	<string name="agreements_desc1">Tiddloid is published under GPL v2:</string>
 	<string name="agreements_desc2">Tiddloid require these permissions to work properly:</string>

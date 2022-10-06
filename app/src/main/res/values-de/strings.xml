@@ -19,15 +19,15 @@
 	<string name="shortcut_created">Verknüpfung erfolgreich erstellt</string>
 	<string name="shortcut_failed">Fehlgeschlagen Verknüpfung erstellen</string>
 	<string name="remove_wiki">Wiki entfernen</string>
+	<string name="server_error">Verbindung zum Server nicht möglich</string>
 	<string name="please_wait">Warten Sie mal&#8230;</string>
-	<string name="no_internet">Keine Internetverbindung</string>
 	<string name="download_failed">Herunterladen fehlgeschlagen</string>
 	<string name="failed">Gescheitert</string>
 	<string name="cancelled">Abgebrochen</string>
 	<string name="wiki_replaced">Vorhandenes Wiki wurde überschrieben</string>
 	<string name="file_deleted">Datei gelöscht</string>
 	<string name="delete_the_html_file">Löschen Sie die HTML-Datei (Kann nicht rückgängig gemacht werden!)</string>
-	<string name="not_a_wiki">Die ausgewählte Datei ist kein TiddlyWiki</string>
+	<string name="not_a_wiki_page">Die Seite ist kein TiddlyWiki.</string>
 	<string name="failed_creating_file">Fehler beim Erstellen der Datei</string>
 	<string name="error_loading_page">Fehler beim Laden der Seite</string>
 	<string name="error_processing_file">Fehler beim Verarbeiten der Datei</string>
@@ -40,13 +40,24 @@
 	<string name="third_part_rising">Die Seite versucht, eine andere Anwendung zu starten. Möchtest du fortfahren?</string>
 	<string name="market">Bewerte diese App</string>
 	<string name="about">
-        Tiddloid, eine leichtgewichtige Version von Tiddloid, ist eine App zum Arbeiten mit lokal gespeicherten TiddlyWikis. Sobald einige Ideen haben, können Sie sie sofort aufschreiben, damit Sie sie überall zugreifen können. Weitere Informationen zu TiddlyWiki finden Sie unter https://tiddlywiki.com/ .\n
-        \n
-        Diese App ist unter der GPLv2 Lizenz mit Hilfe dieser Open-Source-Projekte verbunden:\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        Lizenzdateien mit Quellcodes zur Verfügung gestellt.\n
-        \n
-        Weitere Informationen zu dieser App finden Sie auf der Projektseite ( https://github.com/donmor/TiddloidLite/ ) oder auf meiner Homepage ( https://donmor.top/ ).
+		Tiddloid, eine leichtgewichtige Version von Tiddloid, ist eine App zum Arbeiten mit lokal gespeicherten TiddlyWikis. Sobald einige Ideen haben, können Sie sie sofort aufschreiben, damit Sie sie überall zugreifen können. Weitere Informationen zu TiddlyWiki finden Sie unter https://tiddlywiki.com/ .\n
+		\n
+		Diese App ist unter der GPLv2 Lizenz mit Hilfe dieser Open-Source-Projekte verbunden:\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		Lizenzdateien mit Quellcodes zur Verfügung gestellt.\n
+		\n
+		Weitere Informationen zu dieser App finden Sie auf der Projektseite ( https://github.com/donmor/TiddloidLite/ ) oder auf meiner Homepage ( https://donmor.top/ ).
     </string>
+	<string name="agreements_title">Nutzungsbedingungen</string>
+	<string name="agreements_desc1">"Diese App ist unter der GPLv2 Lizenz: "</string>
+	<string name="agreements_desc2">Tiddloid benötigt diese Berechtigungen, um richtig zu funktionieren:</string>
+	<string name="agreements_privacy">
+		[Internetverbindung]
+		\nZum Abrufen von Remote-Vorlagen
+		\n[Verknüpfung erstellen]
+		\nOptional, um Verknüpfungen zu erstellen</string>
+	<string name="agreements_desc3">Um fortzufahren, müssen Sie die obigen Vereinbarungen akzeptieren.</string>
+	<string name="agreements_accept">Annehmen</string>
+	<string name="agreements_decline">Ablehnen</string>
 </resources>

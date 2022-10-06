@@ -19,15 +19,15 @@
 	<string name="shortcut_created">ショートカットが作成されました</string>
 	<string name="shortcut_failed">ショートカットを作成できませんでした</string>
 	<string name="remove_wiki">削除</string>
+	<string name="server_error">サーバーに接続できません</string>
 	<string name="please_wait">お待ちください…</string>
-	<string name="no_internet">インターネット接続がありません</string>
 	<string name="download_failed">ダウンロード失敗</string>
 	<string name="failed">失敗</string>
 	<string name="cancelled">キャンセル</string>
 	<string name="wiki_replaced">既存のWikiを上書きされました</string>
 	<string name="file_deleted">ファイルが削除されました</string>
 	<string name="delete_the_html_file">HTMLファイルを削除します(元に戻せません!)</string>
-	<string name="not_a_wiki">選択されたファイルはTiddlyWikiではありません</string>
+	<string name="not_a_wiki_page">このページはTiddlyWikiではありません。</string>
 	<string name="failed_creating_file">ファイルの作成に失敗しました</string>
 	<string name="error_loading_page">ページの読み込み中にエラーが発生しました</string>
 	<string name="error_processing_file">ファイルの処理中にエラーが発生しました</string>
@@ -41,12 +41,23 @@
 	<string name="market">評価する</string>
 	<string name="about">
 		Tiddloid Liteは、ローカルに保存されているTiddlyWikiを操作するためのアプリであり、Tiddloidの軽量バージョンです。いくつかのアイデアを得たら、すぐにそれらを書き留めてどこにでもアクセスできるようにすることができます。TiddlyWikiの詳細については、https://tiddlywiki.com を参照してください。\n
-        \n
-        このアプリは、これらのオープンソースプロジェクトの助けを借りて、GPLv2ライセンスの下でリリースされています：\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        ライセンスファイルはソースコードとともに提供されます。\n
-        \n
-        このアプリの詳細については、プロジェクトページ（ https://github.com/donmor/TiddloidLite/ ）または私のホームページ（ https://donmor.top/ ）をご覧ください。
+		\n
+		このアプリは、これらのオープンソースプロジェクトの助けを借りて、GPLv2ライセンスの下でリリースされています：\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		ライセンスファイルはソースコードとともに提供されます。\n
+		\n
+		このアプリの詳細については、プロジェクトページ（ https://github.com/donmor/TiddloidLite/ ）または私のホームページ（ https://donmor.top/ ）をご覧ください。
 	</string>
+	<string name="agreements_title">利用規約</string>
+	<string name="agreements_desc1">このアプリは、GPLv2ライセンスの下でリリースされています：</string>
+	<string name="agreements_desc2">Tiddloid が正しく機能するには、次の権限が必要です：</string>
+	<string name="agreements_privacy">
+		[インターネット接続]
+		\nサーバーからテンプレートを取得するため
+		\n[ショートカットを作成中]
+		\ショートカットを作成するため、無視できます</string>
+	<string name="agreements_desc3">続行するには、上記の契約に同意する必要があります。</string>
+	<string name="agreements_accept">承認</string>
+	<string name="agreements_decline">断る</string>
 </resources>

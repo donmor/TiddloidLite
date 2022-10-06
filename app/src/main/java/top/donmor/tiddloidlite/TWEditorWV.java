@@ -25,7 +25,6 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.provider.DocumentsContract;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.NonWritableChannelException;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 import java.util.Objects;
 
 public class TWEditorWV extends AppCompatActivity {
@@ -513,7 +511,7 @@ public class TWEditorWV extends AppCompatActivity {
 	}
 
 	private void autoRemoveConfirm(JSONObject wl, String id, Uri u) {
-		AlertDialog confirmAutoRemove = new AlertDialog.Builder(this)
+		new AlertDialog.Builder(this)
 				.setTitle(android.R.string.dialog_alert_title)
 				.setMessage(R.string.confirm_to_auto_remove_wiki)
 				.setNegativeButton(android.R.string.no, null)
@@ -526,13 +524,7 @@ public class TWEditorWV extends AppCompatActivity {
 						e.printStackTrace();
 					}
 				}).setOnDismissListener(dialogInterface -> TWEditorWV.this.finish())
-				.create();
-		confirmAutoRemove.setOnShowListener(dialog1 -> {
-			Window w;
-			if ((w = confirmAutoRemove.getWindow()) != null)
-				w.getDecorView().setLayoutDirection(TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()));
-		});
-		confirmAutoRemove.show();
+				.show();
 	}
 
 	// 加载内容
