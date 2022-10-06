@@ -19,15 +19,15 @@
 	<string name="shortcut_created">바로 가기가 성공적으로 생성되었습니다</string>
 	<string name="shortcut_failed">바로 가기를 만들지 못했습니다</string>
 	<string name="remove_wiki">위키 삭제</string>
+	<string name="server_error">서버에 연결할 수 없습니다</string>
 	<string name="please_wait">기다려주세요&#8230;</string>
-	<string name="no_internet">인터넷에 연결되지 않음</string>
 	<string name="download_failed">다운로드 실패</string>
 	<string name="failed">실패한</string>
 	<string name="cancelled">취소 된</string>
 	<string name="wiki_replaced">기존 위키를 덮어 썼습니다</string>
 	<string name="file_deleted">파일이 삭제되었습니다</string>
 	<string name="delete_the_html_file">HTML 파일을 삭제 (취소 할 수 없습니다!)</string>
-	<string name="not_a_wiki">선택된 파일은 TiddlyWiki가 아닙니다</string>
+	<string name="not_a_wiki_page">이 페이지는 TiddlyWiki가 아닙니다.</string>
 	<string name="failed_creating_file">파일을 만들지 못했습니다</string>
 	<string name="error_loading_page">페이지를로드 오류</string>
 	<string name="error_processing_file">파일을 처리하는 중 오류가 발생했습니다</string>
@@ -41,12 +41,24 @@
 	<string name="market">이 앱을 평가 해주십시오</string>
 	<string name="about">
 		Tiddloid의 경량 버전 인 Tiddloid Lite는 로컬에 저장된 TiddlyWiki와 함께 작동하는 앱입니다. 일단 아이디어가 있으면 즉시 적어두고 어디서나 액세스 할 수 있습니다. TiddlyWiki에 대한 자세한 내용은 https://tiddlywiki.com/을 참조하십시오.\n
-        \n
-        이 앱은 이러한 오픈 소스 프로젝트의 도움으로 GPLv2 라이선스로 출시되었습니다:\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        라이센스 파일은 소스 코드와 함께 배포됩니다.\n
-        \n
-        이 응용 프로그램에 대한 자세한 내용은 프로젝트 페이지 ( https://github.com/donmor/TiddloidLite/ ) 또는 내 홈페이지 ( https://donmor.top/ )를 방문하십시오.
+		\n
+		이 앱은 이러한 오픈 소스 프로젝트의 도움으로 GPLv2 라이선스로 출시되었습니다:\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		라이센스 파일은 소스 코드와 함께 배포됩니다.\n
+		\n
+		이 응용 프로그램에 대한 자세한 내용은 프로젝트 페이지 ( https://github.com/donmor/TiddloidLite/ ) 또는 내 홈페이지 ( https://donmor.top/ )를 방문하십시오.
 	</string>
+	<string name="agreements_title">사용 조건</string>
+	<string name="agreements_desc1">이 애플리케이션은 GPLv2 라이선스에 따라 게시됩니다:</string>
+	<string name="agreements_desc2">Tiddloid가 제대로 작동하려면 다음 권한이 필요합니다:</string>
+	<string name="agreements_privacy">
+		[인터넷 연결]
+		\n원격 템플릿 가져오기
+		\n[바로가기 생성]
+		\n선택 사항, 바로 가기 생성용
+	</string>
+	<string name="agreements_desc3">계속하려면 위의 계약에 동의해야 합니다.</string>
+	<string name="agreements_accept">동의하기</string>
+	<string name="agreements_decline">거절하다</string>
 </resources>

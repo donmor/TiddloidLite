@@ -19,15 +19,15 @@
 	<string name="shortcut_created">快捷方式已创建</string>
 	<string name="shortcut_failed">快捷方式创建失败</string>
 	<string name="remove_wiki">移除Wiki</string>
+	<string name="server_error">连接服务器失败</string>
 	<string name="please_wait">请稍候…</string>
-	<string name="no_internet">无网络连接</string>
 	<string name="download_failed">下载失败</string>
 	<string name="failed">失败</string>
 	<string name="cancelled">已取消</string>
 	<string name="wiki_replaced">已覆盖现有Wiki</string>
 	<string name="file_deleted">文件已删除</string>
 	<string name="delete_the_html_file">删除HTML源文件(无法撤销!)</string>
-	<string name="not_a_wiki">所选文件不是TiddlyWiki</string>
+	<string name="not_a_wiki_page">此页面不是 TiddlyWiki。</string>
 	<string name="failed_creating_file">创建文件失败</string>
 	<string name="error_loading_page">加载页面时出错</string>
 	<string name="error_processing_file">处理文件时出错</string>
@@ -43,10 +43,21 @@
 		Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是Tiddloid的轻量版。一旦有了一些想法，您可以立即将它们写下来以供随时查阅。有关TiddlyWiki的更多详细信息，请参阅https://tiddlywiki.com/。\n
 		\n
 		本应用程序遵循GPLv2许可发布，其完成离不开这些开源项目的帮助：\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
 		许可证文件随源代码提供。\n
 		\n
 		有关本应用程序的更多详细信息，请访问项目页面（ https://github.com/donmor/TiddloidLite/ ）或我的主页（ https://donmor.top/ ）。
 	</string>
+	<string name="agreements_title">使用条款</string>
+	<string name="agreements_desc1">本应用程序遵循GPLv2许可发布：</string>
+	<string name="agreements_desc2">Tiddloid 需要这些权限才能正常工作：</string>
+	<string name="agreements_privacy">
+		[网络连接]
+		\n用于获取远程模板
+		\n[创建快捷方式]
+		\n可选，用于创建快捷方式</string>
+	<string name="agreements_desc3">您必须接受上述条款才能使用本软件 。</string>
+	<string name="agreements_accept">接受</string>
+	<string name="agreements_decline">拒绝</string>
 </resources>

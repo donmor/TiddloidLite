@@ -7,9 +7,8 @@ Features
 - Saving TiddlyWikis to the source file by clicking the Save button
 - Creating shortcuts to existing wiki on desktop
 - Importing or exporting wiki list data
-This app is released under GPL v2 license　with the help of these open source projects:
-  Json - https://json.org/ ,
-  Jsoup - https://jsoup.org/ ,
-License files provided with source codes.
-
+License
+  This app is under GPL v2 license. License files provided with source codes.
+Localization
+  The localization of this app is currently provided by Google Translation. Pull requests are welcomed if you have better translations.
 For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).

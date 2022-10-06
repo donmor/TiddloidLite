@@ -19,15 +19,15 @@
 	<string name="shortcut_created">成功建立捷徑</string>
 	<string name="shortcut_failed">無法建立捷徑</string>
 	<string name="remove_wiki">刪除Wiki</string>
+	<string name="server_error">無法連接到服務器</string>
 	<string name="please_wait">請耐心等待…</string>
-	<string name="no_internet">沒有網絡連接</string>
 	<string name="download_failed">下載失敗</string>
 	<string name="failed">失敗</string>
 	<string name="cancelled">取消</string>
 	<string name="wiki_replaced">現有的Wiki被覆蓋</string>
 	<string name="file_deleted">檔案已刪除</string>
 	<string name="delete_the_html_file">刪除檔案(無法撤消!)</string>
-	<string name="not_a_wiki">所選檔案不是TiddlyWiki</string>
+	<string name="not_a_wiki_page">該頁面不是 TiddlyWiki。</string>
 	<string name="failed_creating_file">創建檔案失敗</string>
 	<string name="error_loading_page">載入頁面時出錯</string>
 	<string name="error_processing_file">處理檔案時出錯</string>
@@ -41,12 +41,23 @@
 	<string name="market">為此應用評分</string>
 	<string name="about">
 		Tiddloid Lite是Tiddloid的輕量化版本，是一款適用於本地儲存的TiddlyWiki的應用程式。一旦有了一些想法，您可以立即將它們寫下來，以便您可以隨時隨地訪問這些想法。有關TiddlyWiki的更多詳細信息，請參閱https://tiddlywiki.com/。 \n
-        \n
-        本應用程序遵循GPLv2許可發布，其完成離不開這些開源項目的幫助：\n
-        Json - https://json.org/ ,\n
-        Jsoup - https://jsoup.org/ ,\n
-        許可證文件與代碼一起提供。 \n
-        \n
-        有關本應用程式的更多詳細信息，請訪問項目頁面（ https://github.com/donmor/TiddloidLite/ ）或我的主頁（ https://donmor.top/ ）。
+		\n
+		本應用程序遵循GPLv2許可發布，其完成離不開這些開源項目的幫助：\n
+		Json - https://json.org/ ,\n
+		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
+		許可證文件與代碼一起提供。 \n
+		\n
+		有關本應用程式的更多詳細信息，請訪問項目頁面（ https://github.com/donmor/TiddloidLite/ ）或我的主頁（ https://donmor.top/ ）。
 	</string>
+	<string name="agreements_title">使用條款</string>
+	<string name="agreements_desc1">本應用程序遵循GPLv2許可發布：</string>
+	<string name="agreements_desc2">Tiddloid 需要這些權限才能正常工作：</string>
+	<string name="agreements_privacy">
+		[網絡連接]
+		\n用於獲取遠程模板
+		\n[創建快捷方式]
+		\n可選，用於創建快捷方式</string>
+	<string name="agreements_desc3">要繼續，您必須接受上述協議。</string>
+	<string name="agreements_accept">接受</string>
+	<string name="agreements_decline">拒絕</string>
 </resources>

@@ -1,3 +1,4 @@
 Update details:
-- Fixed a bug causing mistaken permission revocation when having a page opened and perform a missing wiki auto-remove.
-- Other optimizations
+- Refactored the project and updated codebase to fix several problems
+- Dropped support to KitKat
+- Minor tweaks

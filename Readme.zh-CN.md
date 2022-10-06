@@ -43,10 +43,6 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 
     * 检查Android系统版本。TiddlyWiki 5.1.23版本在Android 5.1及以下(WebView 39)存在严重bug。一个解决方案是使用已经修复了此bug的pre-release版本，或者未出现此bug的旧版本。
 
-* Wiki列表每次的顺序都在变化。
-
-    * 检查Android系统版本。JSON库的一个实现在Android 4.4以下有所差异，导致了Wiki列表乱序问题。推荐在Android 8.0以上系统运行以获得最佳体验。
-
 * 为什么单独有一个Tiddloid Lite？它和Tiddloid有什么区别？
 
     在之前的1.x版本中，Tiddloid使用旧的`file://`协议打开文件，此方式不支持访问云存储。之后我制作了基于SAF（即Storage Access Framework）的Tiddloid Lite，最终成为一个轻量版。现在Tiddloid已经换用SAF，Tiddloid Lite的开发已中止。
@@ -68,12 +64,7 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 
 ### 许可
 
-本应用程序遵循GPLv2许可发布，其完成离不开这些开源项目的帮助：
-
-* Json - https://json.org/ ,
-* Jsoup - https://jsoup.org/ .
-
-许可证文件随源代码提供。
+本应用程序遵循GPLv2许可发布，许可证文件随源代码提供。
 
 ### 多语言
 

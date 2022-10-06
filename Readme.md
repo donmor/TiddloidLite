@@ -42,10 +42,6 @@ There will be no feature updates since version 1.2.0, because all unique feature
 
     * Check your Android version. TiddlyWiki 5.1.23 has critical bugs on Android 5.1 and below (WebView 39). A solution is to get a pre-release version of TiddlyWiki, which have had this bug fixed or, a previous version without this bug.
 
-* My wiki list change its order randomly every time.
-
-    * Check your Android version. One of the functions in the JSON library behaves differently below 4.4, causing random wiki list order bug on KitKat devices. We recommend you to use Tiddloid on Oreo (8.0) and above to enable all of its features.
-
 * Why there's a Tiddloid Lite? What's the difference between this and Tiddloid?
 
     In the past 1.x days, Tiddloid use legacy `file://` ways to handle files, causing the lack of access to cloud medias. Later I made another branch that implements Android's SAF (i.e. Storage Access Framework), and finally it became a lightweight version. Now since Tiddloid 2.0 has been refactored to use SAF, this project has been discontinued except for bug fixes.
@@ -78,10 +74,6 @@ is permitted UNDER THESE CONDITIONS:
 2. State changes
 3. Disclose source under
 4. Same license.
-
-This app is made possible with the help of these open source projects:
-* Json - https://json.org/ ,
-* Jsoup - https://jsoup.org/ ,
 
 License files provided in /lic.
 
