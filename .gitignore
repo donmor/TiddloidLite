@@ -16,3 +16,4 @@
 /app/release
 .cxx
 /.idea/deploymentTargetDropDown.xml
+/.idea/migrations.xml

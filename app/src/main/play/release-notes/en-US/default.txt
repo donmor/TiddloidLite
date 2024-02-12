@@ -1,4 +1,4 @@
 Update details:
-- Refactored the project and updated codebase to fix several problems
-- Dropped support for KitKat
-- Minor tweaks
+- Improve compatibility to cloud services
+- Add monochrome icon
+- Add support for Android 14
