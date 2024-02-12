@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -111,7 +112,7 @@ public class TWEditorWV extends AppCompatActivity {
 		// 初始化顶栏
 		toolbar = findViewById(R.id.wv_toolbar);
 		setSupportActionBar(toolbar);
-		toolbar.setNavigationOnClickListener(v -> onBackPressed());
+		toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 		this.setTitle(R.string.app_name);
 		onConfigurationChanged(getResources().getConfiguration());
 		wvProgress = findViewById(R.id.progressBar);
@@ -342,6 +343,16 @@ public class TWEditorWV extends AppCompatActivity {
 				view.clearHistory();
 			}
 		});
+		// 关闭/返回
+		getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+			@Override
+			public void handleOnBackPressed() {
+				if (mCustomView != null)
+					wcc.onHideCustomView();
+				else
+					wv.evaluateJavascript(getString(R.string.js_exit), value -> confirmAndExit(Boolean.parseBoolean(value), null));
+			}
+		});
 		// 初始化db
 		try {
 			db = MainActivity.readJson(this);
@@ -495,7 +506,7 @@ public class TWEditorWV extends AppCompatActivity {
 			isExit.setCanceledOnTouchOutside(false);
 		} else {
 			if (nextWikiIntent == null)
-				TWEditorWV.super.onBackPressed();
+				finishAfterTransition();
 			else
 				nextWiki(nextWikiIntent);
 		}
@@ -609,15 +620,6 @@ public class TWEditorWV extends AppCompatActivity {
 		c.save();
 		c.restore();
 		return new BitmapDrawable(getResources(), icons);
-	}
-
-	// 关闭
-	@Override
-	public void onBackPressed() {
-		if (mCustomView != null)
-			wcc.onHideCustomView();
-		else
-			wv.evaluateJavascript(getString(R.string.js_exit), value -> confirmAndExit(Boolean.parseBoolean(value), null));
 	}
 
 	// 应用主题

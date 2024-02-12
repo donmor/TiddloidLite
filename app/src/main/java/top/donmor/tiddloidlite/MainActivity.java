@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -475,32 +476,28 @@ public class MainActivity extends AppCompatActivity {
 		final int idNew = R.id.action_new,
 				idImport = R.id.action_import,
 				idAbout = R.id.action_about;
-		switch (id) {
-			case idNew:
-				getChooserCreate.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML));
-				break;
-			case idImport:
-				getChooserImport.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML).putExtra(Intent.EXTRA_MIME_TYPES, TYPE_FILTERS));
-				break;
-			case idAbout:
-				SpannableString spannableString = new SpannableString(getString(R.string.about));
-				Linkify.addLinks(spannableString, Linkify.ALL);
-				AlertDialog aboutDialog = new AlertDialog.Builder(this)
-						.setTitle(getString(R.string.about_title, BuildConfig.VERSION_NAME))
-						.setMessage(spannableString)
-						.setPositiveButton(android.R.string.ok, null)
-						.setNeutralButton(R.string.market, (dialog, which) -> {
-							try {
-								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(KEY_URI_RATE + getPackageName())));
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						})
-						.show();
-				((TextView) aboutDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-				if (APIOver23)
-					((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
-				break;
+		if (id == idNew) {
+			getChooserCreate.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML));
+		} else if (id == idImport) {
+			getChooserImport.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML).putExtra(Intent.EXTRA_MIME_TYPES, TYPE_FILTERS));
+		} else if (id == idAbout) {
+			SpannableString spannableString = new SpannableString(getString(R.string.about));
+			Linkify.addLinks(spannableString, Linkify.ALL);
+			AlertDialog aboutDialog = new AlertDialog.Builder(this)
+					.setTitle(getString(R.string.about_title, getVersion(this)))
+					.setMessage(spannableString)
+					.setPositiveButton(android.R.string.ok, null)
+					.setNeutralButton(R.string.market, (dialog, which) -> {
+						try {
+							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(KEY_URI_RATE + getPackageName())));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					})
+					.show();
+			((TextView) aboutDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+			if (APIOver23)
+				((TextView) aboutDialog.findViewById(android.R.id.message)).setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Widget_TextView);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -686,16 +683,24 @@ public class MainActivity extends AppCompatActivity {
 
 	static void ba2fc(byte[] bytes, @NonNull FileChannel oc) throws IOException, NonWritableChannelException {
 		oc.write(ByteBuffer.wrap(bytes));
-		oc.truncate(bytes.length);
-		oc.force(true);
+		try {
+			oc.truncate(bytes.length);
+			oc.force(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	static void fc2fc(@NonNull FileChannel ic, @NonNull FileChannel oc) throws IOException, NonReadableChannelException, NonWritableChannelException {
 		long len = ic.size();
 		ic.transferTo(0, len, oc);
-		oc.truncate(len);
-		ic.force(true);
-		oc.force(true);
+		try {
+			oc.truncate(len);
+			ic.force(true);
+			oc.force(true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	static void trimDB120(Context context, JSONObject db) {
@@ -798,4 +803,16 @@ public class MainActivity extends AppCompatActivity {
 		firstRunDialog.setCanceledOnTouchOutside(false);
 		firstRunDialog.show();
 	}
+
+	private static String getVersion(Context context) {
+		try {
+			PackageManager manager = context.getPackageManager();
+			PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+			return info.versionName;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
