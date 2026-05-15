@@ -311,11 +311,6 @@ public class TWEditorWV extends AppCompatActivity {
 					Toast.makeText(TWEditorWV.this, R.string.failed, Toast.LENGTH_SHORT).show();
 				}
 			}
-
-			@JavascriptInterface
-			public void exportDB() {
-				MainActivity.exportJson(TWEditorWV.this, db);
-			}
 		}, JSI);
 		wv.setWebViewClient(new WebViewClient() {
 			// 跳转处理
@@ -360,7 +355,7 @@ public class TWEditorWV extends AppCompatActivity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 			try {
-				db = MainActivity.initJson(TWEditorWV.this);    // 初始化JSON数据，如果加载失败
+				db = MainActivity.initJson();    // 初始化JSON数据，如果加载失败
 				MainActivity.writeJson(TWEditorWV.this, db);
 				firstRun = true;
 			} catch (JSONException e1) {

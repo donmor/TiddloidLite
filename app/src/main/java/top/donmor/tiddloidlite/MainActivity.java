@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 			} catch (Exception e) {
 				e.printStackTrace();
 				try {
-					db = initJson(this);
+					db = initJson();
 					writeJson(this, db);
 					firstRun = true;
 				} catch (Exception e1) {
@@ -608,20 +608,7 @@ public class MainActivity extends AppCompatActivity {
 		WindowCompat.setDecorFitsSystemWindows(w, true);
 	}
 
-	static JSONObject initJson(Context context) throws JSONException {
-		File ext = context.getExternalFilesDir(null), file = new File(ext, DB_FILE_NAME);
-		if (ext != null && file.isFile())
-			try (ParcelFileDescriptor ifd = Objects.requireNonNull(context.getContentResolver().openFileDescriptor(Uri.fromFile(file), KEY_FD_R));
-					FileInputStream is = new FileInputStream(ifd.getFileDescriptor());
-					FileChannel ic = is.getChannel()) {
-				JSONObject jsonObject = new JSONObject(new String(fc2ba(ic)));
-				if (!jsonObject.has(DB_KEY_WIKI)) jsonObject.put(DB_KEY_WIKI, new JSONObject());
-				return jsonObject;
-			} catch (IOException | JSONException | NonReadableChannelException e) {
-				e.printStackTrace();
-			} finally {
-				file.delete();
-			}
+	static JSONObject initJson() throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(DB_KEY_WIKI, new JSONObject());
 		return jsonObject;
@@ -642,18 +629,6 @@ public class MainActivity extends AppCompatActivity {
 			ba2fc(vdb.toString(2).getBytes(), oc);
 		} catch (IOException | NonWritableChannelException e) {
 			throw new JSONException(e.getMessage());
-		}
-	}
-
-	static void exportJson(Context context, JSONObject vdb) {
-		File ext = context.getExternalFilesDir(null);
-		if (ext == null) return;
-		try (ParcelFileDescriptor ofd = Objects.requireNonNull(context.getContentResolver().openFileDescriptor(Uri.fromFile(new File(ext, DB_FILE_NAME)), KEY_FD_W));
-				FileOutputStream os = new FileOutputStream(ofd.getFileDescriptor());
-				FileChannel oc = os.getChannel()) {
-			ba2fc(vdb.toString(2).getBytes(), oc);
-		} catch (IOException | JSONException | NonWritableChannelException e) {
-			e.printStackTrace();
 		}
 	}
 
