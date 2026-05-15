@@ -133,10 +133,8 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		long time0 = System.nanoTime();
 		super.onCreate(savedInstanceState);
 		Window w = getWindow();
-		w.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 		w.setFormat(PixelFormat.RGBA_8888);
 		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 		setContentView(R.layout.activity_main);
@@ -312,18 +310,7 @@ public class MainActivity extends AppCompatActivity {
 				rvWikiList.setAdapter(wikiListAdapter);
 				noWiki.setVisibility(wikiListAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
 			});
-			while ((System.nanoTime() - time0) / 1000000 < 1000) try {
-				//noinspection BusyWait
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			runOnUiThread(() -> {
-				View splash = findViewById(R.id.splash_layout);
-				ViewParent parent;
-				if (splash != null && (parent = splash.getParent()) instanceof ViewGroup)
-					((ViewGroup) parent).removeView(splash);
-				w.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 				if (firstRun)
 					firstRunReq(this);
 			});

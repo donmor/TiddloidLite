@@ -12,12 +12,6 @@
 	android:orientation="vertical"
 	tools:context=".MainActivity">
 
-	<include
-		android:id="@+id/splash_layout"
-		layout="@layout/splash"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" />
-
 	<com.google.android.material.appbar.AppBarLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
