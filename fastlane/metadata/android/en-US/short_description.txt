@@ -1,1 +1,1 @@
-work with locally stored TiddlyWikis
+Tiddloid Lite is a lightweight app to work with locally stored TiddlyWikis

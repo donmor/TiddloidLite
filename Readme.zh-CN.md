@@ -1,10 +1,8 @@
 # Tiddloid Lite
 
-![avatar](img/Tiddloid.png)
-
 Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Tiddloid](https://gitee.com/donmor/Tiddloid)的轻量版。一旦有了一些想法，您可以立即将它们写下来以供随时查阅。
 
-<img src="img/img01.png" width="360" height="640" alt="01"/>&emsp;&emsp;<img src="img/img02.png" width="360" height="640" alt="02"/>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="180" height="320" alt="01"/>&emsp;<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="180" height="320" alt="02"/>
 
 有关TiddlyWiki的更多详细信息，请参阅https://tiddlywiki.com/。
 
