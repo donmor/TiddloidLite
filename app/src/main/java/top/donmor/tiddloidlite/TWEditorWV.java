@@ -6,6 +6,7 @@
 
 package top.donmor.tiddloidlite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -67,6 +68,7 @@ import java.nio.channels.NonWritableChannelException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class TWEditorWV extends AppCompatActivity {
 
 	// 定义属性
@@ -77,7 +79,6 @@ public class TWEditorWV extends AppCompatActivity {
 	private int mOriginalOrientation;
 	private Integer themeColor = null;
 	private boolean hideAppbar = false, ready = false, firstRun;
-	private float scale;
 	private ValueCallback<Uri[]> uploadMessage;
 	private WebView wv;
 	private Toolbar toolbar;
@@ -135,7 +136,6 @@ public class TWEditorWV extends AppCompatActivity {
 		wvs.setAllowUniversalAccessFromFileURLs(true);
 		wvs.setSupportMultipleWindows(true);
 		wvs.setMediaPlaybackRequiresUserGesture(false);
-		scale = getResources().getDisplayMetrics().density;
 		getChooserDL = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
 			if (exData == null) return;
 			if (result.getData() != null) {
@@ -356,7 +356,6 @@ public class TWEditorWV extends AppCompatActivity {
 			e.printStackTrace();
 			try {
 				db = MainActivity.initJson();    // 初始化JSON数据，如果加载失败
-				MainActivity.writeJson(TWEditorWV.this, db);
 				firstRun = true;
 			} catch (JSONException e1) {
 				e1.printStackTrace();
@@ -368,7 +367,23 @@ public class TWEditorWV extends AppCompatActivity {
 		MainActivity.trimDB120(this, db);
 		nextWiki(getIntent());
 		if (firstRun)
-			MainActivity.firstRunReq(this);
+			MainActivity.firstRunReq(this, new MainActivity.OnFirstRun() {
+				@Override
+				public void onAgreed() {
+					try {
+						MainActivity.writeJson(TWEditorWV.this, db);
+					} catch (JSONException e) {
+						e.printStackTrace();
+						Toast.makeText(TWEditorWV.this, R.string.data_error, Toast.LENGTH_SHORT).show();
+					}
+				}
+
+				@Override
+				public void onDeclined() {
+					finishAfterTransition();
+					System.exit(0);
+				}
+			});
 	}
 
 	// 热启动
@@ -391,7 +406,7 @@ public class TWEditorWV extends AppCompatActivity {
 	// 处理跳转App
 	private boolean overrideUrlLoading(final WebView view, Uri u) {
 		String sch = u.getScheme();
-		if (sch == null || sch.length() == 0)
+		if (sch == null || sch.isEmpty())
 			return false;
 		try {
 			final Intent intent;
@@ -473,7 +488,7 @@ public class TWEditorWV extends AppCompatActivity {
 				Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
 				toolbar.setLogo(favicon != null ? cIcon(favicon) : null);
 				// 写Json
-				wApp.put(MainActivity.KEY_NAME, title).put(MainActivity.DB_KEY_SUBTITLE, subtitle).put(MainActivity.DB_KEY_COLOR, themeColor).put(MainActivity.KEY_FAVICON, fib64.length() > 0 ? fib64 : null);
+				wApp.put(MainActivity.KEY_NAME, title).put(MainActivity.DB_KEY_SUBTITLE, subtitle).put(MainActivity.DB_KEY_COLOR, themeColor).put(MainActivity.KEY_FAVICON, !fib64.isEmpty() ? fib64 : null);
 				MainActivity.writeJson(TWEditorWV.this, db);
 				onConfigurationChanged(newConfig);
 			} catch (JSONException e) {
@@ -534,6 +549,7 @@ public class TWEditorWV extends AppCompatActivity {
 	}
 
 	// 加载内容
+	@SuppressLint("SetJavaScriptEnabled")
 	private void nextWiki(Intent nextWikiIntent) {
 		// 读取数据
 		final JSONObject wl;
@@ -551,7 +567,7 @@ public class TWEditorWV extends AppCompatActivity {
 		final Uri u;
 		if ((bu = nextWikiIntent.getExtras()) == null
 				|| (nextWikiId = bu.getString(MainActivity.KEY_ID)) == null
-				|| nextWikiId.length() == 0
+				|| nextWikiId.isEmpty()
 				|| (wa = wl.optJSONObject(nextWikiId)) == null) {
 			Toast.makeText(this, R.string.wiki_not_exist, Toast.LENGTH_SHORT).show();
 			finish();
@@ -581,8 +597,8 @@ public class TWEditorWV extends AppCompatActivity {
 		String wvSubTitle = wApp.optString(MainActivity.DB_KEY_SUBTITLE);
 		String fib64 = wApp.optString(MainActivity.KEY_FAVICON);
 		this.setTitle(wvTitle);
-		toolbar.setSubtitle(wvSubTitle.length() > 0 ? wvSubTitle : null);
-		if (fib64.length() > 0) {
+		toolbar.setSubtitle(!wvSubTitle.isEmpty() ? wvSubTitle : null);
+		if (!fib64.isEmpty()) {
 			byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 			Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
 			toolbar.setLogo(favicon != null ? cIcon(favicon) : null);
@@ -608,8 +624,10 @@ public class TWEditorWV extends AppCompatActivity {
 	//生成icon
 	private BitmapDrawable cIcon(Bitmap icon) {
 		Matrix matrix = new Matrix();
-		matrix.postScale(scale * 32f / icon.getWidth(), scale * 32f / icon.getHeight());
-		Bitmap icons = Bitmap.createBitmap(Math.round(scale * 40f), Math.round(scale * 32f), Bitmap.Config.ARGB_8888);
+		matrix.postScale(getResources().getDisplayMetrics().density * 32f / icon.getWidth(),
+				getResources().getDisplayMetrics().density * 32f / icon.getHeight());
+		Bitmap icons = Bitmap.createBitmap(Math.round(getResources().getDisplayMetrics().density * 40f),
+				Math.round(getResources().getDisplayMetrics().density * 32f), Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(icons);
 		c.drawBitmap(icon, matrix, null);
 		c.save();
@@ -628,7 +646,7 @@ public class TWEditorWV extends AppCompatActivity {
 		toolbar.setVisibility(wApp != null && hideAppbar && ready ? View.GONE : View.VISIBLE);
 		Window window = getWindow();
 		WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(window, window.getDecorView());
-		if (MainActivity.APIOver23)
+		if (MainActivity.APIOver23 && !MainActivity.APIOver35)
 			window.setStatusBarColor(primColor);
 		if (MainActivity.APIOver26)
 			window.setNavigationBarColor(primColor);

@@ -18,7 +18,7 @@
 	<string name="create_shortcut">建立捷徑</string>
 	<string name="shortcut_created">成功建立捷徑</string>
 	<string name="shortcut_failed">無法建立捷徑</string>
-	<string name="remove_wiki">刪除Wiki</string>
+	<string name="remove">移除</string>
 	<string name="server_error">無法連接到服務器</string>
 	<string name="please_wait">請耐心等待…</string>
 	<string name="download_failed">下載失敗</string>
@@ -42,10 +42,7 @@
 	<string name="about">
 		Tiddloid Lite是Tiddloid的輕量化版本，是一款適用於本地儲存的TiddlyWiki的應用程式。一旦有了一些想法，您可以立即將它們寫下來，以便您可以隨時隨地訪問這些想法。有關TiddlyWiki的更多詳細信息，請參閱https://tiddlywiki.com/。 \n
 		\n
-		本應用程序遵循GPLv2許可發布，其完成離不開這些開源項目的幫助：\n
-		Json - https://json.org/ ,\n
-		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
-		許可證文件與代碼一起提供。 \n
+		本應用程序遵循GPLv2許可發布。許可證文件與代碼一起提供。 \n
 		\n
 		有關本應用程式的更多詳細信息，請訪問項目頁面（ https://github.com/donmor/TiddloidLite/ ）或我的主頁（ https://donmor.top/ ）。
 	</string>

@@ -82,7 +82,6 @@
 	<!--Misc-->
 	<string name="app_name" translatable="false">Tiddloid Lite</string>
 	<string name="tiddlywiki" translatable="false">TiddlyWiki</string>
-	<string name="logo" translatable="false">logo</string>
 	<!--JSON and Settings-->
 	<string name="template_repo">https://tiddlywiki.com/empty.html</string>
 	<!--UI-->
@@ -97,7 +96,7 @@
 	<string name="create_shortcut">Create Shortcut</string>
 	<string name="shortcut_created">Shortcut successfully created</string>
 	<string name="shortcut_failed">Failed to create shortcut</string>
-	<string name="remove_wiki">Remove</string>
+	<string name="remove">Remove</string>
 	<string name="server_error">Unable to connect to the server</string>
 	<string name="please_wait">Please wait&#8230;</string>
 	<string name="download_failed">Download failed</string>
@@ -121,10 +120,7 @@
 	<string name="about">
 		Tiddloid Lite, a lightweight version of Tiddloid, is an app to work with locally stored TiddlyWikis. Once have some ideas, you can immediately write them down so that you can access them anywhere. For more details of TiddlyWiki, please see https://tiddlywiki.com/ .\n
 		\n
-		This app is released under GPL v2 license　with the help of these open source projects:\n
-		Json - https://json.org/ ,\n
-		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
-		License files provided with source codes.\n
+		This app is released under GPL v2 license. License files provided with source codes.\n
 		\n
 		For more details about this app, please visit the project page ( https://github.com/donmor/TiddloidLite/ ) or my homepage ( https://donmor.top/ ).
     </string>

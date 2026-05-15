@@ -1,0 +1,2 @@
+- Migrated to ANdroid 17
+- Removed config import/export (unusable for SAF)

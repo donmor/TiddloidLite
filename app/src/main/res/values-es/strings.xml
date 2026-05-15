@@ -18,7 +18,7 @@
 	<string name="create_shortcut">Crear un acceso directo en el escritorio</string>
 	<string name="shortcut_created">Acceso directo creado correctamente</string>
 	<string name="shortcut_failed">Error al crear acceso directo</string>
-	<string name="remove_wiki">Eliminar Wiki</string>
+	<string name="remove">Eliminar</string>
 	<string name="server_error">No es posible conectarse al servidor</string>
 	<string name="please_wait">Por favor espera&#8230;</string>
 	<string name="download_failed">Descarga fracasó</string>
@@ -42,10 +42,7 @@
 	<string name="about">
 		Tiddloid Lite, una versión ligera de Tiddloid, es una aplicación para trabajar con TiddlyWikis almacenados localmente. Una vez que tenga algunas ideas, puede escribirlas inmediatamente para que pueda acceder a ellas desde cualquier lugar. Para obtener más detalles sobre TiddlyWiki, consulte https://tiddlywiki.com/ .\n
 		\n
-		Esta aplicación se lanza bajo la licencia GPLv2 con la ayuda de estos proyectos de código abierto:\n
-		Json - https://json.org/ ,\n
-		sardine-android - https://github.com/thegrizzlylabs/sardine-android ,\n
-		El archivo de licencia se proporciona con el código fuente.\n
+		Esta aplicación se lanza bajo la licencia GPLv2. El archivo de licencia se proporciona con el código fuente.\n
 		\n
 		Para obtener más detalles sobre esta aplicación, visite la página del proyecto ( https://github.com/donmor/TiddloidLite/ ) o mi página de inicio ( https://donmor.top/ )..
     </string>

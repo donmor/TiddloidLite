@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiListHolder> {
 
 	private final Context context;
@@ -61,7 +62,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 		inflater = LayoutInflater.from(context);
 	}
 
-	static class WikiListHolder extends RecyclerView.ViewHolder {
+	public static class WikiListHolder extends RecyclerView.ViewHolder {
 		private final Button btnWiki;
 
 		WikiListHolder(View itemView) {
@@ -84,7 +85,7 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 			JSONObject wa = wl.getJSONObject(id);
 			String n = wa.optString(MainActivity.KEY_NAME, MainActivity.KEY_TW), s = wa.optString(MainActivity.DB_KEY_SUBTITLE), fib64 = wa.optString(MainActivity.KEY_FAVICON);
 			holder.btnWiki.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_description, 0, 0, 0);
-			if (fib64.length() > 0) {
+			if (!fib64.isEmpty()) {
 				byte[] b = Base64.decode(fib64, Base64.NO_PADDING);
 				Bitmap favicon = BitmapFactory.decodeByteArray(b, 0, b.length);
 				if (favicon != null) {
@@ -109,10 +110,10 @@ public class WikiListAdapter extends RecyclerView.Adapter<WikiListAdapter.WikiLi
 			} catch (Resources.NotFoundException e) {
 				e.printStackTrace();
 			}
-			builder.append(s.length() > 0 ? MainActivity.KEY_LBL + s : s);
+			builder.append(!s.isEmpty() ? MainActivity.KEY_LBL + s : s);
 			builder.setSpan(new RelativeSizeSpan(0.8f), builder.length(), builder.length(), Spanned.SPAN_MARK_POINT);
 			DocumentFile documentFile = DocumentFile.fromSingleUri(context, Uri.parse(wa.getString(MainActivity.DB_KEY_URI)));
-			if (documentFile != null && documentFile.exists()) {
+			if (documentFile.exists()) {
 				builder.append('\n');
 				builder.append(SimpleDateFormat.getDateTimeInstance().format(new Date(documentFile.lastModified()))).append(formatSize(documentFile.length()));
 			}

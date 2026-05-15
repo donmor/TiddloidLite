@@ -15,11 +15,10 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="false"
 		android:theme="@style/AppTheme"
-		android:usesCleartextTraffic="true"
 		tools:targetApi="s">
 		<activity
 			android:name=".MainActivity"
-			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|touchscreen"
 			android:exported="true"
 			android:hardwareAccelerated="true"
 			android:theme="@style/AppTheme.NoActionBar">
@@ -30,11 +29,10 @@
 		</activity>
 		<activity
 			android:name=".TWEditorWV"
-			android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
-			android:exported="true"
+			android:alwaysRetainTaskState="true"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|density|touchscreen|uiMode"
 			android:hardwareAccelerated="true"
 			android:launchMode="singleTask"
-			android:theme="@style/AppTheme.NoActionBar"
-			tools:targetApi="n" />
+			android:theme="@style/AppTheme.NoActionBar" />
 	</application>
 </manifest>

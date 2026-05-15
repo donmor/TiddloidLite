@@ -16,20 +16,12 @@ There will be no feature updates since version 1.2.0, because all unique feature
 * Import existing Wikis from file providers, supporting local and cloud.
 * Saving TiddlyWikis to the source file by clicking the Save button
 * Creating shortcuts to existing wiki on desktop
-* Importing or exporting wiki list data
 
 ### Frequently Asked Questions
 
-* I can't find where to importing/exporting wiki list data.
-
-    The wiki list importing/exporting are hidden features since it's seldom used.
-
-    * To import: Copy `data.json` to `INTERNAL/Android/data/top.donmor.tiddloidlite/files/` before running for the first time. If you have previously run the program, clear the data in `Settings/Apps` and copy the file.
-    * To export: Create a tiddler with: `<a href="javascript:window.twi.exportDB()">export</a>` and click the link. A `data.json` will be generated under `INTERNAL/Android/data/top.donmor.tiddloidlite/files/`.
-
 * How to apply UI tweaks?
 
-    Install the plugin provided along with the apk and: 
+  Install the plugin provided along with the apk and:
 
     * Apply theme color: Check `Control Panel/Appearance/Tiddloid Tweaks/Apply theme color to system bars`.
     * Hide toolbar: Check `Control Panel/Appearance/Tiddloid Tweaks/Hide toolbar on loading complete`.
@@ -44,18 +36,17 @@ There will be no feature updates since version 1.2.0, because all unique feature
 
     Here's the difference between different versions:
 
-    | Feature                                   | [Tiddloid](https://github.com/donmor/Tiddloid) 1.x | [Tiddloid](https://github.com/donmor/Tiddloid) 2.0 and above | Tiddloid Lite |
-    | ----------------------------------------- | ------------- | ------------------------------------------------------------ | -------------------------------- |
-    | File API                                  | Java File API | Android Storage Access Framework and also Java File API      | Android Storage Access Framework |
-    | Backup system                             | Yes           | Yes                                                          | No                               |
-    | Search-and-Fork system                    | Yes           | No (Instead it receives shared URLs from browsers and show options to save the page) | No                               |
-    | Downloader                                | Yes           | No                                                           | No                               |
-    | Direct access to files in the same folder | Yes           | Partial (Legacy, or TiddlyWiki folders by caching all files) | No                               |
-    | Cloud Service                             | No            | Yes (via SAF)                                                | Yes (via SAF)                    |
-    | Template | Download on first startup | Download on creating new wiki, and cached in case it is unable to access the Internet |Download on creating new wiki|
-    | Compatibility | Supports most of Android versions and most of TiddlyWikis | Supports latest Android versions best and supports most of TiddlyWikis |Supports latest Android versions best and supports most of TW5|
-    | Recommended Android version | Android 4.4 ~ 9.0 | Android 4.4 and above, best for 8.0 and above |Android 4.4 and above, best for 8.0 and above|
-
+  | Feature                                   | Tiddloid 1.x                                             | Tiddloid 2.0 and above                                                                | [Tiddloid Lite](https://github.com/donmor/TiddloidLite)        |
+    |-------------------------------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------|----------------------------------------------------------------|
+  | File API                                  | Java File API                                            | Android Storage Access Framework and also Java File API                               | Android Storage Access Framework                               |
+  | Backup system                             | Yes                                                      | Yes                                                                                   | No                                                             |
+  | Search-and-Fork system                    | Yes                                                      | No (Instead it receives shared URLs from browsers and show options to save the page)  | No                                                             |
+  | Downloader                                | Yes                                                      | No                                                                                    | No                                                             |
+  | Direct access to files in the same folder | Yes                                                      | Partial (Legacy, or TiddlyWiki folders by caching all files)                          | No                                                             |
+  | Cloud Service                             | No                                                       | Yes (via SAF)                                                                         | Yes (via SAF)                                                  |
+  | Template                                  | Download on first startup, manually updated              | Download on creating new wiki, and cached in case it is unable to access the Internet | Download on creating new wiki                                  |
+  | Compatibility                             | Supports legacy Android versions and most of TiddlyWikis | Supports latest Android versions best and supports most of TiddlyWikis                | Supports latest Android versions best and supports most of TW5 |
+  | Recommended Android version               | Android 4.4 ~ 9.0                                        | Android 5.0 and above, best for 8.0                                                   | Android 5.0 and above, best for 8.0                            |
 
 ### License
 
@@ -71,7 +62,7 @@ is permitted UNDER THESE CONDITIONS:
 3. Disclose source under
 4. Same license.
 
-License files provided in /lic.
+License files provided along with the source code.
 
 ### Localization
 
@@ -79,8 +70,8 @@ The localization of this app is currently provided by Google Translation. Pull r
 
 ### About us
 
-Thank you for trying donmor's productions. I'd really appreciate it if you kindly support us via the buttons below, and take more effect to improve our productions.
+Thank you for trying our productions. I'd really appreciate it if you kindly support us via the buttons below, and take more effect to improve our productions.
 
-&ensp;&ensp;<a href="https://liberapay.com/donmor3000/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="30" /></a>&ensp;&ensp;<a href="https://donmor.top/#DonationQrCode"><img alt="Donate using Alipay and Wechat Pay" src="https://donmor.top/img/aliwechat.svg" height="30" /></a>
+&ensp;&ensp;<a href="https://liberapay.com/donmor3000/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="30" /></a>&ensp;&ensp;<a href="https://afdian.com/a/donmor"><img alt="Donate using Afdian" src="https://static.afdiancdn.com/static/img/logo/logo.png" height="30" /></a>
 
-If you take an interest in us, fell free to visit [our homepage](https://donmor.top/).
+Fell free to visit [my homepage](https://donmor.top/).

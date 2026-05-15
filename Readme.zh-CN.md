@@ -16,16 +16,8 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 * 导入存储在可写来源的现有Wiki，支持本地或云存储
 * 点击保存按钮保存更改到源文件
 * 在桌面创建现有Wiki的快捷方式
-* 导入/导出Wiki列表
 
 ### FAQ
-
-* 找不到如何导入/导出Wiki列表。
-
-    Wiki列表导入/导出属于极少用到的隐藏功能。
-
-    * 导入：在第一次运行前复制`data.json`到`内部存储/Android/data/top.donmor.tiddloidlite/files/`。如果已经运行过了，则需要清除应用数据。
-    * 导出：在Wiki内执行`window.twi.exportDB()`，比如创建一个Tiddler并输入以下内容：`<a href="javascript:window.twi.exportDB()">export</a>`然后点击生成的链接。生成的`data.json`可以在`内部存储/Android/data/top.donmor.tiddloidlite/files/`找到。
 
 * 如何调整界面？
 
@@ -44,17 +36,17 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 
     以下是不同版本之间的差异：
 
-    | 功能                               | [Tiddloid](https://gitee.com/donmor/Tiddloid) 1.x | [Tiddloid](https://gitee.com/donmor/Tiddloid) 2.0 及以上 | Tiddloid Lite |
-    | ----------------------------------------- | ------------- | ------------------------------------------------------------ | -------------------------------- |
-    | 文件API                                | Java文件API | Android SAF以及 Java文件API  | Android SAF |
-    | 备份系统                        | 有          | 有                                                         | 无                              |
-    | 搜索-克隆系统        | 有         | 无（改为接收从浏览器分享的TiddlyWiki站点URL并保存） | 无                              |
-    | 下载服务                           | 有          | 无                                                          | 无                              |
-    | 直接访问同目录下的文件 | 支持         | 部分支持（旧版模式，文件夹模式通过缓存所有文件） | 不支持                            |
-    | 云存储                          | 不支持         | 支持（通过SAF）                                          | 支持（通过SAF）           |
-    | 模板 | 首次使用时下载 | 创建新文件时下载，并缓存以备无网络时使用            |创建新文件时下载|
-    | 兼容性 | 适配大多数Android版本，支持TiddlyWiKi5及Classic | 适配新Android版本，支持TiddlyWiKi5及Classic |适配新Android版本，支持TiddlyWiKi5|
-    | 推荐的Android版本 | Android 4.4 ~ 9.0 | Android 4.4 及以上，8.0及以上最佳 |Android 4.4 及以上，8.0及以上最佳|
+  | 功能           | Tiddloid 1.x                       | Tiddloid 2.0 及以上                   | [Tiddloid Lite](https://gitee.com/donmor/TiddloidLite) |
+      |--------------|------------------------------------|------------------------------------|--------------------------------------------------------|
+  | 文件API        | Java文件API                          | Android SAF以及 Java文件API            | Android SAF                                            |
+  | 备份系统         | 有                                  | 有                                  | 无                                                      |
+  | 搜索-克隆系统      | 有                                  | 无（改为接收从浏览器分享的TiddlyWiki站点URL并保存）   | 无                                                      |
+  | 下载服务         | 有                                  | 无                                  | 无                                                      |
+  | 直接访问同目录下的文件  | 支持                                 | 部分支持（旧版模式，文件夹模式通过缓存所有文件）           | 不支持                                                    |
+  | 云存储          | 不支持                                | 支持（通过SAF）                          | 支持（通过SAF）                                              |
+  | 模板           | 首次使用时下载，可手动更新                      | 创建新文件时下载，并缓存以备无网络时使用               | 创建新文件时下载                                               |
+  | 兼容性          | 适配旧Android版本，支持TiddlyWiKi5及Classic | 适配新Android版本，支持TiddlyWiKi5及Classic | 适配新Android版本，支持TiddlyWiKi5                             |
+  | 推荐的Android版本 | Android 4.4 ~ 9.0                  | Android 5.0 及以上，8.0最佳              | Android 5.0 及以上，8.0最佳                                  |
 
 
 ### 许可
@@ -65,10 +57,10 @@ Tiddloid Lite是一款适用于本地存储的TiddlyWiki的应用程序，是[Ti
 
 此应用的翻译目前由Google翻译提供。如果您有更好的版本，欢迎在GitHub/Gitee上发起Pull Request。
 
-### 关于我们
+### 关于作者
 
-感谢您尝试我们的产品。如果您愿意支持，我们将不胜感激，并不遗余力地加以改进。
+感谢您尝试我们的作品。如果您愿意支持，本人将不胜感激，并不遗余力地加以改进。
 
-&ensp;&ensp;<a href="https://liberapay.com/donmor3000/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="30" /></a>&ensp;&ensp;<a href="https://donmor.top/#DonationQrCode"><img alt="Donate using Alipay and Wechat Pay" src="https://donmor.top/img/aliwechat.svg" height="30" /></a>
+&ensp;&ensp;<a href="https://liberapay.com/donmor3000/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="30" /></a>&ensp;&ensp;<a href="https://afdian.com/a/donmor"><img alt="Donate using Afdian" src="https://static.afdiancdn.com/static/img/logo/logo.png" height="30" /></a>
 
-如果您感兴趣，欢迎访问[我的主页](https://donmor.top/).
+欢迎访问[我的主页](https://donmor.top/)。

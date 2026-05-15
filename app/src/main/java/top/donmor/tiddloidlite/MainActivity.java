@@ -36,9 +36,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -89,6 +87,7 @@ import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
+@SuppressWarnings({"CallToPrintStackTrace", "ResultOfMethodCallIgnored"})
 public class MainActivity extends AppCompatActivity {
 	private TextView noWiki;
 	private WikiListAdapter wikiListAdapter = null;
@@ -127,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
 	static final boolean APIOver23 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
 			APIOver24 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N,
 			APIOver26 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
-			APIOver29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q;
+			APIOver29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q,
+			APIOver35 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM;
 	private static final String[] TYPE_FILTERS = {TYPE_HTML};
 
 
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
 			}
 
 			// 长按属性
+			@SuppressLint("QueryPermissionsNeeded")
 			@Override
 			public void onItemLongClick(final int pos, final String id) {
 				if (pos == -1) return;
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 					}
 					TextView view = new TextView(MainActivity.this);
 					DocumentFile file = DocumentFile.fromSingleUri(MainActivity.this, uri);
-					String fn = file != null ? file.getName() : null, provider = getString(R.string.unknown);
+					String fn = file.getName(), provider = getString(R.string.unknown);
 					// 获取来源名
 					try {
 						PackageManager pm = getPackageManager();
@@ -209,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 							+ Uri.decode(uri.getLastPathSegment())
 							+ '\n'
 							+ getString(R.string.filename)
-							+ (fn != null && fn.length() > 0 ? fn : getString(R.string.unknown));
+							+ (fn != null && !fn.isEmpty() ? fn : getString(R.string.unknown));
 					view.setText(s);
 					if (APIOver23)
 						view.setTextAppearance(android.R.style.TextAppearance_DeviceDefault_Small);
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 							.setTitle(name)
 							.setIcon(icon)
 							.setPositiveButton(android.R.string.ok, null)
-							.setNegativeButton(R.string.remove_wiki, (dialogInterface, i) -> {
+							.setNegativeButton(R.string.remove, (dialogInterface, i) -> {
 								dialogInterface.dismiss();
 								// 移除确认
 								AlertDialog removeWikiConfirmationDialog = new AlertDialog.Builder(MainActivity.this)
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 									if (ShortcutManagerCompat.isRequestPinShortcutSupported(MainActivity.this)) {
 										ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(MainActivity.this, id)
 												.setShortLabel(name)
-												.setLongLabel(name + (sub.length() > 0 ? KEY_LBL + sub : sub))
+												.setLongLabel(name + (!sub.isEmpty() ? KEY_LBL + sub : sub))
 												.setIcon(favicon != null ? IconCompat.createWithBitmap(favicon) : IconCompat.createWithResource(MainActivity.this, R.drawable.ic_shortcut))
 												.setIntent(in)
 												.build();
@@ -289,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
 				e.printStackTrace();
 				try {
 					db = initJson();
-					writeJson(this, db);
 					firstRun = true;
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -312,7 +312,24 @@ public class MainActivity extends AppCompatActivity {
 			});
 			runOnUiThread(() -> {
 				if (firstRun)
-					firstRunReq(this);
+					firstRunReq(this, new OnFirstRun() {
+						@Override
+						public void onAgreed() {
+							try {
+								writeJson(MainActivity.this, db);
+								firstRun = false;
+							} catch (JSONException e) {
+								e.printStackTrace();
+								Toast.makeText(MainActivity.this, R.string.data_error, Toast.LENGTH_SHORT).show();
+							}
+						}
+
+						@Override
+						public void onDeclined() {
+							finishAffinity();
+							System.exit(0);
+						}
+					});
 			});
 		}).start();
 	}
@@ -459,15 +476,11 @@ public class MainActivity extends AppCompatActivity {
 	// 菜单栏
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		final int idNew = R.id.action_new,
-				idImport = R.id.action_import,
-				idAbout = R.id.action_about;
-		if (id == idNew) {
+		if (item.getItemId() == R.id.action_new) {
 			getChooserCreate.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML));
-		} else if (id == idImport) {
+		} else if (item.getItemId() == R.id.action_import) {
 			getChooserImport.launch(new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(TYPE_HTML).putExtra(Intent.EXTRA_MIME_TYPES, TYPE_FILTERS));
-		} else if (id == idAbout) {
+		} else if (item.getItemId() == R.id.action_about) {
 			SpannableString spannableString = new SpannableString(getString(R.string.about));
 			Linkify.addLinks(spannableString, Linkify.ALL);
 			AlertDialog aboutDialog = new AlertDialog.Builder(this)
@@ -599,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
 		Window w = getWindow();
 		int color = getResources().getColor(R.color.design_default_color_primary);
 		WindowInsetsControllerCompat wic = WindowCompat.getInsetsController(w, w.getDecorView());
-		if (APIOver23) w.setStatusBarColor(color);
+		if (APIOver23 && !APIOver35) w.setStatusBarColor(color);
 		if (APIOver26) w.setNavigationBarColor(color);
 		wic.show(WindowInsetsCompat.Type.systemBars());
 		boolean lightBar = (newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES;
@@ -686,7 +699,13 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	static void firstRunReq(Activity context) {
+	interface OnFirstRun {
+		void onAgreed();
+
+		void onDeclined();
+	}
+
+	static void firstRunReq(Activity context, OnFirstRun cb) {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		int dialogPadding2 = (int) (context.getResources().getDisplayMetrics().density * 12),
@@ -754,13 +773,8 @@ public class MainActivity extends AppCompatActivity {
 		AlertDialog firstRunDialog = new AlertDialog.Builder(context)
 				.setTitle(R.string.agreements_title)
 				.setView(layout)
-				.setPositiveButton(R.string.agreements_accept, null)
-				.setNegativeButton(R.string.agreements_decline, (dialog, which) -> {
-					File dir = context.getFilesDir(), file = new File(dir, DB_FILE_NAME);
-					file.delete();
-					context.finishAffinity();
-					System.exit(0);
-				})
+				.setPositiveButton(R.string.agreements_accept, (dialog, which) -> cb.onAgreed())
+				.setNegativeButton(R.string.agreements_decline, (dialog, which) -> cb.onDeclined())
 				.create();
 		firstRunDialog.setCanceledOnTouchOutside(false);
 		firstRunDialog.show();
