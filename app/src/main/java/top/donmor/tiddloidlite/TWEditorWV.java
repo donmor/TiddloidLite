@@ -130,10 +130,7 @@ public class TWEditorWV extends AppCompatActivity {
 		wvs.setDisplayZoomControls(false);
 		wvs.setUseWideViewPort(true);
 		wvs.setLoadWithOverviewMode(true);
-		wvs.setAllowFileAccess(true);
 		wvs.setAllowContentAccess(true);
-		wvs.setAllowFileAccessFromFileURLs(true);
-		wvs.setAllowUniversalAccessFromFileURLs(true);
 		wvs.setSupportMultipleWindows(true);
 		wvs.setMediaPlaybackRequiresUserGesture(false);
 		getChooserDL = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {

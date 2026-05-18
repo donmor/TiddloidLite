@@ -1,0 +1,1 @@
+- Dropped unnecessary access in WebView (donmor/Tiddloid#87)
